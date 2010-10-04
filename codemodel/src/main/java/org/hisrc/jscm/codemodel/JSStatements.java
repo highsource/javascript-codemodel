@@ -17,7 +17,8 @@ public interface JSStatements {
 
 	public JSExpressionStatement expression(JSExpression expression);
 
-	public JSIfStatement _if(JSExpression expression);
+	// TODO
+	public JSIfThenElseStatement _ifThenElse(JSExpression expression);
 
 	// TODO IterationStatement
 

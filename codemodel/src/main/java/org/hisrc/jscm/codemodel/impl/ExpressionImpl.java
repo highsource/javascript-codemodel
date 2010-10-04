@@ -12,6 +12,7 @@ public abstract class ExpressionImpl implements JSExpression {
 	private final JSCodeModel codeModel;
 
 	public ExpressionImpl(JSCodeModel codeModel) {
+		Validate.notNull(codeModel);
 		this.codeModel = codeModel;
 	}
 
@@ -20,7 +21,7 @@ public abstract class ExpressionImpl implements JSExpression {
 	}
 
 	public Brackets brackets() {
-		return new PrimaryExpressionImpl.BracketsImpl(getCodeModel(),this);
+		return new PrimaryExpressionImpl.BracketsImpl(getCodeModel(), this);
 	}
 
 	public Comma comma(JSAssignmentExpression expression) {

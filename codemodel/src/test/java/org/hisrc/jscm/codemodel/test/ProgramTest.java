@@ -2,7 +2,7 @@ package org.hisrc.jscm.codemodel.test;
 
 import org.hisrc.jscm.codemodel.JSCodeModel;
 import org.hisrc.jscm.codemodel.JSFunctionDeclaration;
-import org.hisrc.jscm.codemodel.JSIfStatement;
+import org.hisrc.jscm.codemodel.JSIfThenElseStatement;
 import org.hisrc.jscm.codemodel.JSNumericLiteral;
 import org.hisrc.jscm.codemodel.JSProgram;
 import org.hisrc.jscm.codemodel.JSVariable;
@@ -27,7 +27,7 @@ public class ProgramTest {
 				x.le(one).cond(one,
 						x.mul(codeModel.call(factorial).args(x.minus(one)))));
 
-		JSIfStatement _if = factorial.body()._if(x.eq(one));
+		JSIfThenElseStatement _if = factorial.body()._ifThenElse(x.eq(one));
 
 		_if._then()._return(one);
 		_if._else()
