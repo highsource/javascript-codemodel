@@ -3,9 +3,9 @@ package org.hisrc.jscm.codemodel.writer;
 import java.io.IOException;
 
 import org.apache.commons.lang.Validate;
-import org.hisrc.jscm.codemodel.JSNumericLiteral;
 import org.hisrc.jscm.codemodel.JSPropertyNameVisitor;
-import org.hisrc.jscm.codemodel.JSStringLiteral;
+import org.hisrc.jscm.codemodel.literal.JSNumericLiteral;
+import org.hisrc.jscm.codemodel.literal.JSStringLiteral;
 
 public class PropertyNameWriterVisitor<A extends Appendable> implements
 		JSPropertyNameVisitor<A, IOException> {

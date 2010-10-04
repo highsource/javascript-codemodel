@@ -2,7 +2,9 @@ package org.hisrc.jscm.codemodel;
 
 import java.util.List;
 
-public interface JSSourceElements extends JSStatements, JSFunctionDeclarations {
+import org.hisrc.jscm.codemodel.statement.JSStatementGenerator;
+
+public interface JSSourceElements extends JSStatementGenerator, JSFunctionDeclarations {
 
 	public List<JSSourceElement> getSourceElements();
 }

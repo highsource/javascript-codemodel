@@ -3,12 +3,12 @@ package org.hisrc.jscm.codemodel.writer;
 import java.io.IOException;
 
 import org.apache.commons.lang.Validate;
-import org.hisrc.jscm.codemodel.JSBooleanLiteral;
-import org.hisrc.jscm.codemodel.JSDecimalIntegerLiteral;
-import org.hisrc.jscm.codemodel.JSDecimalNonIntegerLiteral;
-import org.hisrc.jscm.codemodel.JSLiteralVisitor;
-import org.hisrc.jscm.codemodel.JSNullLiteral;
-import org.hisrc.jscm.codemodel.JSStringLiteral;
+import org.hisrc.jscm.codemodel.literal.JSBooleanLiteral;
+import org.hisrc.jscm.codemodel.literal.JSDecimalIntegerLiteral;
+import org.hisrc.jscm.codemodel.literal.JSDecimalNonIntegerLiteral;
+import org.hisrc.jscm.codemodel.literal.JSLiteralVisitor;
+import org.hisrc.jscm.codemodel.literal.JSNullLiteral;
+import org.hisrc.jscm.codemodel.literal.JSStringLiteral;
 
 public class LiteralWriterVisitor<A extends Appendable> implements
 		JSLiteralVisitor<A, IOException> {
