@@ -3,6 +3,7 @@ package org.hisrc.jscm.codemodel.impl.statement;
 import org.apache.commons.lang.Validate;
 import org.hisrc.jscm.codemodel.JSCodeModel;
 import org.hisrc.jscm.codemodel.JSVariable;
+import org.hisrc.jscm.codemodel.impl.expression.VariableImpl;
 import org.hisrc.jscm.codemodel.statement.JSBlock;
 import org.hisrc.jscm.codemodel.statement.JSStatementVisitor;
 import org.hisrc.jscm.codemodel.statement.JSTryStatement;

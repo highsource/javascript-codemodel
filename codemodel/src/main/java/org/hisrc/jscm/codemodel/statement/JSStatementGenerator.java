@@ -2,6 +2,7 @@ package org.hisrc.jscm.codemodel.statement;
 
 import org.hisrc.jscm.codemodel.expression.JSAssignmentExpression;
 import org.hisrc.jscm.codemodel.expression.JSExpression;
+import org.hisrc.jscm.codemodel.statement.JSLabelledStatement.JSLabel;
 
 public interface JSStatementGenerator {
 
@@ -16,7 +17,6 @@ public interface JSStatementGenerator {
 
 	public JSExpressionStatement expression(JSExpression expression);
 
-	// TODO
 	public JSIfStatement _if(JSExpression expression);
 
 	// TODO IterationStatement
@@ -29,11 +29,11 @@ public interface JSStatementGenerator {
 
 	public JSContinueStatement _continue();
 
-	// public JSContinueStatement _continue(JSLabel label);
+	public JSContinueStatement _continue(JSLabel label);
 
 	public JSBreakStatement _break();
 
-	// public JSBreakStatement _break(JSLabel label);
+	public JSBreakStatement _break(JSLabel label);
 
 	public JSReturnStatement _return();
 
@@ -44,8 +44,7 @@ public interface JSStatementGenerator {
 	// TODO Switch statement
 	// public JSSwitchStatement _switch(JExpression expression);
 
-	// TODO Labelled statement
-	// public JSLabelledStatement
+	public JSLabelledStatement label(String name);
 
 	public JSThrowStatement _throw(JSExpression expression);
 

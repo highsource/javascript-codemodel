@@ -57,7 +57,6 @@ public class IfStatementImpl extends StatementImpl implements JSIfStatement {
 
 	@Override
 	public JSStatementGenerator _then() {
-
 		return thenGenerator;
 	}
 

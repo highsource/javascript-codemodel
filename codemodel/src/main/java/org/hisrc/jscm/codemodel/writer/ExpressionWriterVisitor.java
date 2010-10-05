@@ -4,6 +4,7 @@ import java.io.IOException;
 
 import org.apache.commons.lang.Validate;
 import org.hisrc.jscm.codemodel.JSPropertyName;
+import org.hisrc.jscm.codemodel.JSVariable;
 import org.hisrc.jscm.codemodel.expression.JSArrayLiteral;
 import org.hisrc.jscm.codemodel.expression.JSAssignmentExpression;
 import org.hisrc.jscm.codemodel.expression.JSExpressionVisitor;
@@ -116,6 +117,12 @@ public class ExpressionWriterVisitor implements Appendable,
 	@Override
 	public ExpressionWriterVisitor visitThis(JSThis value) throws IOException {
 		return append("this");
+	}
+	
+	@Override
+	public ExpressionWriterVisitor visitVariable(JSVariable value)
+			throws IOException {
+		return append(value.getName());
 	}
 
 	@Override

@@ -1,6 +1,14 @@
 package org.hisrc.jscm.codemodel.statement;
 
-public interface JSLabelledStatement extends JSStatement {
+import org.hisrc.jscm.codemodel.JSIdentifier;
 
-	public String getLabel();
+public interface JSLabelledStatement extends JSStatement, JSStatementGenerator {
+
+	public JSIdentifier getLabel();
+
+	public JSStatement getStatement();
+
+	public interface JSLabel extends JSIdentifier {
+
+	}
 }

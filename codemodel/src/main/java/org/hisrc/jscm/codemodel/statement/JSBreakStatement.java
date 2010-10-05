@@ -1,7 +1,9 @@
 package org.hisrc.jscm.codemodel.statement;
 
+import org.hisrc.jscm.codemodel.statement.JSLabelledStatement.JSLabel;
+
 public interface JSBreakStatement extends JSStatement {
 
-	// TODO Label
+	public JSLabel getLabel();
 
 }
