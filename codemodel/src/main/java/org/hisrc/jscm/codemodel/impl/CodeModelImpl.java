@@ -1,17 +1,23 @@
 package org.hisrc.jscm.codemodel.impl;
 
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.apache.commons.lang.Validate;
 import org.hisrc.jscm.codemodel.JSCodeModel;
 import org.hisrc.jscm.codemodel.JSFunctionDeclaration;
+import org.hisrc.jscm.codemodel.JSProgram;
 import org.hisrc.jscm.codemodel.expression.JSArrayLiteral;
 import org.hisrc.jscm.codemodel.expression.JSAssignmentExpression;
 import org.hisrc.jscm.codemodel.expression.JSCallExpression;
+import org.hisrc.jscm.codemodel.expression.JSGlobalVariable;
 import org.hisrc.jscm.codemodel.expression.JSObjectLiteral;
-import org.hisrc.jscm.codemodel.expression.JSThis;
 import org.hisrc.jscm.codemodel.expression.JSObjectLiteral.JSPropertyAssignment;
+import org.hisrc.jscm.codemodel.expression.JSThis;
 import org.hisrc.jscm.codemodel.impl.expression.ArrayLiteralImpl;
+import org.hisrc.jscm.codemodel.impl.expression.GlobalVariableImpl;
 import org.hisrc.jscm.codemodel.impl.expression.ObjectLiteralImpl;
 import org.hisrc.jscm.codemodel.impl.expression.ThisImpl;
 import org.hisrc.jscm.codemodel.impl.literal.BooleanLiteralImpl;
@@ -24,7 +30,6 @@ import org.hisrc.jscm.codemodel.literal.JSDecimalIntegerLiteral;
 import org.hisrc.jscm.codemodel.literal.JSDecimalNonIntegerLiteral;
 import org.hisrc.jscm.codemodel.literal.JSNullLiteral;
 import org.hisrc.jscm.codemodel.literal.JSStringLiteral;
-import org.hisrc.jscm.codemodel.JSProgram;
 
 public class CodeModelImpl implements JSCodeModel {
 
@@ -36,6 +41,21 @@ public class CodeModelImpl implements JSCodeModel {
 	@Override
 	public JSThis _this() {
 		return new ThisImpl(this);
+	}
+
+	private final Map<String, JSGlobalVariable> globalVariables = Collections
+			.synchronizedMap(new HashMap<String, JSGlobalVariable>());
+
+	public JSGlobalVariable globalVariable(String name) {
+		Validate.notNull(name);
+
+		JSGlobalVariable globalVariable = globalVariables.get(name);
+		if (globalVariable == null) {
+			globalVariable = new GlobalVariableImpl(this, name);
+			globalVariables.put(name, globalVariable);
+		}
+
+		return globalVariable;
 	}
 
 	@Override
@@ -72,7 +92,7 @@ public class CodeModelImpl implements JSCodeModel {
 
 	@Override
 	public JSProgram program() {
-		throw new UnsupportedOperationException();
+		return new ProgramImpl(this);
 	}
 
 	@Override

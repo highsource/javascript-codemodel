@@ -1,6 +1,5 @@
 package org.hisrc.jscm.codemodel.expression;
 
-import org.hisrc.jscm.codemodel.JSVariable;
 import org.hisrc.jscm.codemodel.literal.JSLiteral;
 
 public interface JSExpressionVisitor<V, E extends Exception> {
@@ -9,6 +8,8 @@ public interface JSExpressionVisitor<V, E extends Exception> {
 	public V visitThis(JSThis value) throws E;
 
 	public V visitVariable(JSVariable value) throws E;
+
+	public V visitGlobalVariable(JSGlobalVariable value) throws E;
 
 	public V visitLiteral(JSLiteral value) throws E;
 

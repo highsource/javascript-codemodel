@@ -22,7 +22,7 @@ public class BlockImpl extends StatementGeneratorImpl implements JSBlock {
 	}
 
 	public List<JSStatement> getStatements() {
-		return statements;
+		return unmodifiableStatements;
 	}
 
 	protected <S extends JSStatement> S add(S statement) {

@@ -4,13 +4,9 @@ import java.io.IOException;
 
 import org.apache.commons.lang.Validate;
 import org.hisrc.jscm.codemodel.JSPropertyName;
-import org.hisrc.jscm.codemodel.JSVariable;
+import org.hisrc.jscm.codemodel.expression.JSAdditiveExpression.Additive;
 import org.hisrc.jscm.codemodel.expression.JSArrayLiteral;
 import org.hisrc.jscm.codemodel.expression.JSAssignmentExpression;
-import org.hisrc.jscm.codemodel.expression.JSExpressionVisitor;
-import org.hisrc.jscm.codemodel.expression.JSObjectLiteral;
-import org.hisrc.jscm.codemodel.expression.JSThis;
-import org.hisrc.jscm.codemodel.expression.JSAdditiveExpression.Additive;
 import org.hisrc.jscm.codemodel.expression.JSAssignmentExpression.Assignment;
 import org.hisrc.jscm.codemodel.expression.JSBitwiseANDExpression.Band;
 import org.hisrc.jscm.codemodel.expression.JSBitwiseORExpression.Bor;
@@ -22,6 +18,8 @@ import org.hisrc.jscm.codemodel.expression.JSCallExpression.MemberCall;
 import org.hisrc.jscm.codemodel.expression.JSConditionalExpression.Conditional;
 import org.hisrc.jscm.codemodel.expression.JSEqualityExpression.Equality;
 import org.hisrc.jscm.codemodel.expression.JSExpression.Comma;
+import org.hisrc.jscm.codemodel.expression.JSExpressionVisitor;
+import org.hisrc.jscm.codemodel.expression.JSGlobalVariable;
 import org.hisrc.jscm.codemodel.expression.JSLogicalANDExpression.And;
 import org.hisrc.jscm.codemodel.expression.JSLogicalORExpression.Or;
 import org.hisrc.jscm.codemodel.expression.JSMemberExpression.MemberElement;
@@ -29,12 +27,15 @@ import org.hisrc.jscm.codemodel.expression.JSMemberExpression.MemberNew;
 import org.hisrc.jscm.codemodel.expression.JSMemberExpression.MemberProperty;
 import org.hisrc.jscm.codemodel.expression.JSMultiplicativeExpression.Multiplicative;
 import org.hisrc.jscm.codemodel.expression.JSNewExpression.New;
+import org.hisrc.jscm.codemodel.expression.JSObjectLiteral;
 import org.hisrc.jscm.codemodel.expression.JSObjectLiteral.JSPropertyAssignment;
 import org.hisrc.jscm.codemodel.expression.JSPostfixExpression.Postfix;
 import org.hisrc.jscm.codemodel.expression.JSPrimaryExpression.Brackets;
 import org.hisrc.jscm.codemodel.expression.JSRelationalExpression.Relational;
 import org.hisrc.jscm.codemodel.expression.JSShiftExpression.Shift;
+import org.hisrc.jscm.codemodel.expression.JSThis;
 import org.hisrc.jscm.codemodel.expression.JSUnaryExpression.Unary;
+import org.hisrc.jscm.codemodel.expression.JSVariable;
 import org.hisrc.jscm.codemodel.literal.JSLiteral;
 
 public class ExpressionWriterVisitor implements Appendable,
@@ -118,9 +119,15 @@ public class ExpressionWriterVisitor implements Appendable,
 	public ExpressionWriterVisitor visitThis(JSThis value) throws IOException {
 		return append("this");
 	}
-	
+
 	@Override
 	public ExpressionWriterVisitor visitVariable(JSVariable value)
+			throws IOException {
+		return append(value.getName());
+	}
+
+	@Override
+	public ExpressionWriterVisitor visitGlobalVariable(JSGlobalVariable value)
 			throws IOException {
 		return append(value.getName());
 	}

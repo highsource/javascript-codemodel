@@ -2,14 +2,15 @@ package org.hisrc.jscm.codemodel;
 
 import java.util.List;
 
-public interface JSFunctionDeclaration extends JSSourceElement {
+import org.hisrc.jscm.codemodel.expression.JSVariable;
 
-	public String getFunctionName();
-
-	public List<JSVariable> getParameters();
+public interface JSFunctionDeclaration extends JSSourceElement,
+		JSSourceElements {
 
 	public JSVariable parameter(String name);
 
-	public JSFunctionBody body();
+	public String getName();
+
+	public List<JSVariable> getParameters();
 
 }

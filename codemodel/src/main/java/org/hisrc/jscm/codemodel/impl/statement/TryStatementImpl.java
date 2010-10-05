@@ -2,7 +2,7 @@ package org.hisrc.jscm.codemodel.impl.statement;
 
 import org.apache.commons.lang.Validate;
 import org.hisrc.jscm.codemodel.JSCodeModel;
-import org.hisrc.jscm.codemodel.JSVariable;
+import org.hisrc.jscm.codemodel.expression.JSVariable;
 import org.hisrc.jscm.codemodel.impl.expression.VariableImpl;
 import org.hisrc.jscm.codemodel.statement.JSBlock;
 import org.hisrc.jscm.codemodel.statement.JSStatementVisitor;
@@ -41,7 +41,7 @@ public class TryStatementImpl extends StatementImpl implements JSTryStatement {
 	}
 
 	@Override
-	public JSVariable exception() {
+	public JSVariable getException() {
 		return exception;
 	}
 

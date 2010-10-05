@@ -2,15 +2,16 @@ package org.hisrc.jscm.codemodel.statement;
 
 import org.hisrc.jscm.codemodel.expression.JSAssignmentExpression;
 import org.hisrc.jscm.codemodel.expression.JSExpression;
+import org.hisrc.jscm.codemodel.expression.JSLeftHandSideExpression;
 import org.hisrc.jscm.codemodel.statement.JSLabelledStatement.JSLabel;
 
 public interface JSStatementGenerator {
 
 	public JSBlock block();
 
-	public JSVariableStatement variable(String identifier);
+	public JSVariableStatement variable(String name);
 
-	public JSVariableStatement variable(String identifier,
+	public JSVariableStatement variable(String name,
 			JSAssignmentExpression expression);
 
 	public JSEmptyStatement empty();
@@ -19,11 +20,26 @@ public interface JSStatementGenerator {
 
 	public JSIfStatement _if(JSExpression expression);
 
+	public JSForStatement _for();
+
+	public JSForStatement _for(JSExpression expression);
+
+	public JSForInStatement _forIn(JSLeftHandSideExpression expression,
+			JSExpression _in);
+
+	public JSForVarStatement _forVar(String name);
+
+	public JSForVarStatement _forVar(String name,
+			JSAssignmentExpression expression);
+
+	public JSForVarInStatement _forVarIn(String name, JSAssignmentExpression _in);
+
 	// TODO IterationStatement
 
-	// public JSDoWhile doWhile(JSExpression expression);
-	//
-	// public JSWhile _while(JSExpression expression);
+	public JSDoWhileStatement doWhile(JSExpression expression);
+
+	public JSWhileStatement _while(JSExpression expression);
+
 	//
 	// public JSWhile _for(JSExpression);
 
@@ -41,8 +57,7 @@ public interface JSStatementGenerator {
 
 	public JSWithStatement with(JSExpression expression);
 
-	// TODO Switch statement
-	// public JSSwitchStatement _switch(JExpression expression);
+	public JSSwitchStatement _switch(JSExpression expression);
 
 	public JSLabelledStatement label(String name);
 

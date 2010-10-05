@@ -1,16 +1,9 @@
 package org.hisrc.jscm.codemodel.statement;
 
-import org.hisrc.jscm.codemodel.expression.JSAssignmentExpression;
+import java.util.List;
 
+public interface JSVariableStatement extends JSStatement, JSVariableDeclaration {
 
-public interface JSVariableStatement extends JSStatement {
-
-	public JSVariableStatement comma(String identifier);
-
-	public JSVariableStatement comma(String identifier,
-			JSAssignmentExpression expression);
-
-	// TODO
-	// variable declaration
+	public List<JSVariableDeclaration> getVariableDeclarations();
 
 }

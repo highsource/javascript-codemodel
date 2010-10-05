@@ -3,7 +3,7 @@ package org.hisrc.jscm.codemodel.test;
 import org.hisrc.jscm.codemodel.JSCodeModel;
 import org.hisrc.jscm.codemodel.JSFunctionDeclaration;
 import org.hisrc.jscm.codemodel.JSProgram;
-import org.hisrc.jscm.codemodel.JSVariable;
+import org.hisrc.jscm.codemodel.expression.JSVariable;
 import org.hisrc.jscm.codemodel.literal.JSNumericLiteral;
 import org.hisrc.jscm.codemodel.statement.JSBlock;
 import org.hisrc.jscm.codemodel.statement.JSIfStatement;
@@ -23,13 +23,13 @@ public class ProgramTest {
 		JSProgram program = codeModel.program();
 
 		JSNumericLiteral one = codeModel.lit(1);
-		JSFunctionDeclaration factorial = program.declare("factorial");
+		JSFunctionDeclaration factorial = program
+				.functionDeclaration("factorial");
 		JSVariable x = factorial.parameter("x");
-		factorial.body()._return(
-				x.le(one).cond(one,
-						x.mul(codeModel.call(factorial).args(x.minus(one)))));
+		factorial._return(x.le(one).cond(one,
+				x.mul(codeModel.call(factorial).args(x.minus(one)))));
 
-		JSIfStatement _if = factorial.body()._if(x.eq(one));
+		JSIfStatement _if = factorial._if(x.eq(one));
 
 		_if._then()._return(one);
 		_if._else()
@@ -44,7 +44,7 @@ public class ProgramTest {
 
 		JSTryStatement _try = block._tryCatch("foo");
 		_try.body()._break();
-		_try._catch()._throw(_try.exception());
+		_try._catch()._throw(_try.getException());
 		_try._finally()._continue();
 
 	}
