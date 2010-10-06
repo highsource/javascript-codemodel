@@ -9,13 +9,14 @@ public interface JSMemberExpression extends JSNewExpression {
 	public JSMemberExpression.MemberElement element(JSExpression expression);
 
 	public JSMemberExpression.MemberProperty property(
+			String propertyName);
+
+	public JSMemberExpression.MemberProperty property(
 			JSPropertyName propertyName);
 
-	public JSMemberExpression.MemberNew _new(
-			JSAssignmentExpression... expressions);
+	public JSMemberExpression.MemberNew instantiate();
 
-	public JSCallExpression.MemberCall call(
-			JSAssignmentExpression... expressions);
+	public JSCallExpression.MemberCall invoke();
 
 	public interface Member extends JSMemberExpression {
 		public JSMemberExpression getBase();
@@ -30,6 +31,9 @@ public interface JSMemberExpression extends JSNewExpression {
 	}
 
 	public interface MemberNew extends Member {
+
+		public MemberNew args(JSAssignmentExpression... arg);
+
 		public List<JSAssignmentExpression> getArgs();
 	}
 }

@@ -7,8 +7,11 @@ import org.hisrc.jscm.codemodel.JSPropertyName;
 
 public interface JSObjectLiteral extends JSPrimaryExpression {
 
-	public JSObjectLiteral add(JSPropertyName name,
-			JSAssignmentExpression expression);
+	public JSObjectLiteral append(String name, JSAssignmentExpression expression);
+
+	public JSObjectLiteral append(JSPropertyName name, JSAssignmentExpression expression);
+
+	// TODO other appends
 
 	public List<JSPropertyAssignment> getPropertyAssignments();
 

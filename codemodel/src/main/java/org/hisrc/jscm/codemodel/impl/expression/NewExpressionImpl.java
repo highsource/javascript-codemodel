@@ -32,7 +32,7 @@ public abstract class NewExpressionImpl extends LeftHandSideExpressionImpl
 			return base;
 		}
 
-		public <V, E extends Exception> V accept(
+		public <V, E extends Exception> V acceptExpressionVisitor(
 				JSExpressionVisitor<V, E> visitor) throws E {
 			return visitor.visitNew(this);
 		}

@@ -104,4 +104,6 @@ public class ForVarStatementImpl extends IterationStatementImpl implements
 			JSStatementVisitor<V, E> visitor) throws E {
 		return visitor.visitForVar(this);
 	}
+	
+
 }

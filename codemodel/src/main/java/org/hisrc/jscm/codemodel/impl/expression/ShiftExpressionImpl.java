@@ -55,7 +55,7 @@ public abstract class ShiftExpressionImpl extends RelationalExpressionImpl
 		}
 
 		@Override
-		public <V, E extends Exception> V accept(
+		public <V, E extends Exception> V acceptExpressionVisitor(
 				JSExpressionVisitor<V, E> visitor) throws E {
 			return visitor.visitShift(this);
 		}

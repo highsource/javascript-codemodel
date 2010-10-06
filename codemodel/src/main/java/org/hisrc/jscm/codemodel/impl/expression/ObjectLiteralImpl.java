@@ -10,13 +10,15 @@ import org.hisrc.jscm.codemodel.JSPropertyName;
 import org.hisrc.jscm.codemodel.expression.JSAssignmentExpression;
 import org.hisrc.jscm.codemodel.expression.JSExpressionVisitor;
 import org.hisrc.jscm.codemodel.expression.JSObjectLiteral;
+import org.hisrc.jscm.codemodel.impl.IdentifierNameImpl;
 
 public class ObjectLiteralImpl extends PrimaryExpressionImpl implements
 		JSObjectLiteral {
 
 	private final List<JSPropertyAssignment> propertyAssignments;
 
-	public ObjectLiteralImpl(JSCodeModel codeModel, List<JSPropertyAssignment> propertyAssignments) {
+	public ObjectLiteralImpl(JSCodeModel codeModel,
+			List<JSPropertyAssignment> propertyAssignments) {
 		super(codeModel);
 		Validate.noNullElements(propertyAssignments);
 		this.propertyAssignments = Collections
@@ -27,7 +29,12 @@ public class ObjectLiteralImpl extends PrimaryExpressionImpl implements
 		return propertyAssignments;
 	}
 
-	public JSObjectLiteral add(JSPropertyName name, JSAssignmentExpression value) {
+	public JSObjectLiteral append(String name, JSAssignmentExpression expression) {
+		return append(new IdentifierNameImpl(getCodeModel(), name), expression);
+	}
+
+	public JSObjectLiteral append(JSPropertyName name,
+			JSAssignmentExpression value) {
 
 		final List<JSPropertyAssignment> newPropertyAssignments = new ArrayList<JSPropertyAssignment>(
 				this.propertyAssignments.size() + 1);
@@ -38,8 +45,8 @@ public class ObjectLiteralImpl extends PrimaryExpressionImpl implements
 	}
 
 	@Override
-	public <V, E extends Exception> V accept(JSExpressionVisitor<V, E> visitor)
-			throws E {
+	public <V, E extends Exception> V acceptExpressionVisitor(
+			JSExpressionVisitor<V, E> visitor) throws E {
 		return visitor.visitObjectLiteral(this);
 	}
 

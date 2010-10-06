@@ -3,30 +3,38 @@ package org.hisrc.jscm.codemodel.writer;
 import java.io.IOException;
 
 import org.apache.commons.lang.Validate;
+import org.hisrc.jscm.codemodel.JSFormatter;
+import org.hisrc.jscm.codemodel.JSIdentifierName;
 import org.hisrc.jscm.codemodel.JSPropertyNameVisitor;
 import org.hisrc.jscm.codemodel.literal.JSNumericLiteral;
 import org.hisrc.jscm.codemodel.literal.JSStringLiteral;
 
-public class PropertyNameWriterVisitor<A extends Appendable> implements
-		JSPropertyNameVisitor<A, IOException> {
+public class PropertyNameWriterVisitor implements
+		JSPropertyNameVisitor<JSFormatter, IOException> {
 
-	private final A writer;
+	private final JSFormatter f;
 
-	public PropertyNameWriterVisitor(A writer) {
-		Validate.notNull(writer);
-		this.writer = writer;
+	public PropertyNameWriterVisitor(JSFormatter formatter) {
+		Validate.notNull(formatter);
+		this.f = formatter;
+	}
+
+	public JSFormatter visitNumericLiteral(JSNumericLiteral value)
+			throws IOException {
+		value.acceptLiteralVisitor(new LiteralWriterVisitor(f));
+		return f;
+	}
+
+	public JSFormatter visitStringLiteral(JSStringLiteral value)
+			throws IOException {
+		value.acceptLiteralVisitor(new LiteralWriterVisitor(f));
+		return f;
 	}
 
 	@Override
-	public A visitNumericLiteral(JSNumericLiteral literal) throws IOException {
-		literal.acceptLiteralVisitor(new LiteralWriterVisitor<A>(writer));
-		return writer;
-	}
-
-	@Override
-	public A visitStringLiteral(JSStringLiteral literal) throws IOException {
-		literal.acceptLiteralVisitor(new LiteralWriterVisitor<A>(writer));
-		return writer;
+	public JSFormatter visitIdentifierName(JSIdentifierName value)
+			throws IOException {
+		return f.identifier(value.getName());
 	}
 
 }

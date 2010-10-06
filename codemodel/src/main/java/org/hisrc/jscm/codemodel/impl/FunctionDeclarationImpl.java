@@ -6,48 +6,54 @@ import java.util.List;
 
 import org.apache.commons.lang.Validate;
 import org.hisrc.jscm.codemodel.JSCodeModel;
+import org.hisrc.jscm.codemodel.JSFunctionBody;
 import org.hisrc.jscm.codemodel.JSFunctionDeclaration;
-import org.hisrc.jscm.codemodel.JSSourceElement;
+import org.hisrc.jscm.codemodel.JSSourceElementVisitor;
+import org.hisrc.jscm.codemodel.expression.JSPrimaryExpression;
 import org.hisrc.jscm.codemodel.expression.JSVariable;
 import org.hisrc.jscm.codemodel.impl.expression.VariableImpl;
-import org.hisrc.jscm.codemodel.impl.statement.StatementGeneratorImpl;
-import org.hisrc.jscm.codemodel.statement.JSStatement;
 
-public class FunctionDeclarationImpl extends StatementGeneratorImpl implements
-		JSFunctionDeclaration {
+public class FunctionDeclarationImpl implements JSFunctionDeclaration {
 
+	private final JSCodeModel codeModel;
 	private final String name;
+	private final JSPrimaryExpression functionExpression;
 
 	private final List<JSVariable> parameters = new ArrayList<JSVariable>();
 	private final List<JSVariable> unmodifiableParameters = Collections
 			.unmodifiableList(parameters);
 
-	private final List<JSSourceElement> sourceElements = new ArrayList<JSSourceElement>();
-	private final List<JSSourceElement> unmodifiableSourceElements = Collections
-			.unmodifiableList(sourceElements);
+	private final JSFunctionBody body;
 
 	public FunctionDeclarationImpl(JSCodeModel codeModel, String name) {
-		super(codeModel);
+		Validate.notNull(codeModel);
 		Validate.notNull(name);
+		this.codeModel = codeModel;
 		this.name = name;
+		this.functionExpression = new VariableImpl(codeModel, name);
+		this.body = new FunctionBodyImpl(codeModel);
 	}
 
-	protected <S extends JSStatement> S add(S statement) {
-		Validate.notNull(statement);
-		this.sourceElements.add(statement);
-		return statement;
+	public JSCodeModel getCodeModel() {
+		return codeModel;
 	}
 
 	public String getName() {
 		return name;
 	}
+	
+	public JSPrimaryExpression getFunctionExpression() {
+		return functionExpression;
+	}
 
-	@Override
+	public JSFunctionBody getBody() {
+		return body;
+	}
+
 	public List<JSVariable> getParameters() {
 		return unmodifiableParameters;
 	}
 
-	@Override
 	public JSVariable parameter(String name) {
 		Validate.notNull(name);
 		JSVariable parameter = new VariableImpl(getCodeModel(), name);
@@ -55,17 +61,9 @@ public class FunctionDeclarationImpl extends StatementGeneratorImpl implements
 		return parameter;
 	}
 
-	public List<JSSourceElement> getSourceElements() {
-		return unmodifiableSourceElements;
+	public <V, E extends Exception> V acceptSourceElementVisitor(
+			JSSourceElementVisitor<V, E> visitor) throws E {
+		return visitor.visitFunctionDeclaration(this);
 	}
-
-	@Override
-	public JSFunctionDeclaration functionDeclaration(String name) {
-		Validate.notNull(name);
-		final JSFunctionDeclaration functionDeclaration = new FunctionDeclarationImpl(
-				getCodeModel(), name);
-		sourceElements.add(functionDeclaration);
-		return functionDeclaration;
-	}
-
+	
 }

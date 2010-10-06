@@ -2,6 +2,7 @@ package org.hisrc.jscm.codemodel.impl.statement;
 
 import org.apache.commons.lang.Validate;
 import org.hisrc.jscm.codemodel.JSCodeModel;
+import org.hisrc.jscm.codemodel.JSSourceElementVisitor;
 import org.hisrc.jscm.codemodel.statement.JSStatement;
 
 public abstract class StatementImpl implements JSStatement{
@@ -16,5 +17,10 @@ public abstract class StatementImpl implements JSStatement{
 
 	public JSCodeModel getCodeModel() {
 		return codeModel;
+	}
+	
+	public <V, E extends Exception> V acceptSourceElementVisitor(
+			JSSourceElementVisitor<V, E> visitor) throws E {
+		return visitor.visitStatement(this);
 	}
 }

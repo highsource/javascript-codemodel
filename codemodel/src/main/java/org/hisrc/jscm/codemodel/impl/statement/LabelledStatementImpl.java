@@ -3,6 +3,7 @@ package org.hisrc.jscm.codemodel.impl.statement;
 import org.apache.commons.lang.Validate;
 import org.hisrc.jscm.codemodel.JSCodeModel;
 import org.hisrc.jscm.codemodel.JSIdentifier;
+import org.hisrc.jscm.codemodel.JSSourceElementVisitor;
 import org.hisrc.jscm.codemodel.statement.JSLabelledStatement;
 import org.hisrc.jscm.codemodel.statement.JSStatement;
 import org.hisrc.jscm.codemodel.statement.JSStatementVisitor;
@@ -42,6 +43,12 @@ public class LabelledStatementImpl extends StatementGeneratorImpl implements
 			JSStatementVisitor<V, E> visitor) throws E {
 		return visitor.visitLabelled(this);
 	}
+	
+	public <V, E extends Exception> V acceptSourceElementVisitor(
+			JSSourceElementVisitor<V, E> visitor) throws E {
+		return visitor.visitStatement(this);
+	}
+
 
 	private class LabelImpl implements JSLabel {
 		private final String name;

@@ -13,7 +13,7 @@ public abstract class LiteralImpl extends PrimaryExpressionImpl implements
 	}
 
 	@Override
-	public <V, E extends Exception> V accept(JSExpressionVisitor<V, E> visitor)
+	public <V, E extends Exception> V acceptExpressionVisitor(JSExpressionVisitor<V, E> visitor)
 			throws E {
 		return visitor.visitLiteral(this);
 	}

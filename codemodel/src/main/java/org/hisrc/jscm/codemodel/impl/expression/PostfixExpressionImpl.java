@@ -37,7 +37,7 @@ public abstract class PostfixExpressionImpl extends UnaryExpressionImpl
 			return operator;
 		}
 
-		public <V, E extends Exception> V accept(
+		public <V, E extends Exception> V acceptExpressionVisitor(
 				JSExpressionVisitor<V, E> visitor) throws E {
 			return visitor.visitPostfix(this);
 		}

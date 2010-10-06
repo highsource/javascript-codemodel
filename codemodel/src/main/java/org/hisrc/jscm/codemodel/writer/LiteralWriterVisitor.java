@@ -3,6 +3,7 @@ package org.hisrc.jscm.codemodel.writer;
 import java.io.IOException;
 
 import org.apache.commons.lang.Validate;
+import org.hisrc.jscm.codemodel.JSFormatter;
 import org.hisrc.jscm.codemodel.literal.JSBooleanLiteral;
 import org.hisrc.jscm.codemodel.literal.JSDecimalIntegerLiteral;
 import org.hisrc.jscm.codemodel.literal.JSDecimalNonIntegerLiteral;
@@ -10,46 +11,41 @@ import org.hisrc.jscm.codemodel.literal.JSLiteralVisitor;
 import org.hisrc.jscm.codemodel.literal.JSNullLiteral;
 import org.hisrc.jscm.codemodel.literal.JSStringLiteral;
 
-public class LiteralWriterVisitor<A extends Appendable> implements
-		JSLiteralVisitor<A, IOException> {
+public class LiteralWriterVisitor implements
+		JSLiteralVisitor<JSFormatter, IOException> {
 
-	private final A writer;
+	private final JSFormatter f;
 
-	public LiteralWriterVisitor(A writer) {
-		Validate.notNull(writer);
-		this.writer = writer;
+	public LiteralWriterVisitor(JSFormatter formatter) {
+		Validate.notNull(formatter);
+		this.f = formatter;
 	}
 
 	@Override
-	public A visit(JSStringLiteral value) throws IOException {
+	public JSFormatter visit(JSStringLiteral value) throws IOException {
 
-		// TODO Very naive
-		writer.append('"').append(value.asString()).append('"');
-		return writer;
+		return f.string(value.asString());
 	}
 
 	@Override
-	public A visit(JSNullLiteral value) throws IOException {
-		writer.append("null");
-		return writer;
+	public JSFormatter visit(JSNullLiteral value) throws IOException {
+		return f._null();
 	}
 
 	@Override
-	public A visit(JSBooleanLiteral value) throws IOException {
-		writer.append(Boolean.toString(value.asBoolean()));
-		return writer;
+	public JSFormatter visit(JSBooleanLiteral value) throws IOException {
+		return f._boolean(value.asBoolean());
 	}
 
 	@Override
-	public A visit(JSDecimalIntegerLiteral value) throws IOException {
-		writer.append(Long.toString(value.asLong()));
-		return writer;
+	public JSFormatter visit(JSDecimalIntegerLiteral value) throws IOException {
+		return f.decimal(value.asDecimal());
 	}
 
 	@Override
-	public A visit(JSDecimalNonIntegerLiteral value) throws IOException {
-		writer.append(Double.toString(value.asDouble()));
-		return writer;
+	public JSFormatter visit(JSDecimalNonIntegerLiteral value)
+			throws IOException {
+		return f.decimal(value.asDecimal());
 	}
 
 }

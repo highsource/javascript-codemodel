@@ -21,8 +21,7 @@ public class DecimalIntegerLiteralImpl extends DecimalLiteralImpl implements
 	@Override
 	public <V, E extends Exception> V acceptLiteralVisitor(
 			JSLiteralVisitor<V, E> visitor) throws E {
-		// TODO Auto-generated method stub
-		return null;
+		return visitor.visit(this);
 	}
 
 	@Override

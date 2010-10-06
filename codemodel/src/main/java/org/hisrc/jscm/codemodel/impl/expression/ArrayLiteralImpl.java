@@ -27,7 +27,7 @@ public class ArrayLiteralImpl extends PrimaryExpressionImpl implements
 	}
 
 	@Override
-	public JSArrayLiteral add(JSAssignmentExpression... elements) {
+	public JSArrayLiteral append(JSAssignmentExpression... elements) {
 		Validate.noNullElements(elements);
 		final List<JSAssignmentExpression> newElements = new ArrayList<JSAssignmentExpression>(
 				this.elements.size() + elements.length);
@@ -39,7 +39,7 @@ public class ArrayLiteralImpl extends PrimaryExpressionImpl implements
 	}
 
 	@Override
-	public <V, E extends Exception> V accept(JSExpressionVisitor<V, E> visitor)
+	public <V, E extends Exception> V acceptExpressionVisitor(JSExpressionVisitor<V, E> visitor)
 			throws E {
 		return visitor.visitArrayLiteral(this);
 	}

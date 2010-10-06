@@ -1,6 +1,7 @@
 package org.hisrc.jscm.codemodel.expression;
 
 import org.apache.commons.lang.Validate;
+import org.hisrc.jscm.codemodel.JSOperator;
 
 public interface JSRelationalExpression extends JSEqualityExpression {
 
@@ -25,7 +26,7 @@ public interface JSRelationalExpression extends JSEqualityExpression {
 		public JSShiftExpression getRight();
 	}
 
-	public static enum RelationalOperator {
+	public static enum RelationalOperator implements JSOperator {
 		LT("<"), GT(">"), LE("<="), GE(">="), INSTANCEOF("instanceof"), IN("in");
 
 		private final String operatorAsString;

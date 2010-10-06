@@ -2,6 +2,7 @@ package org.hisrc.jscm.codemodel.impl.statement;
 
 import org.apache.commons.lang.Validate;
 import org.hisrc.jscm.codemodel.JSCodeModel;
+import org.hisrc.jscm.codemodel.JSSourceElementVisitor;
 import org.hisrc.jscm.codemodel.statement.JSIterationStatement;
 import org.hisrc.jscm.codemodel.statement.JSStatement;
 
@@ -24,4 +25,8 @@ public abstract class IterationStatementImpl extends StatementGeneratorImpl
 		return statement;
 	}
 
+	public final <V, E extends Exception> V acceptSourceElementVisitor(
+			JSSourceElementVisitor<V, E> visitor) throws E {
+		return visitor.visitStatement(this);
+	}
 }

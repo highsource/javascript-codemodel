@@ -1,5 +1,6 @@
 package org.hisrc.jscm.codemodel.impl.expression;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -12,6 +13,7 @@ import org.hisrc.jscm.codemodel.expression.JSCallExpression;
 import org.hisrc.jscm.codemodel.expression.JSExpression;
 import org.hisrc.jscm.codemodel.expression.JSExpressionVisitor;
 import org.hisrc.jscm.codemodel.expression.JSMemberExpression;
+import org.hisrc.jscm.codemodel.impl.IdentifierNameImpl;
 
 public abstract class CallExpressionImpl extends LeftHandSideExpressionImpl
 		implements JSCallExpression {
@@ -20,13 +22,18 @@ public abstract class CallExpressionImpl extends LeftHandSideExpressionImpl
 		super(codeModel);
 	}
 
-	public CallArgs args(JSAssignmentExpression... args) {
-		return new CallArgsImpl(getCodeModel(), this, args);
+	public CallArgs invoke() {
+		return new CallArgsImpl(getCodeModel(), this);
 	}
 
 	@Override
 	public CallElement element(JSExpression index) {
 		return new CallElementImpl(getCodeModel(), this, index);
+	}
+
+	@Override
+	public CallProperty property(String name) {
+		return new CallPropertyImpl(getCodeModel(), this, new IdentifierNameImpl(getCodeModel(), name));
 	}
 
 	@Override
@@ -51,21 +58,27 @@ public abstract class CallExpressionImpl extends LeftHandSideExpressionImpl
 	}
 
 	public static class CallArgsImpl extends CallImpl implements CallArgs {
-		private final List<JSAssignmentExpression> args;
+		private final List<JSAssignmentExpression> args = new ArrayList<JSAssignmentExpression>();
+		private final List<JSAssignmentExpression> unmodifiableArgs = Collections
+				.unmodifiableList(args);
 
-		public CallArgsImpl(JSCodeModel codeModel, JSCallExpression base,
-				JSAssignmentExpression... args) {
+		public CallArgsImpl(JSCodeModel codeModel, JSCallExpression base) {
 			super(codeModel, base);
+		}
+		
+		public CallArgs args(JSAssignmentExpression... args) {
 			Validate.noNullElements(args);
-			this.args = Collections.unmodifiableList(Arrays.asList(args));
+			this.args.addAll(Arrays.asList(args));
+			return this;
 		}
 
+
 		public List<JSAssignmentExpression> getArgs() {
-			return args;
+			return unmodifiableArgs;
 		}
 
 		@Override
-		public <V, E extends Exception> V accept(
+		public <V, E extends Exception> V acceptExpressionVisitor(
 				JSExpressionVisitor<V, E> visitor) throws E {
 			return visitor.visitCallArgs(this);
 		}
@@ -86,7 +99,7 @@ public abstract class CallExpressionImpl extends LeftHandSideExpressionImpl
 		}
 
 		@Override
-		public <V, E extends Exception> V accept(
+		public <V, E extends Exception> V acceptExpressionVisitor(
 				JSExpressionVisitor<V, E> visitor) throws E {
 			return visitor.visitCallElement(this);
 		}
@@ -108,7 +121,7 @@ public abstract class CallExpressionImpl extends LeftHandSideExpressionImpl
 		}
 
 		@Override
-		public <V, E extends Exception> V accept(
+		public <V, E extends Exception> V acceptExpressionVisitor(
 				JSExpressionVisitor<V, E> visitor) throws E {
 			return visitor.visitCallProperty(this);
 		}
@@ -116,16 +129,21 @@ public abstract class CallExpressionImpl extends LeftHandSideExpressionImpl
 
 	public static class MemberCallImpl extends CallExpressionImpl implements
 			JSCallExpression.MemberCall {
-		private final List<JSAssignmentExpression> args;
+		private final List<JSAssignmentExpression> args = new ArrayList<JSAssignmentExpression>();
+		private final List<JSAssignmentExpression> unmodifiableArgs = Collections
+				.unmodifiableList(args);
 		private final JSMemberExpression base;
 
-		public MemberCallImpl(JSCodeModel codeModel, JSMemberExpression base,
-				JSAssignmentExpression... args) {
+		public MemberCallImpl(JSCodeModel codeModel, JSMemberExpression base) {
 			super(codeModel);
 			Validate.notNull(base);
-			Validate.noNullElements(args);
 			this.base = base;
-			this.args = Collections.unmodifiableList(Arrays.asList(args));
+		}
+
+		public MemberCall args(JSAssignmentExpression... args) {
+			Validate.noNullElements(args);
+			this.args.addAll(Arrays.asList(args));
+			return this;
 		}
 
 		public JSMemberExpression getBase() {
@@ -133,11 +151,11 @@ public abstract class CallExpressionImpl extends LeftHandSideExpressionImpl
 		}
 
 		public List<JSAssignmentExpression> getArgs() {
-			return args;
+			return unmodifiableArgs;
 		}
 
 		@Override
-		public <V, E extends Exception> V accept(
+		public <V, E extends Exception> V acceptExpressionVisitor(
 				JSExpressionVisitor<V, E> visitor) throws E {
 			return visitor.visitMemberCall(this);
 		}

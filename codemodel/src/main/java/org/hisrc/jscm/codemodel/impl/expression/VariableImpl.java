@@ -20,7 +20,7 @@ public class VariableImpl extends PrimaryExpressionImpl implements JSVariable{
 	}
 	
 	@Override
-	public <V, E extends Exception> V accept(JSExpressionVisitor<V, E> visitor)
+	public <V, E extends Exception> V acceptExpressionVisitor(JSExpressionVisitor<V, E> visitor)
 			throws E {
 		return visitor.visitVariable(this);
 	}

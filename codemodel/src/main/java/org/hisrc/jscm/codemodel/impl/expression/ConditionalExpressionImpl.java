@@ -45,7 +45,7 @@ public abstract class ConditionalExpressionImpl extends
 		}
 
 		@Override
-		public <V, E extends Exception> V accept(
+		public <V, E extends Exception> V acceptExpressionVisitor(
 				JSExpressionVisitor<V, E> visitor) throws E {
 			return visitor.visitConditional(this);
 		}

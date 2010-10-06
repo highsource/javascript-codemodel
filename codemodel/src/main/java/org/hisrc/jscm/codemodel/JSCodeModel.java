@@ -2,10 +2,10 @@ package org.hisrc.jscm.codemodel;
 
 import org.hisrc.jscm.codemodel.expression.JSArrayLiteral;
 import org.hisrc.jscm.codemodel.expression.JSAssignmentExpression;
-import org.hisrc.jscm.codemodel.expression.JSCallExpression;
+import org.hisrc.jscm.codemodel.expression.JSFunctionExpression;
 import org.hisrc.jscm.codemodel.expression.JSObjectLiteral;
-import org.hisrc.jscm.codemodel.expression.JSObjectLiteral.JSPropertyAssignment;
 import org.hisrc.jscm.codemodel.expression.JSThis;
+import org.hisrc.jscm.codemodel.expression.JSObjectLiteral.JSPropertyAssignment;
 import org.hisrc.jscm.codemodel.literal.JSBooleanLiteral;
 import org.hisrc.jscm.codemodel.literal.JSDecimalIntegerLiteral;
 import org.hisrc.jscm.codemodel.literal.JSDecimalNonIntegerLiteral;
@@ -29,8 +29,10 @@ public interface JSCodeModel {
 
 	JSObjectLiteral object(JSPropertyAssignment... entries);
 
-	public JSProgram program();
+	JSFunctionExpression.Function function();
 
-	public JSCallExpression call(JSFunctionDeclaration function);
+	JSFunctionExpression.Function function(String name);
+
+	public JSProgram program();
 
 }

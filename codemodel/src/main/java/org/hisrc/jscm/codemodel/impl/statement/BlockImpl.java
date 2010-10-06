@@ -6,6 +6,7 @@ import java.util.List;
 
 import org.apache.commons.lang.Validate;
 import org.hisrc.jscm.codemodel.JSCodeModel;
+import org.hisrc.jscm.codemodel.JSSourceElementVisitor;
 import org.hisrc.jscm.codemodel.statement.JSBlock;
 import org.hisrc.jscm.codemodel.statement.JSStatement;
 import org.hisrc.jscm.codemodel.statement.JSStatementVisitor;
@@ -35,6 +36,11 @@ public class BlockImpl extends StatementGeneratorImpl implements JSBlock {
 	public <V, E extends Exception> V acceptStatementVisitor(
 			JSStatementVisitor<V, E> visitor) throws E {
 		return visitor.visitBlock(this);
+	}
+
+	public <V, E extends Exception> V acceptSourceElementVisitor(
+			JSSourceElementVisitor<V, E> visitor) throws E {
+		return visitor.visitStatement(this);
 	}
 
 }

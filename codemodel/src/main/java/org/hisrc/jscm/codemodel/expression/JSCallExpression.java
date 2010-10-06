@@ -7,10 +7,12 @@ import org.hisrc.jscm.codemodel.JSPropertyName;
 // 11.2
 public interface JSCallExpression extends JSLeftHandSideExpression {
 
-	public JSCallExpression.CallArgs args(JSAssignmentExpression... args);
+	public JSCallExpression.CallArgs invoke();
 
 	public JSCallExpression.CallElement element(JSExpression index);
 
+	public JSCallExpression.CallProperty property(String name);
+	
 	public JSCallExpression.CallProperty property(JSPropertyName name);
 
 	public interface Call extends JSCallExpression {
@@ -18,6 +20,8 @@ public interface JSCallExpression extends JSLeftHandSideExpression {
 	}
 
 	public interface CallArgs extends Call {
+		public CallArgs args(JSAssignmentExpression... arg);
+
 		public List<JSAssignmentExpression> getArgs();
 	}
 
@@ -31,6 +35,9 @@ public interface JSCallExpression extends JSLeftHandSideExpression {
 	}
 
 	public interface MemberCall extends JSCallExpression {
+
+		public MemberCall args(JSAssignmentExpression... arg);
+		
 		public JSMemberExpression getBase();
 
 		public List<JSAssignmentExpression> getArgs();

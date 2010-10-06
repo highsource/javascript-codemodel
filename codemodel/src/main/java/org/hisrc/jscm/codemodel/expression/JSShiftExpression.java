@@ -20,7 +20,7 @@ public interface JSShiftExpression extends JSRelationalExpression {
 	}
 
 	public static enum ShiftOperator implements JSOperator {
-		SHL("<<"), SHR(">>"), SHRZ(">>>=");
+		SHL("<<"), SHR(">>"), SHRZ(">>>");
 		private final String operatorAsString;
 
 		ShiftOperator(String operatorAsString) {

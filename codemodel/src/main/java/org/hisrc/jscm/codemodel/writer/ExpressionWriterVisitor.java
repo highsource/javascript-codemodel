@@ -3,10 +3,17 @@ package org.hisrc.jscm.codemodel.writer;
 import java.io.IOException;
 
 import org.apache.commons.lang.Validate;
+import org.hisrc.jscm.codemodel.JSFormatter;
 import org.hisrc.jscm.codemodel.JSPropertyName;
-import org.hisrc.jscm.codemodel.expression.JSAdditiveExpression.Additive;
+import org.hisrc.jscm.codemodel.JSSourceElement;
 import org.hisrc.jscm.codemodel.expression.JSArrayLiteral;
 import org.hisrc.jscm.codemodel.expression.JSAssignmentExpression;
+import org.hisrc.jscm.codemodel.expression.JSExpressionVisitor;
+import org.hisrc.jscm.codemodel.expression.JSGlobalVariable;
+import org.hisrc.jscm.codemodel.expression.JSObjectLiteral;
+import org.hisrc.jscm.codemodel.expression.JSThis;
+import org.hisrc.jscm.codemodel.expression.JSVariable;
+import org.hisrc.jscm.codemodel.expression.JSAdditiveExpression.Additive;
 import org.hisrc.jscm.codemodel.expression.JSAssignmentExpression.Assignment;
 import org.hisrc.jscm.codemodel.expression.JSBitwiseANDExpression.Band;
 import org.hisrc.jscm.codemodel.expression.JSBitwiseORExpression.Bor;
@@ -18,8 +25,7 @@ import org.hisrc.jscm.codemodel.expression.JSCallExpression.MemberCall;
 import org.hisrc.jscm.codemodel.expression.JSConditionalExpression.Conditional;
 import org.hisrc.jscm.codemodel.expression.JSEqualityExpression.Equality;
 import org.hisrc.jscm.codemodel.expression.JSExpression.Comma;
-import org.hisrc.jscm.codemodel.expression.JSExpressionVisitor;
-import org.hisrc.jscm.codemodel.expression.JSGlobalVariable;
+import org.hisrc.jscm.codemodel.expression.JSFunctionExpression.Function;
 import org.hisrc.jscm.codemodel.expression.JSLogicalANDExpression.And;
 import org.hisrc.jscm.codemodel.expression.JSLogicalORExpression.Or;
 import org.hisrc.jscm.codemodel.expression.JSMemberExpression.MemberElement;
@@ -27,432 +33,382 @@ import org.hisrc.jscm.codemodel.expression.JSMemberExpression.MemberNew;
 import org.hisrc.jscm.codemodel.expression.JSMemberExpression.MemberProperty;
 import org.hisrc.jscm.codemodel.expression.JSMultiplicativeExpression.Multiplicative;
 import org.hisrc.jscm.codemodel.expression.JSNewExpression.New;
-import org.hisrc.jscm.codemodel.expression.JSObjectLiteral;
 import org.hisrc.jscm.codemodel.expression.JSObjectLiteral.JSPropertyAssignment;
 import org.hisrc.jscm.codemodel.expression.JSPostfixExpression.Postfix;
 import org.hisrc.jscm.codemodel.expression.JSPrimaryExpression.Brackets;
 import org.hisrc.jscm.codemodel.expression.JSRelationalExpression.Relational;
 import org.hisrc.jscm.codemodel.expression.JSShiftExpression.Shift;
-import org.hisrc.jscm.codemodel.expression.JSThis;
 import org.hisrc.jscm.codemodel.expression.JSUnaryExpression.Unary;
-import org.hisrc.jscm.codemodel.expression.JSVariable;
 import org.hisrc.jscm.codemodel.literal.JSLiteral;
 
-public class ExpressionWriterVisitor implements Appendable,
-		JSExpressionVisitor<ExpressionWriterVisitor, IOException> {
+public class ExpressionWriterVisitor implements
+		JSExpressionVisitor<JSFormatter, IOException> {
 
-	private final Appendable writer;
-
-	public ExpressionWriterVisitor(Appendable writer) {
-		Validate.notNull(writer);
-		this.writer = writer;
-	}
-
-	public ExpressionWriterVisitor append(CharSequence charSequence)
-			throws IOException {
-		writer.append(charSequence);
-		return this;
-	}
-
-	public ExpressionWriterVisitor append(char c) throws IOException {
-		writer.append(c);
-		return this;
-	}
-
-	public ExpressionWriterVisitor append(CharSequence csq, int start, int end)
-			throws IOException {
-		writer.append(csq, start, end);
-		return this;
-	}
-
-	public ExpressionWriterVisitor space() throws IOException {
-		writer.append(" ");
-		return this;
-	}
-
-	public ExpressionWriterVisitor comma() throws IOException {
-		writer.append(", ");
-		return this;
-	}
-
-	public ExpressionWriterVisitor colon() throws IOException {
-		writer.append(": ");
-		return this;
-	}
-
-	public ExpressionWriterVisitor openSquareBracket() throws IOException {
-		writer.append("[ ");
-		return this;
-	}
-
-	public ExpressionWriterVisitor closeSquareBracket() throws IOException {
-		writer.append(" ]");
-		return this;
-	}
-
-	public ExpressionWriterVisitor openCurlyBracket() throws IOException {
-		writer.append("{ ");
-		return this;
-	}
-
-	public ExpressionWriterVisitor closeCurlyBracket() throws IOException {
-		writer.append(" }");
-		return this;
-	}
-
-	public ExpressionWriterVisitor openRoundBracket() throws IOException {
-		writer.append("( ");
-		return this;
-	}
-
-	public ExpressionWriterVisitor closeRoundBracket() throws IOException {
-		writer.append(" )");
-		return this;
-	}
-
-	public ExpressionWriterVisitor dot() throws IOException {
-		writer.append(".");
-		return this;
+	private final JSFormatter f;
+	
+	public ExpressionWriterVisitor(JSFormatter formatter) {
+		Validate.notNull(formatter);
+		this.f = formatter;
 	}
 
 	@Override
-	public ExpressionWriterVisitor visitThis(JSThis value) throws IOException {
-		return append("this");
+	public JSFormatter visitThis(JSThis value) throws IOException {
+		f.keyword("this");
+		return f;
 	}
 
 	@Override
-	public ExpressionWriterVisitor visitVariable(JSVariable value)
+	public JSFormatter visitVariable(JSVariable value)
 			throws IOException {
-		return append(value.getName());
+		f.identifier(value.getName());
+		return f;
 	}
 
 	@Override
-	public ExpressionWriterVisitor visitGlobalVariable(JSGlobalVariable value)
+	public JSFormatter visitGlobalVariable(JSGlobalVariable value)
 			throws IOException {
-		return append(value.getName());
+		f.identifier(value.getName());
+		return f;
 	}
 
 	@Override
-	public ExpressionWriterVisitor visitLiteral(JSLiteral value)
+	public JSFormatter visitLiteral(JSLiteral value)
 			throws IOException {
-		return value
-				.acceptLiteralVisitor(new LiteralWriterVisitor<ExpressionWriterVisitor>(
-						this));
+		value.acceptLiteralVisitor(new LiteralWriterVisitor(f));
+		return f;
 	}
 
 	@Override
-	public ExpressionWriterVisitor visitArrayLiteral(JSArrayLiteral value)
+	public JSFormatter visitArrayLiteral(JSArrayLiteral value)
 			throws IOException {
 
-		ExpressionWriterVisitor a = openSquareBracket();
+		f.openSquareBracket();
 
 		for (int index = 0; index < value.getElements().size(); index++) {
 			final JSAssignmentExpression element = value.getElements().get(
 					index);
-			a = element.accept(a);
+			element.acceptExpressionVisitor(indented());
 			if (index < value.getElements().size() - 1) {
-				a = a.comma();
+				f.comma();
 			}
 
 		}
-		a = a.closeSquareBracket();
+		f.closeSquareBracket();
 
-		return a;
+		return f;
 	}
 
 	@Override
-	public ExpressionWriterVisitor visitObjectLiteral(JSObjectLiteral value)
+	public JSFormatter visitObjectLiteral(JSObjectLiteral value)
 			throws IOException {
 
-		ExpressionWriterVisitor a = openCurlyBracket();
+		f.openCurlyBracket();
+
+		final JSFormatter fi = f.indented();
+		final ExpressionWriterVisitor vi = indented();
 
 		for (int index = 0; index < value.getPropertyAssignments().size(); index++) {
+			if (index > 0) {
+				fi.comma();
+			}
+			fi.lineBreak();
+
 			final JSPropertyAssignment propertyAssignment = value
 					.getPropertyAssignments().get(index);
 
 			final JSPropertyName propertyName = propertyAssignment.getKey();
 			final JSAssignmentExpression propertyValue = propertyAssignment
 					.getValue();
-			a = propertyName
-					.acceptPropertyNameVisitor(new PropertyNameWriterVisitor<ExpressionWriterVisitor>(
-							a));
-			a = a.colon();
+			propertyName
+					.acceptPropertyNameVisitor(new PropertyNameWriterVisitor(f));
+			fi.colon();
 
-			a = propertyValue.accept(a);
-			if (index < value.getPropertyAssignments().size() - 1) {
-				a = a.comma();
-			}
+			propertyValue.acceptExpressionVisitor(vi);
 		}
-		a = a.closeCurlyBracket();
+		f.closeCurlyBracket();
 
-		return a;
+		return f;
 	}
 
 	@Override
-	public ExpressionWriterVisitor visitBrackets(Brackets value)
+	public JSFormatter visitBrackets(Brackets value)
 			throws IOException {
-		ExpressionWriterVisitor a = this;
-		a = a.openRoundBracket();
-		a = value.getBase().accept(a);
-		a = a.closeRoundBracket();
-		return a;
+		f.openRoundBracket();
+		value.getBase().acceptExpressionVisitor(indented());
+		f.closeRoundBracket();
+		return f;
 	}
 
 	@Override
-	public ExpressionWriterVisitor visitMemberElement(MemberElement value)
+	public JSFormatter visitFunction(Function value)
 			throws IOException {
-		ExpressionWriterVisitor a = this;
-		a = value.getBase().accept(a);
-		a = a.openSquareBracket();
-		a = value.getIndex().accept(a);
-		a = a.closeSquareBracket();
-		return a;
+
+		f.keyword("function");
+
+		if (value.getName() != null) {
+			f.identifier(value.getName());
+		}
+
+		f.openRoundBracket();
+		for (int index = 0; index < value.getParameters().size(); index++) {
+			final JSVariable parameter = value.getParameters().get(index);
+			if (index > 0) {
+				f.comma();
+			}
+			f.identifier(parameter.getName());
+		}
+		f.closeRoundBracket();
+		f.openCurlyBracket();
+
+		JSFormatter fi = f.indented();
+
+		for (JSSourceElement sourceElement : value.getBody()
+				.getSourceElements()) {
+			sourceElement
+					.acceptSourceElementVisitor(new SourceElementWriterVisitor(
+							fi));
+		}
+
+		f.closeCurlyBracket();
+		return f;
 	}
 
 	@Override
-	public ExpressionWriterVisitor visitMemberProperty(MemberProperty value)
+	public JSFormatter visitMemberElement(MemberElement value)
 			throws IOException {
-		ExpressionWriterVisitor a = this;
-		a = value.getBase().accept(a);
-		a = a.dot();
-		a = value.getName().acceptPropertyNameVisitor(
-				new PropertyNameWriterVisitor<ExpressionWriterVisitor>(a));
 
-		return a;
+		value.getBase().acceptExpressionVisitor(this);
+		f.openSquareBracket();
+		value.getIndex().acceptExpressionVisitor(indented());
+		f.closeSquareBracket();
+		return f;
 	}
 
 	@Override
-	public ExpressionWriterVisitor visitMemberNew(MemberNew value)
+	public JSFormatter visitMemberProperty(MemberProperty value)
 			throws IOException {
-		ExpressionWriterVisitor a = this;
-		a = a.append("new").space();
-		a = value.getBase().accept(a);
-		a = a.openRoundBracket();
+		value.getBase().acceptExpressionVisitor(this);
+		f.dot();
+		value.getName().acceptPropertyNameVisitor(
+				new PropertyNameWriterVisitor(f));
+		return f;
+	}
+
+	@Override
+	public JSFormatter visitMemberNew(MemberNew value)
+			throws IOException {
+		f.keyword("new");
+		value.getBase().acceptExpressionVisitor(this);
+		f.openRoundBracket();
 
 		for (int index = 0; index < value.getArgs().size(); index++) {
 			final JSAssignmentExpression arg = value.getArgs().get(index);
 
-			a = arg.accept(a);
+			arg.acceptExpressionVisitor(this);
 			if (index < value.getArgs().size() - 1) {
-				a = a.comma();
+				f.comma();
 			}
 		}
 
-		a = a.closeRoundBracket();
+		f.closeRoundBracket();
 
-		return a;
+		return f;
 	}
 
 	@Override
-	public ExpressionWriterVisitor visitMemberCall(MemberCall value)
+	public JSFormatter visitMemberCall(MemberCall value)
 			throws IOException {
-		ExpressionWriterVisitor a = this;
-		a = value.getBase().accept(a);
-		a = a.openRoundBracket();
+		value.getBase().acceptExpressionVisitor(this);
+		f.openRoundBracket();
 
 		for (int index = 0; index < value.getArgs().size(); index++) {
+			if (index > 0) {
+				f.comma();
+			}
 			final JSAssignmentExpression arg = value.getArgs().get(index);
 
-			a = arg.accept(a);
-			if (index < value.getArgs().size() - 1) {
-				a = a.comma();
-			}
+			arg.acceptExpressionVisitor(indented());
 		}
 
-		a = a.closeRoundBracket();
+		f.closeRoundBracket();
 
-		return a;
+		return f;
 	}
 
 	@Override
-	public ExpressionWriterVisitor visitNew(New value) throws IOException {
-		ExpressionWriterVisitor a = this;
-		a = a.append("new").space();
-		a = value.getBase().accept(a);
-		return a;
+	public JSFormatter visitNew(New value) throws IOException {
+		f.keyword("new");
+		value.getBase().acceptExpressionVisitor(this);
+		return f;
 	}
 
 	@Override
-	public ExpressionWriterVisitor visitCallArgs(CallArgs value)
+	public JSFormatter visitCallArgs(CallArgs value)
 			throws IOException {
-		ExpressionWriterVisitor a = this;
-		a = value.getBase().accept(a);
-		a = a.openRoundBracket();
+		value.getBase().acceptExpressionVisitor(this);
+		f.openRoundBracket();
 
 		for (int index = 0; index < value.getArgs().size(); index++) {
+			if (index > 0) {
+				f.comma();
+			}
 			final JSAssignmentExpression arg = value.getArgs().get(index);
 
-			a = arg.accept(a);
-			if (index < value.getArgs().size() - 1) {
-				a = a.comma();
-			}
+			arg.acceptExpressionVisitor(indented());
 		}
-		a = a.closeRoundBracket();
-		return a;
+		f.closeRoundBracket();
+		return f;
 	}
 
 	@Override
-	public ExpressionWriterVisitor visitCallElement(CallElement value)
+	public JSFormatter visitCallElement(CallElement value)
 			throws IOException {
-		ExpressionWriterVisitor a = this;
-		a = value.getBase().accept(a);
-		a = a.openSquareBracket();
-		a = value.getIndex().accept(a);
-		a = a.closeSquareBracket();
-		return a;
+		value.getBase().acceptExpressionVisitor(this);
+		f.openSquareBracket();
+		value.getIndex().acceptExpressionVisitor(this);
+		f.closeSquareBracket();
+		return f;
 	}
 
 	@Override
-	public ExpressionWriterVisitor visitCallProperty(CallProperty value)
+	public JSFormatter visitCallProperty(CallProperty value)
 			throws IOException {
-		ExpressionWriterVisitor a = this;
-		a = value.getBase().accept(a);
-		a = a.dot();
-		a = value.getName().acceptPropertyNameVisitor(
-				new PropertyNameWriterVisitor<ExpressionWriterVisitor>(a));
-
-		return a;
+		value.getBase().acceptExpressionVisitor(this);
+		f.dot();
+		value.getName().acceptPropertyNameVisitor(
+				new PropertyNameWriterVisitor(f));
+		return f;
 	}
 
 	@Override
-	public ExpressionWriterVisitor visitPostfix(Postfix value)
+	public JSFormatter visitPostfix(Postfix value)
 			throws IOException {
-		ExpressionWriterVisitor a = this;
-		a = value.getBase().accept(a).space();
-		a = a.append(value.getOperator().asString());
-		return a;
+		value.getBase().acceptExpressionVisitor(this);
+		f.operator(value.getOperator());
+		return f;
 	}
 
 	@Override
-	public ExpressionWriterVisitor visitUnary(Unary value) throws IOException {
-		ExpressionWriterVisitor a = this;
-		a = a.append(value.getOperator().asString()).space();
-		a = value.getBase().accept(a);
-		return a;
+	public JSFormatter visitUnary(Unary value) throws IOException {
+		f.operator(value.getOperator());
+		value.getBase().acceptExpressionVisitor(this);
+		return f;
 	}
 
 	@Override
-	public ExpressionWriterVisitor visitMultiplicative(Multiplicative value)
+	public JSFormatter visitMultiplicative(Multiplicative value)
 			throws IOException {
-		ExpressionWriterVisitor a = this;
-		a = value.getLeft().accept(a).space();
-		a = a.append(value.getOperator().asString()).space();
-		a = value.getRight().accept(a);
-		return a;
+		value.getLeft().acceptExpressionVisitor(this);
+		f.operator(value.getOperator());
+		value.getRight().acceptExpressionVisitor(this);
+		return f;
 	}
 
 	@Override
-	public ExpressionWriterVisitor visitAdditive(Additive value)
+	public JSFormatter visitAdditive(Additive value)
 			throws IOException {
-		ExpressionWriterVisitor a = this;
-		a = value.getLeft().accept(a).space();
-		a = a.append(value.getOperator().asString()).space();
-		a = value.getRight().accept(a);
-		return a;
+		value.getLeft().acceptExpressionVisitor(this);
+		f.operator(value.getOperator());
+		value.getRight().acceptExpressionVisitor(this);
+		return f;
 	}
 
 	@Override
-	public ExpressionWriterVisitor visitShift(Shift value) throws IOException {
-		ExpressionWriterVisitor a = this;
-		a = value.getLeft().accept(a).space();
-		a = a.append(value.getOperator().asString()).space();
-		a = value.getRight().accept(a);
-		return a;
+	public JSFormatter visitShift(Shift value) throws IOException {
+		value.getLeft().acceptExpressionVisitor(this);
+		f.operator(value.getOperator());
+		value.getRight().acceptExpressionVisitor(this);
+		return f;
 	}
 
 	@Override
-	public ExpressionWriterVisitor visitRelational(Relational value)
+	public JSFormatter visitRelational(Relational value)
 			throws IOException {
-		ExpressionWriterVisitor a = this;
-		a = value.getLeft().accept(a).space();
-		a = a.append(value.getOperator().asString()).space();
-		a = value.getRight().accept(a);
-		return a;
+		value.getLeft().acceptExpressionVisitor(this);
+		f.operator(value.getOperator());
+		value.getRight().acceptExpressionVisitor(this);
+		return f;
 	}
 
 	@Override
-	public ExpressionWriterVisitor visitEquality(Equality value)
+	public JSFormatter visitEquality(Equality value)
 			throws IOException {
-		ExpressionWriterVisitor a = this;
-		a = value.getLeft().accept(a).space();
-		a = a.append(value.getOperator().asString()).space();
-		a = value.getRight().accept(a);
-		return a;
+		value.getLeft().acceptExpressionVisitor(this);
+		f.operator(value.getOperator());
+		value.getRight().acceptExpressionVisitor(this);
+		return f;
 	}
 
 	@Override
-	public ExpressionWriterVisitor visitBand(Band value) throws IOException {
-		ExpressionWriterVisitor a = this;
-		a = value.getLeft().accept(a).space();
-		a = a.append('|').space();
-		a = value.getRight().accept(a);
-		return a;
+	public JSFormatter visitBand(Band value) throws IOException {
+		value.getLeft().acceptExpressionVisitor(this);
+		f.operator(value.getOperator());
+		value.getRight().acceptExpressionVisitor(this);
+		return f;
 	}
 
 	@Override
-	public ExpressionWriterVisitor visitXor(Xor value) throws IOException {
-		ExpressionWriterVisitor a = this;
-		a = value.getLeft().accept(a).space();
-		a = a.append('^').space();
-		a = value.getRight().accept(a);
-		return a;
+	public JSFormatter visitXor(Xor value) throws IOException {
+		value.getLeft().acceptExpressionVisitor(this);
+		f.operator(value.getOperator());
+		value.getRight().acceptExpressionVisitor(this);
+		return f;
 	}
 
 	@Override
-	public ExpressionWriterVisitor visitBor(Bor value) throws IOException {
-		ExpressionWriterVisitor a = this;
-		a = value.getLeft().accept(a).space();
-		a = a.append('|').space();
-		a = value.getRight().accept(a);
-		return a;
+	public JSFormatter visitBor(Bor value) throws IOException {
+		value.getLeft().acceptExpressionVisitor(this);
+		f.operator(value.getOperator());
+		value.getRight().acceptExpressionVisitor(this);
+		return f;
 	}
 
 	@Override
-	public ExpressionWriterVisitor visitAnd(And value) throws IOException {
-		ExpressionWriterVisitor a = this;
-		a = value.getLeft().accept(a).space();
-		a = a.append("&&").space();
-		a = value.getRight().accept(a);
-		return a;
+	public JSFormatter visitAnd(And value) throws IOException {
+		value.getLeft().acceptExpressionVisitor(this);
+		f.operator(value.getOperator());
+		value.getRight().acceptExpressionVisitor(this);
+		return f;
 	}
 
 	@Override
-	public ExpressionWriterVisitor visitOr(Or value) throws IOException {
-		ExpressionWriterVisitor a = this;
-		a = value.getLeft().accept(a).space();
-		a = a.append("||").space();
-		a = value.getRight().accept(a);
-		return a;
+	public JSFormatter visitOr(Or value) throws IOException {
+		value.getLeft().acceptExpressionVisitor(this);
+		f.operator(value.getOperator());
+		value.getRight().acceptExpressionVisitor(this);
+		return f;
 	}
 
 	@Override
-	public ExpressionWriterVisitor visitConditional(Conditional value)
+	public JSFormatter visitConditional(Conditional value)
 			throws IOException {
-		ExpressionWriterVisitor a = this;
-		a = value.getCondition().accept(a).space();
-		a = a.append('?').space();
-		a = value.getIfTrue().accept(a).space();
-		a = a.append(':').space();
-		a = value.getIfFalse().accept(a);
-		return a;
+		value.getCondition().acceptExpressionVisitor(this);
+		f.questionMark();
+		value.getIfTrue().acceptExpressionVisitor(this);
+		f.colon();
+		value.getIfFalse().acceptExpressionVisitor(this);
+		return f;
 	}
 
 	@Override
-	public ExpressionWriterVisitor visitAssignment(Assignment value)
+	public JSFormatter visitAssignment(Assignment value)
 			throws IOException {
-		ExpressionWriterVisitor a = this;
-		a = value.getLeft().accept(a).space();
-		a = a.append(value.getOperator().asString()).space();
-		a = value.getRight().accept(a);
-		return a;
+		value.getLeft().acceptExpressionVisitor(this);
+		f.operator(value.getOperator());
+		value.getRight().acceptExpressionVisitor(this);
+		return f;
 	}
 
 	@Override
-	public ExpressionWriterVisitor visitComma(Comma value) throws IOException {
-		ExpressionWriterVisitor a = this;
-		a = value.getLeft().accept(a).space();
-		a = a.comma();
-		a = value.getRight().accept(a);
-		return a;
+	public JSFormatter visitComma(Comma value) throws IOException {
+		value.getLeft().acceptExpressionVisitor(this);
+		f.comma();
+		value.getRight().acceptExpressionVisitor(this);
+		return f;
+	}
+
+	private ExpressionWriterVisitor indented() {
+		return new ExpressionWriterVisitor(f.indented());
+
 	}
 }

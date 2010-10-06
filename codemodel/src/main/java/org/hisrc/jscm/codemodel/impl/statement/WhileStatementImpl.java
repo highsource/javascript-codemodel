@@ -26,5 +26,7 @@ public class WhileStatementImpl extends IterationStatementImpl implements
 			JSStatementVisitor<V, E> visitor) throws E {
 		return visitor.visitWhile(this);
 	}
+	
+
 
 }

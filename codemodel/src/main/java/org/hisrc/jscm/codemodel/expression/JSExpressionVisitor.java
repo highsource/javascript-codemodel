@@ -19,6 +19,8 @@ public interface JSExpressionVisitor<V, E extends Exception> {
 
 	public V visitBrackets(JSPrimaryExpression.Brackets value) throws E;
 
+	public V visitFunction(JSFunctionExpression.Function value) throws E;
+
 	public V visitMemberElement(JSMemberExpression.MemberElement value)
 			throws E;
 
