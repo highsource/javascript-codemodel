@@ -75,7 +75,7 @@ public class VariableStatementImpl extends StatementImpl implements
 	public JSVariableDeclaration comma(String name,
 			JSAssignmentExpression expression) {
 		final JSVariableDeclaration variableDeclaration = new VariableDeclarationImpl(
-				getCodeModel(), this, name);
+				getCodeModel(), this, name, expression);
 		this.variableDeclarations.add(variableDeclaration);
 		return variableDeclaration;
 	}

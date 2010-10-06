@@ -4,7 +4,7 @@ import org.hisrc.jscm.codemodel.JSIdentifier;
 
 public interface JSLabelledStatement extends JSStatement, JSStatementGenerator {
 
-	public JSIdentifier getLabel();
+	public JSLabel getLabel();
 
 	public JSStatement getStatement();
 

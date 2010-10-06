@@ -24,24 +24,22 @@ public interface JSStatementGenerator {
 
 	public JSForStatement _for(JSExpression expression);
 
-	public JSForInStatement _forIn(JSLeftHandSideExpression expression,
+	public JSForInStatement forIn(JSLeftHandSideExpression expression,
 			JSExpression _in);
 
-	public JSForVarStatement _forVar(String name);
+	public JSForVarStatement forVar(String name);
 
-	public JSForVarStatement _forVar(String name,
+	public JSForVarStatement forVar(String name,
 			JSAssignmentExpression expression);
 
-	public JSForVarInStatement _forVarIn(String name, JSAssignmentExpression _in);
+	public JSForVarInStatement forVarIn(String name, JSExpression _in);
 
-	// TODO IterationStatement
+	public JSForVarInStatement forVarIn(String name,
+			JSAssignmentExpression expression, JSExpression _in);
 
 	public JSDoWhileStatement doWhile(JSExpression expression);
 
 	public JSWhileStatement _while(JSExpression expression);
-
-	//
-	// public JSWhile _for(JSExpression);
 
 	public JSContinueStatement _continue();
 
@@ -63,11 +61,11 @@ public interface JSStatementGenerator {
 
 	public JSThrowStatement _throw(JSExpression expression);
 
-	public JSTryStatement _tryCatch(String exception);
+	public JSTryStatement tryCatch(String exception);
 
-	public JSTryStatement _tryFinally();
+	public JSTryStatement tryFinally();
 
-	public JSTryStatement _tryCatchFinally(String exception);
+	public JSTryStatement tryCatchFinally(String exception);
 
 	public JSDebuggerStatement debugger();
 

@@ -1,11 +1,13 @@
 package org.hisrc.jscm.codemodel;
 
+import java.math.BigDecimal;
+
 import org.hisrc.jscm.codemodel.expression.JSArrayLiteral;
 import org.hisrc.jscm.codemodel.expression.JSAssignmentExpression;
 import org.hisrc.jscm.codemodel.expression.JSFunctionExpression;
 import org.hisrc.jscm.codemodel.expression.JSObjectLiteral;
-import org.hisrc.jscm.codemodel.expression.JSThis;
 import org.hisrc.jscm.codemodel.expression.JSObjectLiteral.JSPropertyAssignment;
+import org.hisrc.jscm.codemodel.expression.JSThis;
 import org.hisrc.jscm.codemodel.literal.JSBooleanLiteral;
 import org.hisrc.jscm.codemodel.literal.JSDecimalIntegerLiteral;
 import org.hisrc.jscm.codemodel.literal.JSDecimalNonIntegerLiteral;
@@ -22,6 +24,8 @@ public interface JSCodeModel {
 	JSDecimalIntegerLiteral lit(long value);
 
 	JSDecimalNonIntegerLiteral lit(double value);
+
+	JSDecimalNonIntegerLiteral lit(BigDecimal value);
 
 	JSStringLiteral lit(String value);
 

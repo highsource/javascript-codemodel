@@ -1,5 +1,6 @@
 package org.hisrc.jscm.codemodel.impl;
 
+import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
@@ -12,9 +13,9 @@ import org.hisrc.jscm.codemodel.JSProgram;
 import org.hisrc.jscm.codemodel.expression.JSArrayLiteral;
 import org.hisrc.jscm.codemodel.expression.JSAssignmentExpression;
 import org.hisrc.jscm.codemodel.expression.JSCallExpression;
+import org.hisrc.jscm.codemodel.expression.JSFunctionExpression.Function;
 import org.hisrc.jscm.codemodel.expression.JSGlobalVariable;
 import org.hisrc.jscm.codemodel.expression.JSObjectLiteral;
-import org.hisrc.jscm.codemodel.expression.JSFunctionExpression.Function;
 import org.hisrc.jscm.codemodel.expression.JSObjectLiteral.JSPropertyAssignment;
 import org.hisrc.jscm.codemodel.expression.JSThis;
 import org.hisrc.jscm.codemodel.impl.expression.ArrayLiteralImpl;
@@ -70,6 +71,11 @@ public class CodeModelImpl implements JSCodeModel {
 		return new DecimalNonIntegerLiteralImpl(this, value);
 	}
 
+	@Override
+	public JSDecimalNonIntegerLiteral lit(BigDecimal value) {
+		return new DecimalNonIntegerLiteralImpl(this, value);
+	}
+
 	public JSStringLiteral lit(String value) {
 		Validate.notNull(value);
 		return new StringLiteralImpl(this, value);
@@ -84,11 +90,11 @@ public class CodeModelImpl implements JSCodeModel {
 	public JSObjectLiteral object(JSPropertyAssignment... entries) {
 		return new ObjectLiteralImpl(this, Arrays.asList(entries));
 	}
-	
+
 	public Function function() {
 		return new FunctionExpressionImpl.FunctionImpl(this);
 	}
-	
+
 	public Function function(String name) {
 		Validate.notNull(name);
 		return new FunctionExpressionImpl.FunctionImpl(this, name);

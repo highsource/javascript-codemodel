@@ -51,7 +51,7 @@ public class SwitchStatementImpl extends StatementImpl implements
 		if (this.defaultClause == null) {
 			this.defaultClause = new DefaultClauseImpl(getCodeModel());
 		}
-		return null;
+		return defaultClause;
 	}
 
 	@Override

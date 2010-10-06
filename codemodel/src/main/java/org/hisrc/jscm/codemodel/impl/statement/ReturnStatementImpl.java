@@ -19,7 +19,7 @@ public class ReturnStatementImpl extends StatementImpl implements
 	public ReturnStatementImpl(JSCodeModel codeModel, JSExpression expression) {
 		super(codeModel);
 		Validate.notNull(expression);
-		this.expression = null;
+		this.expression = expression;
 	}
 
 	public <V, E extends Exception> V acceptStatementVisitor(

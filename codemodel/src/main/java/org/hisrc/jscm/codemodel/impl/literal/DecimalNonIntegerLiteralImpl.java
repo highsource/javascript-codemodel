@@ -18,6 +18,12 @@ public class DecimalNonIntegerLiteralImpl extends DecimalLiteralImpl implements
 		this.valueAsDouble = value;
 	}
 
+	public DecimalNonIntegerLiteralImpl(JSCodeModel codeModel, BigDecimal value) {
+		super(codeModel, value);
+		Validate.notNull(value);
+		this.valueAsDouble = value.doubleValue();
+	}
+
 	@Override
 	public <V, E extends Exception> V acceptLiteralVisitor(
 			JSLiteralVisitor<V, E> visitor) throws E {

@@ -36,21 +36,21 @@ public class TryStatementImpl extends StatementImpl implements JSTryStatement {
 		}
 	}
 
-	public JSBlock body() {
+	public JSBlock getBody() {
 		return _try;
+	}
+
+	public JSBlock getCatch() {
+		return _catch;
+	}
+
+	public JSBlock getFinally() {
+		return _finally;
 	}
 
 	@Override
 	public JSVariable getException() {
 		return exception;
-	}
-
-	public JSBlock _catch() {
-		return _catch;
-	}
-
-	public JSBlock _finally() {
-		return _finally;
 	}
 
 	@Override

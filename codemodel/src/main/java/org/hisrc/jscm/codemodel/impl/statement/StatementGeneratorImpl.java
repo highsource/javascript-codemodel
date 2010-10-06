@@ -85,23 +85,28 @@ public abstract class StatementGeneratorImpl implements JSStatementGenerator {
 		return add(new ForStatementImpl(getCodeModel(), expression));
 	}
 
-	public JSForInStatement _forIn(JSLeftHandSideExpression expression,
+	public JSForInStatement forIn(JSLeftHandSideExpression expression,
 			JSExpression _in) {
 		return add(new ForInStatementImpl(getCodeModel(), expression, _in));
 	}
 
-	public JSForVarStatement _forVar(String name) {
+	public JSForVarStatement forVar(String name) {
 		return add(new ForVarStatementImpl(getCodeModel(), name));
 	}
 
-	public JSForVarStatement _forVar(String name,
+	public JSForVarStatement forVar(String name,
 			JSAssignmentExpression expression) {
 		return add(new ForVarStatementImpl(getCodeModel(), name, expression));
 	}
 
-	public JSForVarInStatement _forVarIn(String name,
-			JSAssignmentExpression expression) {
-		return add(new ForVarInStatementImpl(getCodeModel(), name, expression));
+	public JSForVarInStatement forVarIn(String name,
+			JSAssignmentExpression expression, JSExpression _in) {
+		return add(new ForVarInStatementImpl(getCodeModel(), name, expression,
+				_in));
+	}
+
+	public JSForVarInStatement forVarIn(String name, JSExpression _in) {
+		return add(new ForVarInStatementImpl(getCodeModel(), name, _in));
 	}
 
 	public JSContinueStatement _continue() {
@@ -148,15 +153,15 @@ public abstract class StatementGeneratorImpl implements JSStatementGenerator {
 		return add(new ThrowStatementImpl(getCodeModel(), expression));
 	}
 
-	public JSTryStatement _tryCatch(String expression) {
+	public JSTryStatement tryCatch(String expression) {
 		return add(new TryStatementImpl(getCodeModel(), expression, false));
 	}
 
-	public JSTryStatement _tryFinally() {
+	public JSTryStatement tryFinally() {
 		return add(new TryStatementImpl(getCodeModel(), null, true));
 	}
 
-	public JSTryStatement _tryCatchFinally(String expression) {
+	public JSTryStatement tryCatchFinally(String expression) {
 		return add(new TryStatementImpl(getCodeModel(), expression, true));
 	}
 
