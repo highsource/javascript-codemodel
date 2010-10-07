@@ -6,7 +6,7 @@ import org.apache.commons.lang.Validate;
 
 public class IndentedAppendableImpl implements IndentedAppendable {
 
-	private boolean newLine = true;
+	private boolean newLine = false;
 
 	private final String indentation;
 

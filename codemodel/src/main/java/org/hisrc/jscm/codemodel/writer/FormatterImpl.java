@@ -31,6 +31,7 @@ public class FormatterImpl implements JSFormatter {
 
 	public JSFormatter keyword(String keyword) throws IOException {
 		Validate.notNull(keyword);
+//		lineBreak();
 		writer.append(keyword);
 		return this;
 	}
@@ -88,11 +89,16 @@ public class FormatterImpl implements JSFormatter {
 		writer.append(":");
 		return this;
 	}
-
+	
 	@Override
 	public JSFormatter semicolon() throws IOException {
 		writer.append(";");
 		return this;
+	}
+
+	@Override
+	public JSFormatter endStatement() throws IOException {
+		return semicolon().lineBreak();
 	}
 
 	@Override
@@ -106,7 +112,7 @@ public class FormatterImpl implements JSFormatter {
 		writer.append("?");
 		return this;
 	}
-
+	
 	@Override
 	public JSFormatter openCurlyBracket() throws IOException {
 		writer.append("{");
@@ -117,6 +123,17 @@ public class FormatterImpl implements JSFormatter {
 	public JSFormatter closeCurlyBracket() throws IOException {
 		writer.append("}");
 		return this;
+	}
+
+
+	@Override
+	public JSFormatter startBlock() throws IOException {
+		return openCurlyBracket().lineBreak();
+	}
+
+	@Override
+	public JSFormatter endBlock() throws IOException {
+		return closeCurlyBracket().lineBreak();
 	}
 
 	@Override

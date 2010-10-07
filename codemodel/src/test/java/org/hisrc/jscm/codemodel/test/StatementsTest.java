@@ -38,6 +38,10 @@ public class StatementsTest {
 
 		{
 			body.block();
+			body.block().block();
+			body.block().block();
+			body.block().block().block().block();
+			body.block().block().block().block().debugger();
 		}
 		{
 			body.variable("a").getVariable();
@@ -48,10 +52,28 @@ public class StatementsTest {
 		}
 		body.empty();
 		{
+			{
 			body._if(x.gt(y))._then()._return();
+			}
+			{
+			body._if(x.gt(y))._then().block()._return();
+			}
+			
+			{
 			JSIfStatement _if = body._if(x.le(y));
 			_if._then()._return(x.mul(y));
 			_if._else()._return(x.plus(x));
+			}
+			{
+				JSIfStatement _if = body._if(x.le(y));
+				_if._then().block()._return(x.mul(y));
+				_if._else().block()._return(x.plus(x));
+				}
+			{
+			JSIfStatement _if = body._if(x.le(y));
+			_if._then().block()._return(x.mul(y));
+			_if._else()._if(x.eq(y))._then()._return(x.plus(x));
+			}
 		}
 
 		{
@@ -99,6 +121,7 @@ public class StatementsTest {
 			body._return();
 			body._return(x);
 			body.with(x).expression(y.postIncr());
+			body.with(x).block().expression(y.postIncr());
 		}
 		{
 			JSSwitchStatement _switch0 = body._switch(x);

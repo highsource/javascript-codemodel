@@ -45,7 +45,7 @@ public class ExpressionWriterVisitor implements
 		JSExpressionVisitor<JSFormatter, IOException> {
 
 	private final JSFormatter f;
-	
+
 	public ExpressionWriterVisitor(JSFormatter formatter) {
 		Validate.notNull(formatter);
 		this.f = formatter;
@@ -58,8 +58,7 @@ public class ExpressionWriterVisitor implements
 	}
 
 	@Override
-	public JSFormatter visitVariable(JSVariable value)
-			throws IOException {
+	public JSFormatter visitVariable(JSVariable value) throws IOException {
 		f.identifier(value.getName());
 		return f;
 	}
@@ -72,8 +71,7 @@ public class ExpressionWriterVisitor implements
 	}
 
 	@Override
-	public JSFormatter visitLiteral(JSLiteral value)
-			throws IOException {
+	public JSFormatter visitLiteral(JSLiteral value) throws IOException {
 		value.acceptLiteralVisitor(new LiteralWriterVisitor(f));
 		return f;
 	}
@@ -111,7 +109,7 @@ public class ExpressionWriterVisitor implements
 			if (index > 0) {
 				fi.comma();
 			}
-			fi.lineBreak();
+			// fi.lineBreak();
 
 			final JSPropertyAssignment propertyAssignment = value
 					.getPropertyAssignments().get(index);
@@ -126,13 +124,11 @@ public class ExpressionWriterVisitor implements
 			propertyValue.acceptExpressionVisitor(vi);
 		}
 		f.closeCurlyBracket();
-
 		return f;
 	}
 
 	@Override
-	public JSFormatter visitBrackets(Brackets value)
-			throws IOException {
+	public JSFormatter visitBrackets(Brackets value) throws IOException {
 		f.openRoundBracket();
 		value.getBase().acceptExpressionVisitor(indented());
 		f.closeRoundBracket();
@@ -140,8 +136,7 @@ public class ExpressionWriterVisitor implements
 	}
 
 	@Override
-	public JSFormatter visitFunction(Function value)
-			throws IOException {
+	public JSFormatter visitFunction(Function value) throws IOException {
 
 		f.keyword("function");
 
@@ -158,18 +153,16 @@ public class ExpressionWriterVisitor implements
 			f.identifier(parameter.getName());
 		}
 		f.closeRoundBracket();
-		f.openCurlyBracket();
-
-		JSFormatter fi = f.indented();
+		f.startBlock();
 
 		for (JSSourceElement sourceElement : value.getBody()
 				.getSourceElements()) {
 			sourceElement
 					.acceptSourceElementVisitor(new SourceElementWriterVisitor(
-							fi));
+							f.indented()));
 		}
 
-		f.closeCurlyBracket();
+		f.endBlock();
 		return f;
 	}
 
@@ -195,8 +188,7 @@ public class ExpressionWriterVisitor implements
 	}
 
 	@Override
-	public JSFormatter visitMemberNew(MemberNew value)
-			throws IOException {
+	public JSFormatter visitMemberNew(MemberNew value) throws IOException {
 		f.keyword("new");
 		value.getBase().acceptExpressionVisitor(this);
 		f.openRoundBracket();
@@ -216,8 +208,7 @@ public class ExpressionWriterVisitor implements
 	}
 
 	@Override
-	public JSFormatter visitMemberCall(MemberCall value)
-			throws IOException {
+	public JSFormatter visitMemberCall(MemberCall value) throws IOException {
 		value.getBase().acceptExpressionVisitor(this);
 		f.openRoundBracket();
 
@@ -243,8 +234,7 @@ public class ExpressionWriterVisitor implements
 	}
 
 	@Override
-	public JSFormatter visitCallArgs(CallArgs value)
-			throws IOException {
+	public JSFormatter visitCallArgs(CallArgs value) throws IOException {
 		value.getBase().acceptExpressionVisitor(this);
 		f.openRoundBracket();
 
@@ -261,8 +251,7 @@ public class ExpressionWriterVisitor implements
 	}
 
 	@Override
-	public JSFormatter visitCallElement(CallElement value)
-			throws IOException {
+	public JSFormatter visitCallElement(CallElement value) throws IOException {
 		value.getBase().acceptExpressionVisitor(this);
 		f.openSquareBracket();
 		value.getIndex().acceptExpressionVisitor(this);
@@ -271,8 +260,7 @@ public class ExpressionWriterVisitor implements
 	}
 
 	@Override
-	public JSFormatter visitCallProperty(CallProperty value)
-			throws IOException {
+	public JSFormatter visitCallProperty(CallProperty value) throws IOException {
 		value.getBase().acceptExpressionVisitor(this);
 		f.dot();
 		value.getName().acceptPropertyNameVisitor(
@@ -281,8 +269,7 @@ public class ExpressionWriterVisitor implements
 	}
 
 	@Override
-	public JSFormatter visitPostfix(Postfix value)
-			throws IOException {
+	public JSFormatter visitPostfix(Postfix value) throws IOException {
 		value.getBase().acceptExpressionVisitor(this);
 		f.operator(value.getOperator());
 		return f;
@@ -305,8 +292,7 @@ public class ExpressionWriterVisitor implements
 	}
 
 	@Override
-	public JSFormatter visitAdditive(Additive value)
-			throws IOException {
+	public JSFormatter visitAdditive(Additive value) throws IOException {
 		value.getLeft().acceptExpressionVisitor(this);
 		f.operator(value.getOperator());
 		value.getRight().acceptExpressionVisitor(this);
@@ -322,8 +308,7 @@ public class ExpressionWriterVisitor implements
 	}
 
 	@Override
-	public JSFormatter visitRelational(Relational value)
-			throws IOException {
+	public JSFormatter visitRelational(Relational value) throws IOException {
 		value.getLeft().acceptExpressionVisitor(this);
 		f.operator(value.getOperator());
 		value.getRight().acceptExpressionVisitor(this);
@@ -331,8 +316,7 @@ public class ExpressionWriterVisitor implements
 	}
 
 	@Override
-	public JSFormatter visitEquality(Equality value)
-			throws IOException {
+	public JSFormatter visitEquality(Equality value) throws IOException {
 		value.getLeft().acceptExpressionVisitor(this);
 		f.operator(value.getOperator());
 		value.getRight().acceptExpressionVisitor(this);
@@ -380,8 +364,7 @@ public class ExpressionWriterVisitor implements
 	}
 
 	@Override
-	public JSFormatter visitConditional(Conditional value)
-			throws IOException {
+	public JSFormatter visitConditional(Conditional value) throws IOException {
 		value.getCondition().acceptExpressionVisitor(this);
 		f.questionMark();
 		value.getIfTrue().acceptExpressionVisitor(this);
@@ -391,8 +374,7 @@ public class ExpressionWriterVisitor implements
 	}
 
 	@Override
-	public JSFormatter visitAssignment(Assignment value)
-			throws IOException {
+	public JSFormatter visitAssignment(Assignment value) throws IOException {
 		value.getLeft().acceptExpressionVisitor(this);
 		f.operator(value.getOperator());
 		value.getRight().acceptExpressionVisitor(this);

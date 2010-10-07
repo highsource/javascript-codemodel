@@ -43,17 +43,15 @@ public class StatementWriterVisitor implements
 
 	@Override
 	public JSFormatter visitBlock(JSBlock value) throws IOException {
-		f.openCurlyBracket();
+		f.startBlock();
 		if (!value.getStatements().isEmpty()) {
-			f.lineBreak();
-			JSFormatter fi = f.indented();
+//			f.lineBreak();
 			for (JSStatement statement : value.getStatements()) {
 				statement
-						.acceptStatementVisitor(new StatementWriterVisitor(fi));
-				fi.lineBreak();
+						.acceptStatementVisitor(indentedBlockStatementVisitor());
 			}
 		}
-		f.closeCurlyBracket();
+		f.endBlock();
 		return f;
 	}
 
@@ -63,7 +61,7 @@ public class StatementWriterVisitor implements
 		if (value.getLabel() != null) {
 			f.identifier(value.getLabel().getName());
 		}
-		f.semicolon();
+		f.endStatement();
 		return f;
 	}
 
@@ -74,14 +72,14 @@ public class StatementWriterVisitor implements
 		if (value.getLabel() != null) {
 			f.identifier(value.getLabel().getName());
 		}
-		f.semicolon();
+		f.endStatement();
 		return f;
 	}
 
 	@Override
 	public JSFormatter visitDebugger(JSDebuggerStatement value)
 			throws IOException {
-		f.keyword("debugger").colon();
+		f.keyword("debugger").endStatement();
 		return f;
 	}
 
@@ -89,20 +87,18 @@ public class StatementWriterVisitor implements
 	public JSFormatter visitDoWhile(JSDoWhileStatement value)
 			throws IOException {
 		f.keyword("do");
-		f.lineBreak();
 		value.getStatement().acceptStatementVisitor(indentedStatementVisitor());
-		f.lineBreak();
 		f.keyword("while");
 		f.openRoundBracket();
 		value.getExpression().acceptExpressionVisitor(expressionVisitor());
 		f.closeRoundBracket();
-		f.semicolon();
+		f.endStatement();
 		return f;
 	}
 
 	@Override
 	public JSFormatter visitEmpty(JSEmptyStatement value) throws IOException {
-		f.semicolon();
+		f.endStatement();
 		return f;
 
 	}
@@ -112,7 +108,7 @@ public class StatementWriterVisitor implements
 			throws IOException {
 		value.getExpression().acceptExpressionVisitor(
 				new ExpressionWriterVisitor(f));
-		f.semicolon();
+		f.endStatement();
 		return f;
 	}
 
@@ -132,7 +128,6 @@ public class StatementWriterVisitor implements
 			value.getUpdate().acceptExpressionVisitor(expressionVisitor());
 		}
 		f.closeRoundBracket();
-		f.lineBreak();
 		value.getStatement().acceptStatementVisitor(indentedStatementVisitor());
 
 		return f;
@@ -146,7 +141,6 @@ public class StatementWriterVisitor implements
 		f.keyword("in");
 		value.getIn().acceptExpressionVisitor(expressionVisitor());
 		f.closeRoundBracket();
-		f.lineBreak();
 		value.getStatement().acceptStatementVisitor(indentedStatementVisitor());
 
 		return f;
@@ -171,7 +165,6 @@ public class StatementWriterVisitor implements
 			value.getUpdate().acceptExpressionVisitor(expressionVisitor());
 		}
 		f.closeRoundBracket();
-		f.lineBreak();
 		value.getStatement().acceptStatementVisitor(indentedStatementVisitor());
 
 		return f;
@@ -193,7 +186,6 @@ public class StatementWriterVisitor implements
 		f.keyword("in");
 		value.getIn().acceptExpressionVisitor(expressionVisitor());
 		f.closeRoundBracket();
-		f.lineBreak();
 		value.getStatement().acceptStatementVisitor(indentedStatementVisitor());
 
 		return f;
@@ -203,17 +195,12 @@ public class StatementWriterVisitor implements
 	public JSFormatter visitIf(JSIfStatement value) throws IOException {
 		f.keyword("if");
 		f.openRoundBracket();
-		value.getIf().acceptExpressionVisitor(new ExpressionWriterVisitor(f));
+		value.getIf().acceptExpressionVisitor(expressionVisitor());
 		f.closeRoundBracket();
-		f.lineBreak();
-		value.getThen().acceptStatementVisitor(
-				new StatementWriterVisitor(f.indented()));
+		value.getThen().acceptStatementVisitor(indentedStatementVisitor());
 		if (value.getElse() != null) {
-			f.lineBreak();
 			f.keyword("else");
-			f.lineBreak();
-			value.getElse().acceptStatementVisitor(
-					new StatementWriterVisitor(f.indented()));
+			value.getElse().acceptStatementVisitor(indentedStatementVisitor());
 		}
 		return f;
 	}
@@ -234,7 +221,7 @@ public class StatementWriterVisitor implements
 			value.getReturn().acceptExpressionVisitor(
 					new ExpressionWriterVisitor(f));
 		}
-		f.semicolon();
+		f.endStatement();
 		return f;
 	}
 
@@ -245,10 +232,9 @@ public class StatementWriterVisitor implements
 		f.openRoundBracket();
 		value.getExpression().acceptExpressionVisitor(expressionVisitor());
 		f.closeRoundBracket();
-		f.lineBreak();
-		f.openCurlyBracket();
+		f.startBlock();
 		for (JSCaseClause caseClause : value.getFirstCaseClauses()) {
-			f.lineBreak();
+			f.keyword("case");
 			caseClause.getExpression().acceptExpressionVisitor(
 					expressionVisitor());
 			f.colon();
@@ -259,7 +245,6 @@ public class StatementWriterVisitor implements
 			}
 		}
 		if (value.getDefaultClause() != null) {
-			f.lineBreak();
 			f.keyword("default");
 			f.colon();
 			List<JSStatement> statements = value.getDefaultClause()
@@ -271,7 +256,7 @@ public class StatementWriterVisitor implements
 		}
 
 		for (JSCaseClause caseClause : value.getSecondCaseClauses()) {
-			f.lineBreak();
+			f.keyword("case");
 			caseClause.getExpression().acceptExpressionVisitor(
 					expressionVisitor());
 			f.colon();
@@ -281,7 +266,7 @@ public class StatementWriterVisitor implements
 				statement.acceptStatementVisitor(indentedStatementVisitor());
 			}
 		}
-		f.closeCurlyBracket();
+		f.endBlock();
 		return f;
 	}
 
@@ -290,24 +275,24 @@ public class StatementWriterVisitor implements
 		f.keyword("throw");
 		value.getExpression().acceptExpressionVisitor(
 				new ExpressionWriterVisitor(f));
-		f.semicolon();
+		f.endStatement();
 		return f;
 	}
 
 	@Override
 	public JSFormatter visitTry(JSTryStatement value) throws IOException {
 		f.keyword("try");
-		value.getBody().acceptStatementVisitor(this);
+		value.getBody().acceptStatementVisitor(indentedBlockStatementVisitor());
 		if (value.getCatch() != null) {
 			f.keyword("catch");
 			f.openRoundBracket();
 			value.getException().acceptExpressionVisitor(expressionVisitor());
 			f.closeRoundBracket();
-			value.getCatch().acceptStatementVisitor(this);
+			value.getCatch().acceptStatementVisitor(indentedBlockStatementVisitor());
 		}
 		if (value.getFinally() != null) {
 			f.keyword("finally");
-			value.getFinally().acceptStatementVisitor(this);
+			value.getFinally().acceptStatementVisitor(indentedBlockStatementVisitor());
 		}
 		return f;
 	}
@@ -339,7 +324,7 @@ public class StatementWriterVisitor implements
 			}
 
 		}
-		f.semicolon();
+		f.endStatement();
 		return f;
 	}
 
@@ -350,7 +335,6 @@ public class StatementWriterVisitor implements
 		f.openRoundBracket();
 		value.getExpression().acceptExpressionVisitor(expressionVisitor());
 		f.closeRoundBracket();
-		f.lineBreak();
 		value.getStatement().acceptStatementVisitor(indentedStatementVisitor());
 
 		return f;
@@ -362,21 +346,48 @@ public class StatementWriterVisitor implements
 		f.openRoundBracket();
 		value.getWith().acceptExpressionVisitor(expressionVisitor());
 		f.closeRoundBracket();
-		f.lineBreak();
 		value.getStatement().acceptStatementVisitor(indentedStatementVisitor());
 
 		return f;
-	}
-
-	private ExpressionWriterVisitor indentedExpressionVisitor() {
-		return new ExpressionWriterVisitor(f.indented());
 	}
 
 	private ExpressionWriterVisitor expressionVisitor() {
 		return new ExpressionWriterVisitor(f);
 	}
 
-	private StatementWriterVisitor indentedStatementVisitor() {
-		return new StatementWriterVisitor(f.indented());
+	private JSStatementVisitor<JSFormatter, IOException> indentedStatementVisitor() {
+		return new StatementVisitorWrapper<JSFormatter, IOException>(
+				new StatementWriterVisitor(f.indented())) {
+
+			public JSFormatter visitBlock(JSBlock value) throws IOException {
+				return StatementWriterVisitor.this.visitBlock(value);
+			}
+
+			public JSFormatter visitStatement(JSStatement statement)
+					throws IOException {
+//				f.lineBreak();
+				return super.visitStatement(statement);
+				//.lineBreak();
+			}
+		};
 	}
+
+	private JSStatementVisitor<JSFormatter, IOException> indentedBlockStatementVisitor() {
+		return new StatementVisitorWrapper<JSFormatter, IOException>(
+				new StatementWriterVisitor(f.indented())) {
+
+//			public JSFormatter visitBlock(JSBlock value) throws IOException {
+//				return StatementWriterVisitor.this.visitBlock(value);
+//			}
+//
+			public JSFormatter visitStatement(JSStatement statement)
+					throws IOException {
+				return super.visitStatement(statement);
+				//.lineBreak();
+//				f.lineBreak();
+//				return r;
+			}
+		};
+	}
+
 }

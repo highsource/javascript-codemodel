@@ -23,11 +23,14 @@ public interface JSFormatter {
 
 	public JSFormatter lineBreak() throws IOException;
 
+	public JSFormatter endStatement() throws IOException;
+
 	public JSFormatter comma() throws IOException;
 
 	public JSFormatter colon() throws IOException;
 
 	public JSFormatter semicolon() throws IOException;
+	
 
 	public JSFormatter questionMark() throws IOException;
 
@@ -40,6 +43,10 @@ public interface JSFormatter {
 	public JSFormatter openCurlyBracket() throws IOException;
 
 	public JSFormatter closeCurlyBracket() throws IOException;
+	
+	public JSFormatter startBlock() throws IOException;
+
+	public JSFormatter endBlock() throws IOException;
 
 	public JSFormatter openRoundBracket() throws IOException;
 

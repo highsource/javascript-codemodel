@@ -36,21 +36,21 @@ public class SourceElementWriterVisitor implements
 			f.identifier(parameter.getName());
 		}
 		f.closeRoundBracket();
-		f.openCurlyBracket();
+		f.startBlock();
 
 		JSFormatter fi = f.indented();
 
-		fi.lineBreak();
+//		fi.lineBreak();
 		for (JSSourceElement sourceElement : value.getBody()
 				.getSourceElements()) {
 			sourceElement
 					.acceptSourceElementVisitor(new SourceElementWriterVisitor(
 							fi));
-			fi.lineBreak();
+//			fi.lineBreak();
 			
 		}
 
-		f.closeCurlyBracket();
+		f.endBlock();
 		return f;
 	}
 
