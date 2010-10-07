@@ -2,10 +2,10 @@ package org.hisrc.jscm.codemodel.impl.expression;
 
 import org.apache.commons.lang.Validate;
 import org.hisrc.jscm.codemodel.JSCodeModel;
-import org.hisrc.jscm.codemodel.JSOperator;
 import org.hisrc.jscm.codemodel.expression.JSBitwiseORExpression;
 import org.hisrc.jscm.codemodel.expression.JSExpressionVisitor;
 import org.hisrc.jscm.codemodel.expression.JSLogicalANDExpression;
+import org.hisrc.jscm.codemodel.operator.JSBinaryOperator;
 
 public abstract class LogicalANDExpressionImpl extends LogicalORExpressionImpl
 		implements JSLogicalANDExpression {
@@ -22,7 +22,7 @@ public abstract class LogicalANDExpressionImpl extends LogicalORExpressionImpl
 	public static class AndImpl extends LogicalANDExpressionImpl implements And {
 		private final JSLogicalANDExpression left;
 
-		private final JSOperator operator = new OperatorImpl("&&");
+		private final JSBinaryOperator operator = new BinaryOperatorImpl("&&");
 
 		private final JSBitwiseORExpression right;
 
@@ -39,8 +39,8 @@ public abstract class LogicalANDExpressionImpl extends LogicalORExpressionImpl
 		public JSLogicalANDExpression getLeft() {
 			return left;
 		}
-		
-		public JSOperator getOperator() {
+
+		public JSBinaryOperator getOperator() {
 			return operator;
 		}
 

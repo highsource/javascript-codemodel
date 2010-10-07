@@ -6,8 +6,6 @@ import org.apache.commons.lang.Validate;
 
 public class IndentedAppendableImpl implements IndentedAppendable {
 
-	private boolean newLine = false;
-
 	private final String indentation;
 
 	private final Appendable writer;
@@ -23,39 +21,35 @@ public class IndentedAppendableImpl implements IndentedAppendable {
 		this.indentation = indentation;
 	}
 
-	@Override
-	public Appendable append(CharSequence charSequence) throws IOException {
-		if (charSequence == null) {
-			charSequence = "null";
-		}
-		for (int index = 0; index < charSequence.length(); index++) {
-			append(charSequence.charAt(index));
-		}
-		return this;
-	}
-
-	@Override
-	public Appendable append(CharSequence charSequence, int start, int end)
-			throws IOException {
-		if (charSequence == null) {
-			charSequence = "null";
-		}
-		for (int index = start; index < end; index++) {
-			append(charSequence.charAt(index));
-		}
-		return this;
-	}
-
-	@Override
-	public synchronized Appendable append(char c) throws IOException {
-		if (newLine) {
+	private void pre() throws IOException {
+		if (lineTerminator) {
+			lineTerminator = false;
+			whiteSpace = false;
+			writer.append('\n');
 			writer.append(indentation);
-			newLine = false;
+		} else if (whiteSpace) {
+			lineTerminator = false;
+			whiteSpace = false;
+			writer.append(' ');
 		}
+	}
+
+	public IndentedAppendable append(CharSequence str) throws IOException {
+		pre();
+		writer.append(str);
+		return this;
+	}
+
+	public IndentedAppendable append(CharSequence charSequence, int start,
+			int end) throws IOException {
+		pre();
+		writer.append(charSequence, start, end);
+		return this;
+	}
+
+	public synchronized IndentedAppendable append(char c) throws IOException {
+		pre();
 		writer.append(c);
-		if (c == '\n') {
-			newLine = true;
-		}
 		return this;
 	}
 
@@ -67,4 +61,25 @@ public class IndentedAppendableImpl implements IndentedAppendable {
 				+ indentation);
 	}
 
+	private boolean whiteSpace = false;
+
+	public IndentedAppendable whiteSpace() {
+		whiteSpace = true;
+		return this;
+	}
+
+	public boolean isWhiteSpace() {
+		return whiteSpace;
+	}
+
+	private boolean lineTerminator = false;
+
+	public boolean isLineTerminator() {
+		return lineTerminator;
+	}
+
+	public IndentedAppendable lineTerminator() {
+		lineTerminator = true;
+		return this;
+	}
 }

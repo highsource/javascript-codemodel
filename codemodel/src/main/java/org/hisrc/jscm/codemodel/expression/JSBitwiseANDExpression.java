@@ -1,15 +1,15 @@
 package org.hisrc.jscm.codemodel.expression;
 
-import org.hisrc.jscm.codemodel.JSOperator;
+import org.hisrc.jscm.codemodel.operator.JSBinaryOperator;
 
 public interface JSBitwiseANDExpression extends JSBitwiseXORExpression {
 
 	public JSBitwiseANDExpression.Band band(JSEqualityExpression expression);
 
-	public interface Band extends JSBitwiseANDExpression {
+	public interface Band extends JSBitwiseANDExpression, JSBinaryExpression {
 		public JSBitwiseANDExpression getLeft();
 
-		public JSOperator getOperator();
+		public JSBinaryOperator getOperator();
 
 		public JSEqualityExpression getRight();
 	}

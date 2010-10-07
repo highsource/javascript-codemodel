@@ -1,7 +1,8 @@
 package org.hisrc.jscm.codemodel.expression;
 
 import org.apache.commons.lang.Validate;
-import org.hisrc.jscm.codemodel.JSOperator;
+import org.hisrc.jscm.codemodel.operator.JSBinaryOperator;
+import org.hisrc.jscm.codemodel.operator.JSOperatorVisitor;
 
 // 11.6
 public interface JSAdditiveExpression extends JSShiftExpression {
@@ -10,7 +11,7 @@ public interface JSAdditiveExpression extends JSShiftExpression {
 
 	JSAdditiveExpression.Additive minus(JSMultiplicativeExpression expression);
 
-	public interface Additive extends JSAdditiveExpression {
+	public interface Additive extends JSAdditiveExpression, JSBinaryExpression {
 		public JSAdditiveExpression getLeft();
 
 		public JSAdditiveExpression.AdditiveOperator getOperator();
@@ -18,7 +19,7 @@ public interface JSAdditiveExpression extends JSShiftExpression {
 		public JSMultiplicativeExpression getRight();
 	}
 
-	public static enum AdditiveOperator implements JSOperator {
+	public static enum AdditiveOperator implements JSBinaryOperator {
 		PLUS("+"), MINUS("-");
 		private final String operatorAsString;
 
@@ -29,6 +30,11 @@ public interface JSAdditiveExpression extends JSShiftExpression {
 
 		public String asString() {
 			return operatorAsString;
+		}
+
+		public <V, E extends Exception> V acceptOperatorVisitor(
+				JSOperatorVisitor<V, E> visitor) throws E {
+			return visitor.visitBinaryOperator(this);
 		}
 	}
 

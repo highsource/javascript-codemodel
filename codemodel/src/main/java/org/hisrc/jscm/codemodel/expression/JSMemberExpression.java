@@ -8,8 +8,7 @@ public interface JSMemberExpression extends JSNewExpression {
 
 	public JSMemberExpression.MemberElement element(JSExpression expression);
 
-	public JSMemberExpression.MemberProperty property(
-			String propertyName);
+	public JSMemberExpression.MemberProperty property(String propertyName);
 
 	public JSMemberExpression.MemberProperty property(
 			JSPropertyName propertyName);
@@ -30,7 +29,7 @@ public interface JSMemberExpression extends JSNewExpression {
 		public JSPropertyName getName();
 	}
 
-	public interface MemberNew extends Member {
+	public interface MemberNew extends Member, JSInvocationExpression {
 
 		public MemberNew args(JSAssignmentExpression... arg);
 

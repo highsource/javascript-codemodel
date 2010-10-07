@@ -1,7 +1,8 @@
 package org.hisrc.jscm.codemodel.expression;
 
 import org.apache.commons.lang.Validate;
-import org.hisrc.jscm.codemodel.JSOperator;
+import org.hisrc.jscm.codemodel.operator.JSBinaryOperator;
+import org.hisrc.jscm.codemodel.operator.JSOperatorVisitor;
 
 public interface JSShiftExpression extends JSRelationalExpression {
 
@@ -11,7 +12,7 @@ public interface JSShiftExpression extends JSRelationalExpression {
 
 	public JSShiftExpression.Shift shrz(JSAdditiveExpression expression);
 
-	public interface Shift extends JSShiftExpression {
+	public interface Shift extends JSShiftExpression, JSBinaryExpression {
 		public JSShiftExpression getLeft();
 
 		public JSShiftExpression.ShiftOperator getOperator();
@@ -19,7 +20,7 @@ public interface JSShiftExpression extends JSRelationalExpression {
 		public JSAdditiveExpression getRight();
 	}
 
-	public static enum ShiftOperator implements JSOperator {
+	public static enum ShiftOperator implements JSBinaryOperator {
 		SHL("<<"), SHR(">>"), SHRZ(">>>");
 		private final String operatorAsString;
 
@@ -30,6 +31,11 @@ public interface JSShiftExpression extends JSRelationalExpression {
 
 		public String asString() {
 			return operatorAsString;
+		}
+
+		public <V, E extends Exception> V acceptOperatorVisitor(
+				JSOperatorVisitor<V, E> visitor) throws E {
+			return visitor.visitBinaryOperator(this);
 		}
 	}
 

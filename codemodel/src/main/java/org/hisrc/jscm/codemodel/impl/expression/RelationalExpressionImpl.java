@@ -5,6 +5,7 @@ import org.hisrc.jscm.codemodel.JSCodeModel;
 import org.hisrc.jscm.codemodel.expression.JSExpressionVisitor;
 import org.hisrc.jscm.codemodel.expression.JSRelationalExpression;
 import org.hisrc.jscm.codemodel.expression.JSShiftExpression;
+import org.hisrc.jscm.codemodel.operator.JSBinaryOperator;
 
 public abstract class RelationalExpressionImpl extends EqualityExpressionImpl
 		implements JSRelationalExpression {
@@ -35,12 +36,12 @@ public abstract class RelationalExpressionImpl extends EqualityExpressionImpl
 
 	public Relational _instanceof(JSShiftExpression value) {
 		return new RelationalImpl(getCodeModel(), this, value,
-				RelationalOperator.INSTANCEOF);
+				KeywordRelationalOperator.INSTANCEOF);
 	}
 
 	public Relational in(JSShiftExpression value) {
 		return new RelationalImpl(getCodeModel(), this, value,
-				RelationalOperator.IN);
+				KeywordRelationalOperator.IN);
 	}
 
 	public static class RelationalImpl extends RelationalExpressionImpl
@@ -48,11 +49,11 @@ public abstract class RelationalExpressionImpl extends EqualityExpressionImpl
 
 		private final JSRelationalExpression left;
 		private final JSShiftExpression right;
-		private final RelationalOperator operator;
+		private final JSBinaryOperator operator;
 
 		public RelationalImpl(JSCodeModel codeModel,
 				JSRelationalExpression left, JSShiftExpression right,
-				RelationalOperator operator) {
+				JSBinaryOperator operator) {
 			super(codeModel);
 			Validate.notNull(left);
 			Validate.notNull(right);
@@ -70,7 +71,7 @@ public abstract class RelationalExpressionImpl extends EqualityExpressionImpl
 			return right;
 		}
 
-		public RelationalOperator getOperator() {
+		public JSBinaryOperator getOperator() {
 			return operator;
 		}
 

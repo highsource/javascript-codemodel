@@ -6,15 +6,11 @@ import org.apache.commons.lang.Validate;
 import org.hisrc.jscm.codemodel.JSFormatter;
 import org.hisrc.jscm.codemodel.JSPropertyName;
 import org.hisrc.jscm.codemodel.JSSourceElement;
+import org.hisrc.jscm.codemodel.expression.JSAdditiveExpression.Additive;
 import org.hisrc.jscm.codemodel.expression.JSArrayLiteral;
 import org.hisrc.jscm.codemodel.expression.JSAssignmentExpression;
-import org.hisrc.jscm.codemodel.expression.JSExpressionVisitor;
-import org.hisrc.jscm.codemodel.expression.JSGlobalVariable;
-import org.hisrc.jscm.codemodel.expression.JSObjectLiteral;
-import org.hisrc.jscm.codemodel.expression.JSThis;
-import org.hisrc.jscm.codemodel.expression.JSVariable;
-import org.hisrc.jscm.codemodel.expression.JSAdditiveExpression.Additive;
 import org.hisrc.jscm.codemodel.expression.JSAssignmentExpression.Assignment;
+import org.hisrc.jscm.codemodel.expression.JSBinaryExpression;
 import org.hisrc.jscm.codemodel.expression.JSBitwiseANDExpression.Band;
 import org.hisrc.jscm.codemodel.expression.JSBitwiseORExpression.Bor;
 import org.hisrc.jscm.codemodel.expression.JSBitwiseXORExpression.Xor;
@@ -25,7 +21,10 @@ import org.hisrc.jscm.codemodel.expression.JSCallExpression.MemberCall;
 import org.hisrc.jscm.codemodel.expression.JSConditionalExpression.Conditional;
 import org.hisrc.jscm.codemodel.expression.JSEqualityExpression.Equality;
 import org.hisrc.jscm.codemodel.expression.JSExpression.Comma;
+import org.hisrc.jscm.codemodel.expression.JSExpressionVisitor;
 import org.hisrc.jscm.codemodel.expression.JSFunctionExpression.Function;
+import org.hisrc.jscm.codemodel.expression.JSGlobalVariable;
+import org.hisrc.jscm.codemodel.expression.JSInvocationExpression;
 import org.hisrc.jscm.codemodel.expression.JSLogicalANDExpression.And;
 import org.hisrc.jscm.codemodel.expression.JSLogicalORExpression.Or;
 import org.hisrc.jscm.codemodel.expression.JSMemberExpression.MemberElement;
@@ -33,12 +32,15 @@ import org.hisrc.jscm.codemodel.expression.JSMemberExpression.MemberNew;
 import org.hisrc.jscm.codemodel.expression.JSMemberExpression.MemberProperty;
 import org.hisrc.jscm.codemodel.expression.JSMultiplicativeExpression.Multiplicative;
 import org.hisrc.jscm.codemodel.expression.JSNewExpression.New;
+import org.hisrc.jscm.codemodel.expression.JSObjectLiteral;
 import org.hisrc.jscm.codemodel.expression.JSObjectLiteral.JSPropertyAssignment;
 import org.hisrc.jscm.codemodel.expression.JSPostfixExpression.Postfix;
 import org.hisrc.jscm.codemodel.expression.JSPrimaryExpression.Brackets;
 import org.hisrc.jscm.codemodel.expression.JSRelationalExpression.Relational;
 import org.hisrc.jscm.codemodel.expression.JSShiftExpression.Shift;
+import org.hisrc.jscm.codemodel.expression.JSThis;
 import org.hisrc.jscm.codemodel.expression.JSUnaryExpression.Unary;
+import org.hisrc.jscm.codemodel.expression.JSVariable;
 import org.hisrc.jscm.codemodel.literal.JSLiteral;
 
 public class ExpressionWriterVisitor implements
@@ -190,40 +192,20 @@ public class ExpressionWriterVisitor implements
 	@Override
 	public JSFormatter visitMemberNew(MemberNew value) throws IOException {
 		f.keyword("new");
+		return visitInvocation(value);
+	}
+
+	public JSFormatter visitInvocation(JSInvocationExpression value)
+			throws IOException {
 		value.getBase().acceptExpressionVisitor(this);
-		f.openRoundBracket();
-
-		for (int index = 0; index < value.getArgs().size(); index++) {
-			final JSAssignmentExpression arg = value.getArgs().get(index);
-
-			arg.acceptExpressionVisitor(this);
-			if (index < value.getArgs().size() - 1) {
-				f.comma();
-			}
-		}
-
-		f.closeRoundBracket();
+		f.args(value.getArgs());
 
 		return f;
 	}
 
 	@Override
 	public JSFormatter visitMemberCall(MemberCall value) throws IOException {
-		value.getBase().acceptExpressionVisitor(this);
-		f.openRoundBracket();
-
-		for (int index = 0; index < value.getArgs().size(); index++) {
-			if (index > 0) {
-				f.comma();
-			}
-			final JSAssignmentExpression arg = value.getArgs().get(index);
-
-			arg.acceptExpressionVisitor(indented());
-		}
-
-		f.closeRoundBracket();
-
-		return f;
+		return visitInvocation(value);
 	}
 
 	@Override
@@ -235,19 +217,7 @@ public class ExpressionWriterVisitor implements
 
 	@Override
 	public JSFormatter visitCallArgs(CallArgs value) throws IOException {
-		value.getBase().acceptExpressionVisitor(this);
-		f.openRoundBracket();
-
-		for (int index = 0; index < value.getArgs().size(); index++) {
-			if (index > 0) {
-				f.comma();
-			}
-			final JSAssignmentExpression arg = value.getArgs().get(index);
-
-			arg.acceptExpressionVisitor(indented());
-		}
-		f.closeRoundBracket();
-		return f;
+		return visitInvocation(value);
 	}
 
 	@Override
@@ -285,82 +255,52 @@ public class ExpressionWriterVisitor implements
 	@Override
 	public JSFormatter visitMultiplicative(Multiplicative value)
 			throws IOException {
-		value.getLeft().acceptExpressionVisitor(this);
-		f.operator(value.getOperator());
-		value.getRight().acceptExpressionVisitor(this);
-		return f;
+		return visitBinaryExpression(value);
 	}
 
 	@Override
 	public JSFormatter visitAdditive(Additive value) throws IOException {
-		value.getLeft().acceptExpressionVisitor(this);
-		f.operator(value.getOperator());
-		value.getRight().acceptExpressionVisitor(this);
-		return f;
+		return visitBinaryExpression(value);
 	}
 
 	@Override
 	public JSFormatter visitShift(Shift value) throws IOException {
-		value.getLeft().acceptExpressionVisitor(this);
-		f.operator(value.getOperator());
-		value.getRight().acceptExpressionVisitor(this);
-		return f;
+		return visitBinaryExpression(value);
 	}
 
 	@Override
 	public JSFormatter visitRelational(Relational value) throws IOException {
-		value.getLeft().acceptExpressionVisitor(this);
-		f.operator(value.getOperator());
-		value.getRight().acceptExpressionVisitor(this);
-		return f;
+		return visitBinaryExpression(value);
 	}
 
 	@Override
 	public JSFormatter visitEquality(Equality value) throws IOException {
-		value.getLeft().acceptExpressionVisitor(this);
-		f.operator(value.getOperator());
-		value.getRight().acceptExpressionVisitor(this);
-		return f;
+		return visitBinaryExpression(value);
 	}
 
 	@Override
 	public JSFormatter visitBand(Band value) throws IOException {
-		value.getLeft().acceptExpressionVisitor(this);
-		f.operator(value.getOperator());
-		value.getRight().acceptExpressionVisitor(this);
-		return f;
+		return visitBinaryExpression(value);
 	}
 
 	@Override
 	public JSFormatter visitXor(Xor value) throws IOException {
-		value.getLeft().acceptExpressionVisitor(this);
-		f.operator(value.getOperator());
-		value.getRight().acceptExpressionVisitor(this);
-		return f;
+		return visitBinaryExpression(value);
 	}
 
 	@Override
 	public JSFormatter visitBor(Bor value) throws IOException {
-		value.getLeft().acceptExpressionVisitor(this);
-		f.operator(value.getOperator());
-		value.getRight().acceptExpressionVisitor(this);
-		return f;
+		return visitBinaryExpression(value);
 	}
 
 	@Override
 	public JSFormatter visitAnd(And value) throws IOException {
-		value.getLeft().acceptExpressionVisitor(this);
-		f.operator(value.getOperator());
-		value.getRight().acceptExpressionVisitor(this);
-		return f;
+		return visitBinaryExpression(value);
 	}
 
 	@Override
 	public JSFormatter visitOr(Or value) throws IOException {
-		value.getLeft().acceptExpressionVisitor(this);
-		f.operator(value.getOperator());
-		value.getRight().acceptExpressionVisitor(this);
-		return f;
+		return visitBinaryExpression(value);
 	}
 
 	@Override
@@ -375,10 +315,7 @@ public class ExpressionWriterVisitor implements
 
 	@Override
 	public JSFormatter visitAssignment(Assignment value) throws IOException {
-		value.getLeft().acceptExpressionVisitor(this);
-		f.operator(value.getOperator());
-		value.getRight().acceptExpressionVisitor(this);
-		return f;
+		return visitBinaryExpression(value);
 	}
 
 	@Override
@@ -386,6 +323,14 @@ public class ExpressionWriterVisitor implements
 		value.getLeft().acceptExpressionVisitor(this);
 		f.comma();
 		value.getRight().acceptExpressionVisitor(this);
+		return f;
+	}
+
+	public JSFormatter visitBinaryExpression(JSBinaryExpression value)
+			throws IOException {
+		f.expression(value.getLeft());
+		f.operator(value.getOperator());
+		f.expression(value.getRight());
 		return f;
 	}
 

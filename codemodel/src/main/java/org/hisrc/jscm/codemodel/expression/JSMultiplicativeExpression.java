@@ -1,7 +1,8 @@
 package org.hisrc.jscm.codemodel.expression;
 
 import org.apache.commons.lang.Validate;
-import org.hisrc.jscm.codemodel.JSOperator;
+import org.hisrc.jscm.codemodel.operator.JSBinaryOperator;
+import org.hisrc.jscm.codemodel.operator.JSOperatorVisitor;
 
 public interface JSMultiplicativeExpression extends JSAdditiveExpression {
 
@@ -14,7 +15,8 @@ public interface JSMultiplicativeExpression extends JSAdditiveExpression {
 	public JSMultiplicativeExpression.Multiplicative mod(
 			JSUnaryExpression expression);
 
-	public interface Multiplicative extends JSMultiplicativeExpression {
+	public interface Multiplicative extends JSMultiplicativeExpression,
+			JSBinaryExpression {
 		public JSMultiplicativeExpression getLeft();
 
 		public JSMultiplicativeExpression.MultiplicativeOperator getOperator();
@@ -22,7 +24,7 @@ public interface JSMultiplicativeExpression extends JSAdditiveExpression {
 		public JSUnaryExpression getRight();
 	}
 
-	public static enum MultiplicativeOperator implements JSOperator {
+	public static enum MultiplicativeOperator implements JSBinaryOperator {
 		MUL("*"), DIV("/"), MOD("%");
 		private final String operatorAsString;
 
@@ -34,5 +36,11 @@ public interface JSMultiplicativeExpression extends JSAdditiveExpression {
 		public String asString() {
 			return operatorAsString;
 		}
+
+		public <V, E extends Exception> V acceptOperatorVisitor(
+				JSOperatorVisitor<V, E> visitor) throws E {
+			return visitor.visitBinaryOperator(this);
+		}
+
 	}
 }

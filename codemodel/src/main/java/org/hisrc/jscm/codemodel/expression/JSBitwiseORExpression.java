@@ -1,15 +1,15 @@
 package org.hisrc.jscm.codemodel.expression;
 
-import org.hisrc.jscm.codemodel.JSOperator;
+import org.hisrc.jscm.codemodel.operator.JSBinaryOperator;
 
 public interface JSBitwiseORExpression extends JSLogicalANDExpression {
 
 	public JSBitwiseORExpression.Bor bor(JSBitwiseXORExpression value);
 
-	public interface Bor extends JSBitwiseORExpression {
+	public interface Bor extends JSBitwiseORExpression, JSBinaryExpression {
 		public JSBitwiseORExpression getLeft();
 
-		public JSOperator getOperator();
+		public JSBinaryOperator getOperator();
 
 		public JSBitwiseXORExpression getRight();
 	}

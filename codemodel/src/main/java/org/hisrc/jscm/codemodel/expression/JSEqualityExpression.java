@@ -1,7 +1,8 @@
 package org.hisrc.jscm.codemodel.expression;
 
 import org.apache.commons.lang.Validate;
-import org.hisrc.jscm.codemodel.JSOperator;
+import org.hisrc.jscm.codemodel.operator.JSBinaryOperator;
+import org.hisrc.jscm.codemodel.operator.JSOperatorVisitor;
 
 public interface JSEqualityExpression extends JSBitwiseANDExpression {
 
@@ -13,7 +14,7 @@ public interface JSEqualityExpression extends JSBitwiseANDExpression {
 
 	public JSEqualityExpression.Equality nee(JSRelationalExpression value);
 
-	public interface Equality extends JSEqualityExpression {
+	public interface Equality extends JSEqualityExpression, JSBinaryExpression {
 		public JSEqualityExpression getLeft();
 
 		public JSEqualityExpression.EqualityOperator getOperator();
@@ -21,7 +22,7 @@ public interface JSEqualityExpression extends JSBitwiseANDExpression {
 		public JSRelationalExpression getRight();
 	}
 
-	public static enum EqualityOperator implements JSOperator {
+	public static enum EqualityOperator implements JSBinaryOperator {
 		EQ("=="), NE("!="), EEQ("==="), NEE("!==");
 
 		private final String operatorAsString;
@@ -34,6 +35,12 @@ public interface JSEqualityExpression extends JSBitwiseANDExpression {
 		public String asString() {
 			return operatorAsString;
 		}
+
+		public <V, E extends Exception> V acceptOperatorVisitor(
+				JSOperatorVisitor<V, E> visitor) throws E {
+			return visitor.visitBinaryOperator(this);
+		}
+
 	}
 
 }

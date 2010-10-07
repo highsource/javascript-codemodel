@@ -2,10 +2,10 @@ package org.hisrc.jscm.codemodel.impl.expression;
 
 import org.apache.commons.lang.Validate;
 import org.hisrc.jscm.codemodel.JSCodeModel;
-import org.hisrc.jscm.codemodel.JSOperator;
 import org.hisrc.jscm.codemodel.expression.JSBitwiseORExpression;
 import org.hisrc.jscm.codemodel.expression.JSBitwiseXORExpression;
 import org.hisrc.jscm.codemodel.expression.JSExpressionVisitor;
+import org.hisrc.jscm.codemodel.operator.JSBinaryOperator;
 
 public abstract class BitwiseORExpressionImpl extends LogicalANDExpressionImpl
 		implements JSBitwiseORExpression {
@@ -21,7 +21,7 @@ public abstract class BitwiseORExpressionImpl extends LogicalANDExpressionImpl
 
 	public static class BorImpl extends BitwiseORExpressionImpl implements Bor {
 		private final JSBitwiseORExpression left;
-		private final JSOperator operator = new OperatorImpl("|");
+		private final JSBinaryOperator operator = new BinaryOperatorImpl("|");
 
 		private final JSBitwiseXORExpression right;
 
@@ -38,11 +38,10 @@ public abstract class BitwiseORExpressionImpl extends LogicalANDExpressionImpl
 		public JSBitwiseORExpression getLeft() {
 			return left;
 		}
-		
-		public JSOperator getOperator() {
+
+		public JSBinaryOperator getOperator() {
 			return operator;
 		}
-
 
 		public JSBitwiseXORExpression getRight() {
 			return right;

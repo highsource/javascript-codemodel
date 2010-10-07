@@ -4,6 +4,7 @@ import org.apache.commons.lang.Validate;
 import org.hisrc.jscm.codemodel.JSCodeModel;
 import org.hisrc.jscm.codemodel.expression.JSExpressionVisitor;
 import org.hisrc.jscm.codemodel.expression.JSUnaryExpression;
+import org.hisrc.jscm.codemodel.operator.JSUnaryOperator;
 
 public abstract class UnaryExpressionImpl extends MultiplicativeExpressionImpl
 		implements JSUnaryExpression {
@@ -13,24 +14,24 @@ public abstract class UnaryExpressionImpl extends MultiplicativeExpressionImpl
 	}
 
 	public JSUnaryExpression.Unary delete() {
-		return new UnaryImpl(getCodeModel(), this, UnaryOperator.DELETE);
+		return new UnaryImpl(getCodeModel(), this, KeywordPrefixOperator.DELETE);
 	}
 
 	@Override
 	public Unary _void() {
-		return new UnaryImpl(getCodeModel(), this, UnaryOperator.VOID);
+		return new UnaryImpl(getCodeModel(), this, KeywordPrefixOperator.VOID);
 	}
 
 	public JSUnaryExpression.Unary typeof() {
-		return new UnaryImpl(getCodeModel(), this, UnaryOperator.TYPEOF);
+		return new UnaryImpl(getCodeModel(), this, KeywordPrefixOperator.TYPEOF);
 	}
 
 	public JSUnaryExpression.Unary preIncr() {
-		return new UnaryImpl(getCodeModel(), this, UnaryOperator.PRE_INCR);
+		return new UnaryImpl(getCodeModel(), this, PrefixOperator.PRE_INCR);
 	}
 
 	public JSUnaryExpression.Unary preDecr() {
-		return new UnaryImpl(getCodeModel(), this, UnaryOperator.PRE_DECR);
+		return new UnaryImpl(getCodeModel(), this, PrefixOperator.PRE_DECR);
 	}
 
 	public JSUnaryExpression.Unary positive() {
@@ -52,10 +53,10 @@ public abstract class UnaryExpressionImpl extends MultiplicativeExpressionImpl
 	public static class UnaryImpl extends UnaryExpressionImpl implements Unary {
 
 		private final JSUnaryExpression base;
-		private final UnaryOperator operator;
+		private final JSUnaryOperator operator;
 
 		public UnaryImpl(JSCodeModel codeModel, JSUnaryExpression base,
-				UnaryOperator operator) {
+				JSUnaryOperator operator) {
 			super(codeModel);
 			this.base = base;
 			this.operator = operator;
@@ -68,7 +69,7 @@ public abstract class UnaryExpressionImpl extends MultiplicativeExpressionImpl
 			return base;
 		}
 
-		public UnaryOperator getOperator() {
+		public JSUnaryOperator getOperator() {
 			return operator;
 		}
 

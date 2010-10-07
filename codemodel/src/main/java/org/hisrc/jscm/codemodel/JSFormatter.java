@@ -2,14 +2,24 @@ package org.hisrc.jscm.codemodel;
 
 import java.io.IOException;
 import java.math.BigDecimal;
+import java.util.List;
+
+import org.hisrc.jscm.codemodel.expression.JSAssignmentExpression;
+import org.hisrc.jscm.codemodel.expression.JSExpression;
+import org.hisrc.jscm.codemodel.operator.JSOperator;
 
 public interface JSFormatter {
 
 	public JSFormatter indented();
 
+	public JSFormatter args(List<JSAssignmentExpression> expression)
+			throws IOException;
+
 	public JSFormatter identifier(String identifier) throws IOException;
 
 	public JSFormatter keyword(String keyword) throws IOException;
+
+	public JSFormatter expression(JSExpression operator) throws IOException;
 
 	public JSFormatter operator(JSOperator operator) throws IOException;
 
@@ -30,7 +40,6 @@ public interface JSFormatter {
 	public JSFormatter colon() throws IOException;
 
 	public JSFormatter semicolon() throws IOException;
-	
 
 	public JSFormatter questionMark() throws IOException;
 
@@ -43,7 +52,7 @@ public interface JSFormatter {
 	public JSFormatter openCurlyBracket() throws IOException;
 
 	public JSFormatter closeCurlyBracket() throws IOException;
-	
+
 	public JSFormatter startBlock() throws IOException;
 
 	public JSFormatter endBlock() throws IOException;

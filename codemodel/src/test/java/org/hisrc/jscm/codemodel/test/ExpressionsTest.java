@@ -119,7 +119,8 @@ public class ExpressionsTest {
 		JSBlock callExpressions = leftHandSideExpressions.block();
 
 		callExpressions.expression(x.invoke().args(y));
-		callExpressions.expression(x.invoke().args(y).args(y));
+		callExpressions.expression(x.invoke().args(y).args(y).args(y));
+		callExpressions.expression(x.invoke().args(y, y, y));
 		callExpressions
 				.expression(x.invoke().args(y).element(codeModel.lit(0)));
 		callExpressions.expression(x.invoke().args(y).property("zero"));

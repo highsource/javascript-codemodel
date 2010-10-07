@@ -5,6 +5,7 @@ import org.hisrc.jscm.codemodel.JSCodeModel;
 import org.hisrc.jscm.codemodel.expression.JSExpressionVisitor;
 import org.hisrc.jscm.codemodel.expression.JSLeftHandSideExpression;
 import org.hisrc.jscm.codemodel.expression.JSPostfixExpression;
+import org.hisrc.jscm.codemodel.operator.JSPostfixOperator;
 
 public abstract class PostfixExpressionImpl extends UnaryExpressionImpl
 		implements JSPostfixExpression {
@@ -17,10 +18,10 @@ public abstract class PostfixExpressionImpl extends UnaryExpressionImpl
 			Postfix {
 
 		private final JSLeftHandSideExpression base;
-		private final PostfixOperator operator;
+		private final JSPostfixOperator operator;
 
 		public PostfixImpl(JSCodeModel codeModel,
-				JSLeftHandSideExpression base, PostfixOperator operator) {
+				JSLeftHandSideExpression base, JSPostfixOperator operator) {
 			super(codeModel);
 			Validate.notNull(base);
 			Validate.notNull(operator);
@@ -33,7 +34,7 @@ public abstract class PostfixExpressionImpl extends UnaryExpressionImpl
 			return base;
 		}
 
-		public PostfixOperator getOperator() {
+		public JSPostfixOperator getOperator() {
 			return operator;
 		}
 

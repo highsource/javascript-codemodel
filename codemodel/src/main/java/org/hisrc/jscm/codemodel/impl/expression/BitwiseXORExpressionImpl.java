@@ -2,10 +2,10 @@ package org.hisrc.jscm.codemodel.impl.expression;
 
 import org.apache.commons.lang.Validate;
 import org.hisrc.jscm.codemodel.JSCodeModel;
-import org.hisrc.jscm.codemodel.JSOperator;
 import org.hisrc.jscm.codemodel.expression.JSBitwiseANDExpression;
 import org.hisrc.jscm.codemodel.expression.JSBitwiseXORExpression;
 import org.hisrc.jscm.codemodel.expression.JSExpressionVisitor;
+import org.hisrc.jscm.codemodel.operator.JSBinaryOperator;
 
 public abstract class BitwiseXORExpressionImpl extends BitwiseORExpressionImpl
 		implements JSBitwiseXORExpression {
@@ -22,7 +22,7 @@ public abstract class BitwiseXORExpressionImpl extends BitwiseORExpressionImpl
 	public static class XorImpl extends BitwiseXORExpressionImpl implements Xor {
 		private final JSBitwiseXORExpression left;
 
-		private final JSOperator operator = new OperatorImpl("^");
+		private final JSBinaryOperator operator = new BinaryOperatorImpl("^");
 
 		private final JSBitwiseANDExpression right;
 
@@ -40,7 +40,7 @@ public abstract class BitwiseXORExpressionImpl extends BitwiseORExpressionImpl
 			return left;
 		}
 
-		public JSOperator getOperator() {
+		public JSBinaryOperator getOperator() {
 			return operator;
 		}
 

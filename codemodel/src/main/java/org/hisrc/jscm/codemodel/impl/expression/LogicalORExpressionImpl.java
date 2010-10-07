@@ -2,11 +2,11 @@ package org.hisrc.jscm.codemodel.impl.expression;
 
 import org.apache.commons.lang.Validate;
 import org.hisrc.jscm.codemodel.JSCodeModel;
-import org.hisrc.jscm.codemodel.JSOperator;
 import org.hisrc.jscm.codemodel.expression.JSAssignmentExpression;
 import org.hisrc.jscm.codemodel.expression.JSExpressionVisitor;
 import org.hisrc.jscm.codemodel.expression.JSLogicalANDExpression;
 import org.hisrc.jscm.codemodel.expression.JSLogicalORExpression;
+import org.hisrc.jscm.codemodel.operator.JSBinaryOperator;
 
 public abstract class LogicalORExpressionImpl extends ConditionalExpressionImpl
 		implements JSLogicalORExpression {
@@ -29,9 +29,8 @@ public abstract class LogicalORExpressionImpl extends ConditionalExpressionImpl
 	public static class OrImpl extends LogicalORExpressionImpl implements Or {
 		private final JSLogicalORExpression left;
 		private final JSLogicalANDExpression right;
-		
-		private final JSOperator operator
-		 = new OperatorImpl("||");
+
+		private final JSBinaryOperator operator = new BinaryOperatorImpl("||");
 
 		public OrImpl(JSCodeModel codeModel, JSLogicalORExpression left,
 				JSLogicalANDExpression right) {
@@ -46,8 +45,8 @@ public abstract class LogicalORExpressionImpl extends ConditionalExpressionImpl
 		public JSLogicalORExpression getLeft() {
 			return left;
 		}
-		
-		public JSOperator getOperator() {
+
+		public JSBinaryOperator getOperator() {
 			return operator;
 		}
 
