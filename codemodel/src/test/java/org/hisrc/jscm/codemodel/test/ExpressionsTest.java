@@ -3,15 +3,15 @@ package org.hisrc.jscm.codemodel.test;
 import java.io.IOException;
 
 import org.hisrc.jscm.codemodel.JSCodeModel;
-import org.hisrc.jscm.codemodel.JSFormatter;
 import org.hisrc.jscm.codemodel.JSFunctionBody;
 import org.hisrc.jscm.codemodel.JSFunctionDeclaration;
 import org.hisrc.jscm.codemodel.JSProgram;
+import org.hisrc.jscm.codemodel.expression.JSFunctionExpression;
 import org.hisrc.jscm.codemodel.expression.JSVariable;
 import org.hisrc.jscm.codemodel.impl.CodeModelImpl;
 import org.hisrc.jscm.codemodel.statement.JSBlock;
-import org.hisrc.jscm.codemodel.writer.FormatterImpl;
-import org.hisrc.jscm.codemodel.writer.SourceElementWriterVisitor;
+import org.hisrc.jscm.codemodel.writer.Formatter;
+import org.hisrc.jscm.codemodel.writer.SourceElementWriter;
 import org.junit.Test;
 
 public class ExpressionsTest {
@@ -19,7 +19,7 @@ public class ExpressionsTest {
 	@Test
 	public void allExpressions() throws IOException {
 
-		final JSFormatter out = new FormatterImpl(System.out);
+		final Formatter out = new Formatter(System.out);
 		JSCodeModel codeModel = new CodeModelImpl();
 
 		JSProgram program = codeModel.program();
@@ -118,16 +118,19 @@ public class ExpressionsTest {
 
 		JSBlock callExpressions = leftHandSideExpressions.block();
 
-		callExpressions.expression(x.invoke().args(y));
 		callExpressions.expression(x.invoke().args(y).args(y).args(y));
+		callExpressions.expression(x.invoke().args(y));
 		callExpressions.expression(x.invoke().args(y, y, y));
-		callExpressions
-				.expression(x.invoke().args(y).element(codeModel.lit(0)));
+		callExpressions.expression(x.invoke().args(y).invoke()
+				.args(codeModel.integer(0), codeModel.integer(1)));
+
+		callExpressions.expression(x.invoke().args(y)
+				.element(codeModel.integer(0)));
 		callExpressions.expression(x.invoke().args(y).property("zero"));
 		callExpressions.expression(x.invoke().args(y)
-				.property(codeModel.lit(0)));
+				.property(codeModel.integer(0)));
 		callExpressions.expression(x.invoke().args(y)
-				.property(codeModel.lit("two")));
+				.property(codeModel.string("two")));
 
 		JSBlock newExpressions = leftHandSideExpressions.block();
 
@@ -136,10 +139,17 @@ public class ExpressionsTest {
 		JSBlock memberExpressions = newExpressions.block();
 
 		memberExpressions.expression(codeModel.function());
-		memberExpressions.expression(x.element(codeModel.lit(0)));
+		JSFunctionExpression.Function foo = codeModel.function("foo");
+		JSVariable a = foo.parameter("a");
+		JSVariable b = foo.parameter("b");
+		JSVariable c = foo.parameter("c");
+		foo.getBody().expression(a.plus(b));
+		foo.getBody()._return(c);
+		memberExpressions.expression(foo);
+		memberExpressions.expression(x.element(codeModel.integer(0)));
 		memberExpressions.expression(x.property("zero"));
-		memberExpressions.expression(x.property(codeModel.lit(1)));
-		memberExpressions.expression(x.property(codeModel.lit("two")));
+		memberExpressions.expression(x.property(codeModel.integer(1)));
+		memberExpressions.expression(x.property(codeModel.string("two")));
 		memberExpressions.expression(x.instantiate().args(y));
 
 		JSBlock primaryExpressions = memberExpressions.block();
@@ -149,23 +159,27 @@ public class ExpressionsTest {
 
 		JSBlock literals = primaryExpressions.block();
 		literals.expression(codeModel._null());
-		literals.expression(codeModel.lit(true));
-		literals.expression(codeModel.lit(false));
-		literals.expression(codeModel.lit(-1L));
-		literals.expression(codeModel.lit(0L));
-		literals.expression(codeModel.lit(1L));
-		literals.expression(codeModel.lit(-1.1d));
-		literals.expression(codeModel.lit(0.0d));
-		literals.expression(codeModel.lit(1.1d));
-		literals.expression(codeModel.lit("a"));
+		literals.expression(codeModel._boolean(true));
+		literals.expression(codeModel._boolean(false));
+		literals.expression(codeModel.integer(-1L));
+		literals.expression(codeModel.integer(0L));
+		literals.expression(codeModel.integer(1L));
+		literals.expression(codeModel.decimal("-1.1"));
+		literals.expression(codeModel.decimal("0.0"));
+		literals.expression(codeModel.decimal("1.1"));
+		literals.expression(codeModel.string("a"));
 
-		primaryExpressions.expression(codeModel.array(x, y));
+		primaryExpressions.expression(codeModel.array());
 		primaryExpressions.expression(codeModel.array().append(x, y));
+		primaryExpressions.expression(codeModel.object());
 		primaryExpressions.expression(codeModel.object().append("zero", x)
-				.append(codeModel.lit(1), x).append(codeModel.lit("two"), x));
-		primaryExpressions.expression(codeModel.lit(true).brackets());
+				.append(codeModel.integer(1), x)
+				.append(codeModel.string("two"), x));
+		primaryExpressions.expression(codeModel._boolean(true).brackets());
+		primaryExpressions.expression(codeModel._boolean(true)
+				.comma(codeModel._boolean(false)).brackets());
 
-		f.acceptSourceElementVisitor(new SourceElementWriterVisitor(out));
+		f.acceptSourceElementVisitor(new SourceElementWriter(out));
 
 	}
 }
