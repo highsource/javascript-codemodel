@@ -11,7 +11,7 @@ import org.hisrc.jscm.codemodel.JSFunctionDeclaration;
 import org.hisrc.jscm.codemodel.JSSourceElementVisitor;
 import org.hisrc.jscm.codemodel.expression.JSPrimaryExpression;
 import org.hisrc.jscm.codemodel.expression.JSVariable;
-import org.hisrc.jscm.codemodel.impl.expression.VariableImpl;
+import org.hisrc.jscm.codemodel.expression.impl.VariableImpl;
 
 public class FunctionDeclarationImpl implements JSFunctionDeclaration {
 

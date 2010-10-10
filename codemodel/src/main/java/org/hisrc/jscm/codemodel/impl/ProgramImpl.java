@@ -9,8 +9,8 @@ import org.hisrc.jscm.codemodel.JSCodeModel;
 import org.hisrc.jscm.codemodel.JSFunctionDeclaration;
 import org.hisrc.jscm.codemodel.JSProgram;
 import org.hisrc.jscm.codemodel.JSSourceElement;
-import org.hisrc.jscm.codemodel.impl.statement.StatementGeneratorImpl;
 import org.hisrc.jscm.codemodel.statement.JSStatement;
+import org.hisrc.jscm.codemodel.statement.impl.StatementGeneratorImpl;
 
 public class ProgramImpl extends StatementGeneratorImpl implements JSProgram {
 

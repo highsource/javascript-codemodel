@@ -1,45 +1,42 @@
 package org.hisrc.jscm.codemodel.impl;
 
 import java.math.BigDecimal;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.commons.lang.Validate;
 import org.hisrc.jscm.codemodel.JSCodeModel;
-import org.hisrc.jscm.codemodel.JSFunctionDeclaration;
 import org.hisrc.jscm.codemodel.JSProgram;
 import org.hisrc.jscm.codemodel.expression.JSArrayLiteral;
-import org.hisrc.jscm.codemodel.expression.JSAssignmentExpression;
-import org.hisrc.jscm.codemodel.expression.JSCallExpression;
 import org.hisrc.jscm.codemodel.expression.JSFunctionExpression.Function;
 import org.hisrc.jscm.codemodel.expression.JSGlobalVariable;
 import org.hisrc.jscm.codemodel.expression.JSObjectLiteral;
-import org.hisrc.jscm.codemodel.expression.JSObjectLiteral.JSPropertyAssignment;
 import org.hisrc.jscm.codemodel.expression.JSThis;
-import org.hisrc.jscm.codemodel.impl.expression.ArrayLiteralImpl;
-import org.hisrc.jscm.codemodel.impl.expression.FunctionExpressionImpl;
-import org.hisrc.jscm.codemodel.impl.expression.GlobalVariableImpl;
-import org.hisrc.jscm.codemodel.impl.expression.ObjectLiteralImpl;
-import org.hisrc.jscm.codemodel.impl.expression.ThisImpl;
-import org.hisrc.jscm.codemodel.impl.literal.BooleanLiteralImpl;
-import org.hisrc.jscm.codemodel.impl.literal.DecimalIntegerLiteralImpl;
-import org.hisrc.jscm.codemodel.impl.literal.DecimalNonIntegerLiteralImpl;
-import org.hisrc.jscm.codemodel.impl.literal.NullLiteralImpl;
-import org.hisrc.jscm.codemodel.impl.literal.StringLiteralImpl;
+import org.hisrc.jscm.codemodel.expression.impl.ArrayLiteralImpl;
+import org.hisrc.jscm.codemodel.expression.impl.FunctionExpressionImpl;
+import org.hisrc.jscm.codemodel.expression.impl.GlobalVariableImpl;
+import org.hisrc.jscm.codemodel.expression.impl.ObjectLiteralImpl;
+import org.hisrc.jscm.codemodel.expression.impl.ThisImpl;
 import org.hisrc.jscm.codemodel.literal.JSBooleanLiteral;
 import org.hisrc.jscm.codemodel.literal.JSDecimalIntegerLiteral;
 import org.hisrc.jscm.codemodel.literal.JSDecimalNonIntegerLiteral;
 import org.hisrc.jscm.codemodel.literal.JSNullLiteral;
 import org.hisrc.jscm.codemodel.literal.JSStringLiteral;
+import org.hisrc.jscm.codemodel.literal.impl.BooleanLiteralImpl;
+import org.hisrc.jscm.codemodel.literal.impl.DecimalIntegerLiteralImpl;
+import org.hisrc.jscm.codemodel.literal.impl.DecimalNonIntegerLiteralImpl;
+import org.hisrc.jscm.codemodel.literal.impl.NullLiteralImpl;
+import org.hisrc.jscm.codemodel.literal.impl.StringLiteralImpl;
 
 public class CodeModelImpl implements JSCodeModel {
 
+	@Override
 	public JSNullLiteral _null() {
 		return new NullLiteralImpl(this);
 	}
 
+	@Override
 	public JSThis _this() {
 		return new ThisImpl(this);
 	}
@@ -47,6 +44,7 @@ public class CodeModelImpl implements JSCodeModel {
 	private final Map<String, JSGlobalVariable> globalVariables = Collections
 			.synchronizedMap(new HashMap<String, JSGlobalVariable>());
 
+	@Override
 	public JSGlobalVariable globalVariable(String name) {
 		Validate.notNull(name);
 
@@ -59,52 +57,52 @@ public class CodeModelImpl implements JSCodeModel {
 		return globalVariable;
 	}
 
-	public JSBooleanLiteral lit(boolean value) {
+	@Override
+	public JSBooleanLiteral _boolean(boolean value) {
 		return new BooleanLiteralImpl(this, value);
 	}
 
-	public JSDecimalIntegerLiteral lit(long value) {
+	@Override
+	public JSDecimalIntegerLiteral integer(long value) {
 		return new DecimalIntegerLiteralImpl(this, value);
 	}
 
-	public JSDecimalNonIntegerLiteral lit(double value) {
-		return new DecimalNonIntegerLiteralImpl(this, value);
+	@Override
+	public JSDecimalNonIntegerLiteral decimal(String value) {
+		Validate.notNull(value);
+		final BigDecimal bigDecimal = new BigDecimal(value);
+		return new DecimalNonIntegerLiteralImpl(this, bigDecimal);
 	}
 
 	@Override
-	public JSDecimalNonIntegerLiteral lit(BigDecimal value) {
-		return new DecimalNonIntegerLiteralImpl(this, value);
-	}
-
-	public JSStringLiteral lit(String value) {
+	public JSStringLiteral string(String value) {
 		Validate.notNull(value);
 		return new StringLiteralImpl(this, value);
 	}
 
-	public JSArrayLiteral array(JSAssignmentExpression... elements) {
-		Validate.noNullElements(elements);
-		return new ArrayLiteralImpl(this, Arrays.asList(elements));
+	@Override
+	public JSArrayLiteral array() {
+		return new ArrayLiteralImpl(this);
 	}
 
 	@Override
-	public JSObjectLiteral object(JSPropertyAssignment... entries) {
-		return new ObjectLiteralImpl(this, Arrays.asList(entries));
+	public JSObjectLiteral object() {
+		return new ObjectLiteralImpl(this);
 	}
 
+	@Override
 	public Function function() {
 		return new FunctionExpressionImpl.FunctionImpl(this);
 	}
 
+	@Override
 	public Function function(String name) {
 		Validate.notNull(name);
 		return new FunctionExpressionImpl.FunctionImpl(this, name);
 	}
 
+	@Override
 	public JSProgram program() {
 		return new ProgramImpl(this);
-	}
-
-	public JSCallExpression call(JSFunctionDeclaration function) {
-		throw new UnsupportedOperationException();
 	}
 }
