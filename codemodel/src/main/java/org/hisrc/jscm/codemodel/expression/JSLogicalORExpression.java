@@ -9,12 +9,14 @@ public interface JSLogicalORExpression extends JSConditionalExpression {
 
 	public JSLogicalORExpression.Or or(JSLogicalANDExpression value);
 
-	// //
 	public interface Or extends JSLogicalORExpression, JSBinaryExpression {
+		@Override
 		public JSLogicalORExpression getLeft();
 
+		@Override
 		public JSBinaryOperator getOperator();
 
+		@Override
 		public JSLogicalANDExpression getRight();
 	}
 

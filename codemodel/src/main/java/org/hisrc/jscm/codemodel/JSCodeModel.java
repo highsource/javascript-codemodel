@@ -1,12 +1,9 @@
 package org.hisrc.jscm.codemodel;
 
-import java.math.BigDecimal;
-
 import org.hisrc.jscm.codemodel.expression.JSArrayLiteral;
-import org.hisrc.jscm.codemodel.expression.JSAssignmentExpression;
 import org.hisrc.jscm.codemodel.expression.JSFunctionExpression;
+import org.hisrc.jscm.codemodel.expression.JSGlobalVariable;
 import org.hisrc.jscm.codemodel.expression.JSObjectLiteral;
-import org.hisrc.jscm.codemodel.expression.JSObjectLiteral.JSPropertyAssignment;
 import org.hisrc.jscm.codemodel.expression.JSThis;
 import org.hisrc.jscm.codemodel.literal.JSBooleanLiteral;
 import org.hisrc.jscm.codemodel.literal.JSDecimalIntegerLiteral;
@@ -19,24 +16,24 @@ public interface JSCodeModel {
 
 	JSThis _this();
 
-	JSBooleanLiteral lit(boolean value);
+	JSBooleanLiteral _boolean(boolean value);
 
-	JSDecimalIntegerLiteral lit(long value);
+	JSDecimalIntegerLiteral integer(long value);
 
-	JSDecimalNonIntegerLiteral lit(double value);
+	JSDecimalNonIntegerLiteral decimal(String value);
 
-	JSDecimalNonIntegerLiteral lit(BigDecimal value);
+	JSStringLiteral string(String value);
 
-	JSStringLiteral lit(String value);
+	JSArrayLiteral array();
 
-	JSArrayLiteral array(JSAssignmentExpression... elements);
+	JSObjectLiteral object();
 
-	JSObjectLiteral object(JSPropertyAssignment... entries);
+	JSGlobalVariable globalVariable(String name);
 
 	JSFunctionExpression.Function function();
 
 	JSFunctionExpression.Function function(String name);
 
-	public JSProgram program();
+	JSProgram program();
 
 }

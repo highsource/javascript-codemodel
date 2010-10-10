@@ -22,6 +22,7 @@ public interface JSCallExpression extends JSLeftHandSideExpression {
 	public interface CallArgs extends Call, JSInvocationExpression {
 		public CallArgs args(JSAssignmentExpression... arg);
 
+		@Override
 		public List<JSAssignmentExpression> getArgs();
 	}
 
@@ -39,8 +40,10 @@ public interface JSCallExpression extends JSLeftHandSideExpression {
 
 		public MemberCall args(JSAssignmentExpression... arg);
 
+		@Override
 		public JSMemberExpression getBase();
 
+		@Override
 		public List<JSAssignmentExpression> getArgs();
 	}
 
