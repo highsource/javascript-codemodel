@@ -34,9 +34,6 @@ public interface JSStatementGenerator {
 
 	public JSForVarInStatement forVarIn(String name, JSExpression _in);
 
-	public JSForVarInStatement forVarIn(String name,
-			JSAssignmentExpression expression, JSExpression _in);
-
 	public JSDoWhileStatement doWhile(JSExpression expression);
 
 	public JSWhileStatement _while(JSExpression expression);

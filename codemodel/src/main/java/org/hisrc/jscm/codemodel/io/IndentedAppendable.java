@@ -1,4 +1,4 @@
-package org.hisrc.jscm.codemodel.writer;
+package org.hisrc.jscm.codemodel.io;
 
 import java.io.IOException;
 
