@@ -10,8 +10,7 @@ import org.hisrc.jscm.codemodel.expression.JSFunctionExpression;
 import org.hisrc.jscm.codemodel.expression.JSVariable;
 import org.hisrc.jscm.codemodel.impl.CodeModelImpl;
 import org.hisrc.jscm.codemodel.statement.JSBlock;
-import org.hisrc.jscm.codemodel.writer.Formatter;
-import org.hisrc.jscm.codemodel.writer.SourceElementWriter;
+import org.hisrc.jscm.codemodel.writer.CodeWriter;
 import org.junit.Test;
 
 public class ExpressionsTest {
@@ -19,7 +18,7 @@ public class ExpressionsTest {
 	@Test
 	public void allExpressions() throws IOException {
 
-		final Formatter out = new Formatter(System.out);
+		final CodeWriter out = new CodeWriter(System.out);
 		JSCodeModel codeModel = new CodeModelImpl();
 
 		JSProgram program = codeModel.program();
@@ -179,7 +178,7 @@ public class ExpressionsTest {
 		primaryExpressions.expression(codeModel._boolean(true)
 				.comma(codeModel._boolean(false)).brackets());
 
-		f.acceptSourceElementVisitor(new SourceElementWriter(out));
+		out.program(program);
 
 	}
 }

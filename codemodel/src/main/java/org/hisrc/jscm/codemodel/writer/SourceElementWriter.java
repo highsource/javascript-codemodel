@@ -11,17 +11,17 @@ import org.hisrc.jscm.codemodel.expression.JSVariable;
 import org.hisrc.jscm.codemodel.statement.JSStatement;
 
 public class SourceElementWriter implements
-		JSSourceElementVisitor<Formatter, IOException> {
+		JSSourceElementVisitor<CodeWriter, IOException> {
 
-	private final Formatter f;
+	private final CodeWriter f;
 
-	public SourceElementWriter(Formatter formatter) {
+	public SourceElementWriter(CodeWriter formatter) {
 		Validate.notNull(formatter);
 		this.f = formatter;
 	}
 
 	@Override
-	public Formatter visitFunctionDeclaration(JSFunctionDeclaration value)
+	public CodeWriter visitFunctionDeclaration(JSFunctionDeclaration value)
 			throws IOException {
 		f.keyword("function").whiteSpace();
 
@@ -39,7 +39,7 @@ public class SourceElementWriter implements
 		f.whiteSpace();
 		f.openCurlyBracket().lineTerminator();
 
-		final Formatter fi = f.indented();
+		final CodeWriter fi = f.indented();
 		final List<JSSourceElement> sourceElements = value.getBody()
 				.getSourceElements();
 
@@ -54,7 +54,7 @@ public class SourceElementWriter implements
 	}
 
 	@Override
-	public Formatter visitStatement(JSStatement value) throws IOException {
+	public CodeWriter visitStatement(JSStatement value) throws IOException {
 		return f.statement(value);
 	}
 

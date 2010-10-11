@@ -1,4 +1,4 @@
-package org.hisrc.jscm.codemodel.formatter;
+package org.hisrc.jscm.codemodel.writer;
 
 import java.io.IOException;
 
@@ -13,12 +13,12 @@ import org.hisrc.jscm.codemodel.operator.JSPostfixOperator;
 import org.hisrc.jscm.codemodel.operator.JSPrefixOperator;
 import org.hisrc.jscm.codemodel.operator.JSUnaryOperator;
 
-public class OperatorFormatter implements
+public class OperatorWriter implements
 		JSOperatorVisitor<IndentedAppendable, IOException> {
 
 	private final IndentedAppendable appendable;
 
-	public OperatorFormatter(IndentedAppendable appendable) {
+	public OperatorWriter(IndentedAppendable appendable) {
 		Validate.notNull(appendable);
 		this.appendable = appendable;
 	}

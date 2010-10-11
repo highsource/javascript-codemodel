@@ -9,27 +9,27 @@ import org.hisrc.jscm.codemodel.literal.JSNumericLiteral;
 import org.hisrc.jscm.codemodel.literal.JSStringLiteral;
 
 public class PropertyNameWriter implements
-		JSPropertyNameVisitor<Formatter, IOException> {
+		JSPropertyNameVisitor<CodeWriter, IOException> {
 
-	private final Formatter f;
+	private final CodeWriter f;
 
-	public PropertyNameWriter(Formatter formatter) {
+	public PropertyNameWriter(CodeWriter formatter) {
 		Validate.notNull(formatter);
 		this.f = formatter;
 	}
 
-	public Formatter visitNumericLiteral(JSNumericLiteral value)
+	public CodeWriter visitNumericLiteral(JSNumericLiteral value)
 			throws IOException {
 		return f.literal(value);
 	}
 
-	public Formatter visitStringLiteral(JSStringLiteral value)
+	public CodeWriter visitStringLiteral(JSStringLiteral value)
 			throws IOException {
 		return f.literal(value);
 	}
 
 	@Override
-	public Formatter visitIdentifierName(JSIdentifierName value)
+	public CodeWriter visitIdentifierName(JSIdentifierName value)
 			throws IOException {
 		return f.identifier(value.getName());
 	}

@@ -4,10 +4,10 @@ import java.io.IOException;
 import java.math.BigDecimal;
 
 import org.apache.commons.lang.Validate;
+import org.hisrc.jscm.codemodel.JSProgram;
 import org.hisrc.jscm.codemodel.JSPropertyName;
 import org.hisrc.jscm.codemodel.JSSourceElement;
 import org.hisrc.jscm.codemodel.expression.JSExpression;
-import org.hisrc.jscm.codemodel.formatter.OperatorFormatter;
 import org.hisrc.jscm.codemodel.io.DefaultIndentedAppendable;
 import org.hisrc.jscm.codemodel.io.IndentedAppendable;
 import org.hisrc.jscm.codemodel.literal.JSLiteral;
@@ -16,173 +16,178 @@ import org.hisrc.jscm.codemodel.statement.JSBlock;
 import org.hisrc.jscm.codemodel.statement.JSStatement;
 import org.hisrc.jscm.codemodel.statement.impl.AbstractStatementVisitor;
 
-public class Formatter {
+public class CodeWriter {
 
 	public static final String INDENTATION = "  ";
 
 	private final IndentedAppendable writer;
 
-	public Formatter(Appendable writer) {
+	public CodeWriter(Appendable writer) {
 		this(new DefaultIndentedAppendable(writer));
 	}
 
-	private Formatter(IndentedAppendable writer) {
+	private CodeWriter(IndentedAppendable writer) {
 		Validate.notNull(writer);
 		this.writer = writer;
 	}
 
-	public Formatter identifier(String identifier) throws IOException {
+	public CodeWriter identifier(String identifier) throws IOException {
 		Validate.notNull(identifier);
 		writer.append(identifier);
 		return this;
 	}
 
-	public Formatter keyword(String keyword) throws IOException {
+	public CodeWriter keyword(String keyword) throws IOException {
 		Validate.notNull(keyword);
 		writer.append(keyword);
 		return this;
 	}
 
-	public Formatter operator(JSOperator operator) throws IOException {
+	public CodeWriter operator(JSOperator operator) throws IOException {
 		Validate.notNull(operator);
-		operator.acceptOperatorVisitor(new OperatorFormatter(writer));
+		operator.acceptOperatorVisitor(new OperatorWriter(writer));
 		return this;
 	}
 
-	public Formatter _null() throws IOException {
+	public CodeWriter _null() throws IOException {
 		writer.append("null");
 		return this;
 	}
 
-	public Formatter string(String value) throws IOException {
+	public CodeWriter string(String value) throws IOException {
 		// TODO
 		writer.append('\"').append(value).append('\"');
 		return this;
 	}
 
-	public Formatter _boolean(boolean value) throws IOException {
+	public CodeWriter _boolean(boolean value) throws IOException {
 		writer.append(Boolean.toString(value));
 		return this;
 	}
 
-	public Formatter decimal(BigDecimal value) throws IOException {
+	public CodeWriter decimal(BigDecimal value) throws IOException {
 		Validate.notNull(value);
 		writer.append(value.toString());
 		return this;
 	}
 
-	public Formatter indented() {
-		return new Formatter(writer.indent(INDENTATION));
+	public CodeWriter indented() {
+		return new CodeWriter(writer.indent(INDENTATION));
 	}
 
-	public Formatter lineTerminator() throws IOException {
+	public CodeWriter lineTerminator() throws IOException {
 		writer.lineTerminator();
 		return this;
 	}
 
-	public Formatter comma() throws IOException {
+	public CodeWriter comma() throws IOException {
 		writer.append(',');
 		return this;
 	}
 
-	public Formatter colon() throws IOException {
+	public CodeWriter colon() throws IOException {
 		writer.append(':');
 		return this;
 	}
 
-	public Formatter semicolon() throws IOException {
+	public CodeWriter semicolon() throws IOException {
 		writer.append(';');
 		return this;
 	}
 
-	public Formatter dot() throws IOException {
+	public CodeWriter dot() throws IOException {
 		writer.append('.');
 		return this;
 	}
 
-	public Formatter questionMark() throws IOException {
+	public CodeWriter questionMark() throws IOException {
 		writer.append('?');
 		return this;
 	}
 
-	public Formatter openCurlyBracket() throws IOException {
+	public CodeWriter openCurlyBracket() throws IOException {
 		writer.append('{');
 		return this;
 	}
 
-	public Formatter closeCurlyBracket() throws IOException {
+	public CodeWriter closeCurlyBracket() throws IOException {
 		writer.append('}');
 		return this;
 	}
 
-	public Formatter openRoundBracket() throws IOException {
+	public CodeWriter openRoundBracket() throws IOException {
 		writer.append('(');
 		return this;
 	}
 
-	public Formatter closeRoundBracket() throws IOException {
+	public CodeWriter closeRoundBracket() throws IOException {
 		writer.append(')');
 		return this;
 	}
 
-	public Formatter openSquareBracket() throws IOException {
+	public CodeWriter openSquareBracket() throws IOException {
 		writer.append('[');
 		return this;
 	}
 
-	public Formatter closeSquareBracket() throws IOException {
+	public CodeWriter closeSquareBracket() throws IOException {
 		writer.append(']');
 		return this;
 	}
 
-	public Formatter expression(JSExpression expression) throws IOException {
+	public CodeWriter expression(JSExpression expression) throws IOException {
 		expression.acceptExpressionVisitor(new ExpressionWriter(this));
 		return this;
 	}
 
-	public Formatter statement(JSStatement statement) throws IOException {
+	public CodeWriter statement(JSStatement statement) throws IOException {
 		statement.acceptStatementVisitor(new StatementWriter(this));
 		return this;
 	}
 
-	public Formatter block(JSStatement statement) throws IOException {
-		final Formatter f = this;
-		final Formatter fi = f.indented();
+	public CodeWriter block(JSStatement statement) throws IOException {
+		final CodeWriter f = this;
+		final CodeWriter fi = f.indented();
 		return statement
-				.acceptStatementVisitor(new AbstractStatementVisitor<Formatter, IOException>() {
+				.acceptStatementVisitor(new AbstractStatementVisitor<CodeWriter, IOException>() {
 
 					@Override
-					public Formatter visitBlock(JSBlock block)
+					public CodeWriter visitBlock(JSBlock block)
 							throws IOException {
 						return f.statement(block);
 					}
 
 					@Override
-					public Formatter visitStatement(JSStatement statement)
+					public CodeWriter visitStatement(JSStatement statement)
 							throws IOException {
 						return fi.lineTerminator().statement(statement);
 					}
 				});
 	}
 
-	public Formatter whiteSpace() throws IOException {
+	public CodeWriter whiteSpace() throws IOException {
 		writer.whiteSpace();
 		return this;
 	}
 
-	public Formatter sourceElement(JSSourceElement sourceElement)
+	public CodeWriter sourceElement(JSSourceElement sourceElement)
 			throws IOException {
 		return sourceElement
 				.acceptSourceElementVisitor(new SourceElementWriter(this));
 	}
 
-	public Formatter literal(JSLiteral literal) throws IOException {
+	public CodeWriter literal(JSLiteral literal) throws IOException {
 		return literal.acceptLiteralVisitor(new LiteralWriter(this));
 	}
 
-	public Formatter propertyName(JSPropertyName propertyName)
+	public CodeWriter propertyName(JSPropertyName propertyName)
 			throws IOException {
 		return propertyName.acceptPropertyNameVisitor(new PropertyNameWriter(
 				this));
+	}
+
+	public CodeWriter program(JSProgram program) throws IOException {
+		Validate.notNull(program);
+		return program.acceptProgramVisitor(new ProgramWriter(this));
 	}
 }

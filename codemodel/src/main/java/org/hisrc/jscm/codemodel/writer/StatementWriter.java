@@ -31,20 +31,20 @@ import org.hisrc.jscm.codemodel.statement.JSWhileStatement;
 import org.hisrc.jscm.codemodel.statement.JSWithStatement;
 
 public class StatementWriter implements
-		JSStatementVisitor<Formatter, IOException> {
+		JSStatementVisitor<CodeWriter, IOException> {
 
-	private final Formatter f;
+	private final CodeWriter f;
 
-	public StatementWriter(Formatter formatter) {
+	public StatementWriter(CodeWriter formatter) {
 		Validate.notNull(formatter);
 		this.f = formatter;
 	}
 
 	@Override
-	public Formatter visitBlock(JSBlock value) throws IOException {
+	public CodeWriter visitBlock(JSBlock value) throws IOException {
 		f.openCurlyBracket();
 		f.lineTerminator();
-		final Formatter fi = f.indented();
+		final CodeWriter fi = f.indented();
 		final List<JSStatement> statements = value.getStatements();
 
 		for (int index = 0; index < statements.size(); index++) {
@@ -57,7 +57,7 @@ public class StatementWriter implements
 	}
 
 	@Override
-	public Formatter visitBreak(JSBreakStatement value) throws IOException {
+	public CodeWriter visitBreak(JSBreakStatement value) throws IOException {
 		f.keyword("break");
 		if (value.getLabel() != null) {
 			f.whiteSpace();
@@ -68,7 +68,7 @@ public class StatementWriter implements
 	}
 
 	@Override
-	public Formatter visitContinue(JSContinueStatement value)
+	public CodeWriter visitContinue(JSContinueStatement value)
 			throws IOException {
 		f.keyword("continue");
 		if (value.getLabel() != null) {
@@ -80,7 +80,7 @@ public class StatementWriter implements
 	}
 
 	@Override
-	public Formatter visitDebugger(JSDebuggerStatement value)
+	public CodeWriter visitDebugger(JSDebuggerStatement value)
 			throws IOException {
 		f.keyword("debugger");
 		f.semicolon();
@@ -88,7 +88,7 @@ public class StatementWriter implements
 	}
 
 	@Override
-	public Formatter visitDoWhile(JSDoWhileStatement value) throws IOException {
+	public CodeWriter visitDoWhile(JSDoWhileStatement value) throws IOException {
 		f.keyword("do");
 		f.block(value.getStatement());
 		f.lineTerminator().keyword("while").whiteSpace();
@@ -100,14 +100,14 @@ public class StatementWriter implements
 	}
 
 	@Override
-	public Formatter visitEmpty(JSEmptyStatement value) throws IOException {
+	public CodeWriter visitEmpty(JSEmptyStatement value) throws IOException {
 		f.semicolon();
 		return f;
 
 	}
 
 	@Override
-	public Formatter visitExpression(JSExpressionStatement value)
+	public CodeWriter visitExpression(JSExpressionStatement value)
 			throws IOException {
 		f.expression(value.getExpression());
 		f.semicolon();
@@ -115,7 +115,7 @@ public class StatementWriter implements
 	}
 
 	@Override
-	public Formatter visitFor(JSForStatement value) throws IOException {
+	public CodeWriter visitFor(JSForStatement value) throws IOException {
 		f.keyword("for");
 		f.openRoundBracket();
 		if (value.getExpression() != null) {
@@ -137,7 +137,7 @@ public class StatementWriter implements
 	}
 
 	@Override
-	public Formatter visitForIn(JSForInStatement value) throws IOException {
+	public CodeWriter visitForIn(JSForInStatement value) throws IOException {
 		f.keyword("for").whiteSpace();
 		f.openRoundBracket();
 		f.expression(value.getExpression());
@@ -151,7 +151,7 @@ public class StatementWriter implements
 	}
 
 	@Override
-	public Formatter visitForVar(JSForVarStatement value) throws IOException {
+	public CodeWriter visitForVar(JSForVarStatement value) throws IOException {
 		f.keyword("for").whiteSpace();
 		f.openRoundBracket();
 		visitVariableDeclarations(value.getVariableDeclarations());
@@ -172,7 +172,7 @@ public class StatementWriter implements
 	}
 
 	@Override
-	public Formatter visitForVarIn(JSForVarInStatement value)
+	public CodeWriter visitForVarIn(JSForVarInStatement value)
 			throws IOException {
 		f.keyword("for").whiteSpace();
 		f.openRoundBracket();
@@ -188,7 +188,7 @@ public class StatementWriter implements
 	}
 
 	@Override
-	public Formatter visitIf(JSIfStatement value) throws IOException {
+	public CodeWriter visitIf(JSIfStatement value) throws IOException {
 		f.keyword("if").whiteSpace();
 		f.openRoundBracket();
 		f.indented().expression(value.getIf());
@@ -203,7 +203,7 @@ public class StatementWriter implements
 	}
 
 	@Override
-	public Formatter visitLabelled(JSLabelledStatement value)
+	public CodeWriter visitLabelled(JSLabelledStatement value)
 			throws IOException {
 		f.identifier(value.getLabel().getName());
 		f.colon().whiteSpace();
@@ -212,7 +212,7 @@ public class StatementWriter implements
 	}
 
 	@Override
-	public Formatter visitReturn(JSReturnStatement value) throws IOException {
+	public CodeWriter visitReturn(JSReturnStatement value) throws IOException {
 		f.keyword("return");
 		if (value.getReturn() != null) {
 			f.whiteSpace();
@@ -223,7 +223,7 @@ public class StatementWriter implements
 	}
 
 	@Override
-	public Formatter visitSwitch(JSSwitchStatement value) throws IOException {
+	public CodeWriter visitSwitch(JSSwitchStatement value) throws IOException {
 
 		f.keyword("switch").whiteSpace();
 		f.openRoundBracket();
@@ -232,7 +232,7 @@ public class StatementWriter implements
 		f.whiteSpace();
 		f.openCurlyBracket();
 		f.lineTerminator();
-		final Formatter fi = f.indented();
+		final CodeWriter fi = f.indented();
 		for (JSCaseClause caseClause : value.getFirstCaseClauses()) {
 			fi.keyword("case").whiteSpace();
 			fi.indented().expression(caseClause.getExpression());
@@ -272,13 +272,13 @@ public class StatementWriter implements
 	}
 
 	@Override
-	public Formatter visitThrow(JSThrowStatement value) throws IOException {
+	public CodeWriter visitThrow(JSThrowStatement value) throws IOException {
 		return f.keyword("throw").whiteSpace()
 				.expression(value.getExpression()).semicolon();
 	}
 
 	@Override
-	public Formatter visitTry(JSTryStatement value) throws IOException {
+	public CodeWriter visitTry(JSTryStatement value) throws IOException {
 		f.keyword("try").whiteSpace();
 		f.statement(value.getBody());
 		if (value.getCatch() != null) {
@@ -298,14 +298,14 @@ public class StatementWriter implements
 	}
 
 	@Override
-	public Formatter visitVariable(JSVariableStatement value)
+	public CodeWriter visitVariable(JSVariableStatement value)
 			throws IOException {
 		final List<JSVariableDeclaration> variableDeclarations = value
 				.getVariableDeclarations();
 		return visitVariableDeclarations(variableDeclarations);
 	}
 
-	private Formatter visitVariableDeclarations(
+	private CodeWriter visitVariableDeclarations(
 			final List<JSVariableDeclaration> variableDeclarations)
 			throws IOException {
 		f.keyword("var").whiteSpace();
@@ -328,7 +328,7 @@ public class StatementWriter implements
 	}
 
 	@Override
-	public Formatter visitWhile(JSWhileStatement value) throws IOException {
+	public CodeWriter visitWhile(JSWhileStatement value) throws IOException {
 
 		f.keyword("while").whiteSpace();
 		f.openRoundBracket();
@@ -340,7 +340,7 @@ public class StatementWriter implements
 	}
 
 	@Override
-	public Formatter visitWith(JSWithStatement value) throws IOException {
+	public CodeWriter visitWith(JSWithStatement value) throws IOException {
 		f.keyword("with").whiteSpace();
 		f.openRoundBracket();
 		f.indented().expression(value.getWith());

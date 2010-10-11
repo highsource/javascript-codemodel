@@ -18,8 +18,7 @@ import org.hisrc.jscm.codemodel.statement.JSSwitchStatement;
 import org.hisrc.jscm.codemodel.statement.JSSwitchStatement.JSCaseClause;
 import org.hisrc.jscm.codemodel.statement.JSSwitchStatement.JSDefaultClause;
 import org.hisrc.jscm.codemodel.statement.JSTryStatement;
-import org.hisrc.jscm.codemodel.writer.Formatter;
-import org.hisrc.jscm.codemodel.writer.SourceElementWriter;
+import org.hisrc.jscm.codemodel.writer.CodeWriter;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -27,7 +26,7 @@ public class StatementsTest {
 	@Test
 	public void allExpressions() throws IOException {
 
-		final Formatter out = new Formatter(System.out);
+		final CodeWriter out = new CodeWriter(System.out);
 		JSCodeModel codeModel = new CodeModelImpl();
 
 		JSProgram program = codeModel.program();
@@ -190,6 +189,7 @@ public class StatementsTest {
 			body.debugger();
 		}
 
-		f.acceptSourceElementVisitor(new SourceElementWriter(out));
+		// f.acceptSourceElementVisitor(new SourceElementWriter(out));
+		out.program(program);
 	}
 }

@@ -8,6 +8,7 @@ import org.apache.commons.lang.Validate;
 import org.hisrc.jscm.codemodel.JSCodeModel;
 import org.hisrc.jscm.codemodel.JSFunctionDeclaration;
 import org.hisrc.jscm.codemodel.JSProgram;
+import org.hisrc.jscm.codemodel.JSProgramVisitor;
 import org.hisrc.jscm.codemodel.JSSourceElement;
 import org.hisrc.jscm.codemodel.statement.JSStatement;
 import org.hisrc.jscm.codemodel.statement.impl.StatementGeneratorImpl;
@@ -22,12 +23,14 @@ public class ProgramImpl extends StatementGeneratorImpl implements JSProgram {
 		super(codeModel);
 	}
 
+	@Override
 	protected <S extends JSStatement> S add(S statement) {
 		Validate.notNull(statement);
 		this.sourceElements.add(statement);
 		return statement;
 	}
 
+	@Override
 	public List<JSSourceElement> getSourceElements() {
 		return unmodifiableSourceElements;
 	}
@@ -39,5 +42,11 @@ public class ProgramImpl extends StatementGeneratorImpl implements JSProgram {
 				getCodeModel(), name);
 		sourceElements.add(functionDeclaration);
 		return functionDeclaration;
+	}
+
+	@Override
+	public <V, E extends Exception> V acceptProgramVisitor(
+			JSProgramVisitor<V, E> visitor) throws E {
+		return visitor.visitProgram(this);
 	}
 }

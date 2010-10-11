@@ -45,45 +45,45 @@ import org.hisrc.jscm.codemodel.expression.JSVariable;
 import org.hisrc.jscm.codemodel.literal.JSLiteral;
 
 public class ExpressionWriter implements
-		JSExpressionVisitor<Formatter, IOException> {
+		JSExpressionVisitor<CodeWriter, IOException> {
 
-	private final Formatter f;
+	private final CodeWriter f;
 
-	public ExpressionWriter(Formatter formatter) {
+	public ExpressionWriter(CodeWriter formatter) {
 		Validate.notNull(formatter);
 		this.f = formatter;
 	}
 
 	@Override
-	public Formatter visitThis(JSThis value) throws IOException {
+	public CodeWriter visitThis(JSThis value) throws IOException {
 		f.keyword("this");
 		return f;
 	}
 
 	@Override
-	public Formatter visitVariable(JSVariable value) throws IOException {
+	public CodeWriter visitVariable(JSVariable value) throws IOException {
 		f.identifier(value.getName());
 		return f;
 	}
 
 	@Override
-	public Formatter visitGlobalVariable(JSGlobalVariable value)
+	public CodeWriter visitGlobalVariable(JSGlobalVariable value)
 			throws IOException {
 		f.identifier(value.getName());
 		return f;
 	}
 
 	@Override
-	public Formatter visitLiteral(JSLiteral value) throws IOException {
+	public CodeWriter visitLiteral(JSLiteral value) throws IOException {
 		return f.literal(value);
 	}
 
 	@Override
-	public Formatter visitArrayLiteral(JSArrayLiteral value)
+	public CodeWriter visitArrayLiteral(JSArrayLiteral value)
 			throws IOException {
 
 		f.openSquareBracket();
-		final Formatter fi = f.indented();
+		final CodeWriter fi = f.indented();
 
 		for (int index = 0; index < value.getElements().size(); index++) {
 			if (index > 0) {
@@ -100,7 +100,7 @@ public class ExpressionWriter implements
 	}
 
 	@Override
-	public Formatter visitObjectLiteral(JSObjectLiteral value)
+	public CodeWriter visitObjectLiteral(JSObjectLiteral value)
 			throws IOException {
 
 		f.openCurlyBracket();
@@ -111,7 +111,7 @@ public class ExpressionWriter implements
 
 			f.lineTerminator();
 
-			final Formatter fi = f.indented();
+			final CodeWriter fi = f.indented();
 
 			for (int index = 0; index < propertyAssignments.size(); index++) {
 				if (index > 0) {
@@ -133,7 +133,7 @@ public class ExpressionWriter implements
 	}
 
 	@Override
-	public Formatter visitBrackets(Brackets value) throws IOException {
+	public CodeWriter visitBrackets(Brackets value) throws IOException {
 		f.openRoundBracket();
 		f.indented().expression(value.getBase());
 		f.closeRoundBracket();
@@ -141,7 +141,7 @@ public class ExpressionWriter implements
 	}
 
 	@Override
-	public Formatter visitFunction(Function value) throws IOException {
+	public CodeWriter visitFunction(Function value) throws IOException {
 
 		f.keyword("function").whiteSpace();
 
@@ -160,7 +160,7 @@ public class ExpressionWriter implements
 		f.closeRoundBracket().whiteSpace();
 		f.openCurlyBracket().lineTerminator();
 
-		final Formatter fi = f.indented();
+		final CodeWriter fi = f.indented();
 		final List<JSSourceElement> sourceElements = value.getBody()
 				.getSourceElements();
 		for (int index = 0; index < sourceElements.size(); index++) {
@@ -176,7 +176,7 @@ public class ExpressionWriter implements
 	}
 
 	@Override
-	public Formatter visitMemberElement(MemberElement value)
+	public CodeWriter visitMemberElement(MemberElement value)
 			throws IOException {
 
 		f.expression(value.getBase());
@@ -187,7 +187,7 @@ public class ExpressionWriter implements
 	}
 
 	@Override
-	public Formatter visitMemberProperty(MemberProperty value)
+	public CodeWriter visitMemberProperty(MemberProperty value)
 			throws IOException {
 		f.expression(value.getBase());
 		f.dot();
@@ -196,18 +196,18 @@ public class ExpressionWriter implements
 	}
 
 	@Override
-	public Formatter visitMemberNew(MemberNew value) throws IOException {
+	public CodeWriter visitMemberNew(MemberNew value) throws IOException {
 		f.keyword("new").whiteSpace();
 		return visitInvocation(value);
 	}
 
-	private Formatter visitInvocation(JSInvocationExpression value)
+	private CodeWriter visitInvocation(JSInvocationExpression value)
 			throws IOException {
 		f.expression(value.getBase());
 
 		f.openRoundBracket();
 
-		final Formatter fi = f.indented();
+		final CodeWriter fi = f.indented();
 		List<JSAssignmentExpression> args = value.getArgs();
 
 		for (int index = 0; index < args.size(); index++) {
@@ -224,24 +224,24 @@ public class ExpressionWriter implements
 	}
 
 	@Override
-	public Formatter visitMemberCall(MemberCall value) throws IOException {
+	public CodeWriter visitMemberCall(MemberCall value) throws IOException {
 		return visitInvocation(value);
 	}
 
 	@Override
-	public Formatter visitNew(New value) throws IOException {
+	public CodeWriter visitNew(New value) throws IOException {
 		f.keyword("new").whiteSpace();
 		f.expression(value.getBase());
 		return f;
 	}
 
 	@Override
-	public Formatter visitCallArgs(CallArgs value) throws IOException {
+	public CodeWriter visitCallArgs(CallArgs value) throws IOException {
 		return visitInvocation(value);
 	}
 
 	@Override
-	public Formatter visitCallElement(CallElement value) throws IOException {
+	public CodeWriter visitCallElement(CallElement value) throws IOException {
 		f.expression(value.getBase());
 		f.openSquareBracket();
 		f.indented().expression(value.getIndex());
@@ -250,7 +250,7 @@ public class ExpressionWriter implements
 	}
 
 	@Override
-	public Formatter visitCallProperty(CallProperty value) throws IOException {
+	public CodeWriter visitCallProperty(CallProperty value) throws IOException {
 		f.expression(value.getBase());
 		f.dot();
 		f.indented().propertyName(value.getName());
@@ -258,72 +258,72 @@ public class ExpressionWriter implements
 	}
 
 	@Override
-	public Formatter visitPostfix(Postfix value) throws IOException {
+	public CodeWriter visitPostfix(Postfix value) throws IOException {
 		f.expression(value.getBase());
 		f.operator(value.getOperator());
 		return f;
 	}
 
 	@Override
-	public Formatter visitUnary(Unary value) throws IOException {
+	public CodeWriter visitUnary(Unary value) throws IOException {
 		f.operator(value.getOperator());
 		f.expression(value.getBase());
 		return f;
 	}
 
 	@Override
-	public Formatter visitMultiplicative(Multiplicative value)
+	public CodeWriter visitMultiplicative(Multiplicative value)
 			throws IOException {
 		return visitBinaryExpression(value);
 	}
 
 	@Override
-	public Formatter visitAdditive(Additive value) throws IOException {
+	public CodeWriter visitAdditive(Additive value) throws IOException {
 		return visitBinaryExpression(value);
 	}
 
 	@Override
-	public Formatter visitShift(Shift value) throws IOException {
+	public CodeWriter visitShift(Shift value) throws IOException {
 		return visitBinaryExpression(value);
 	}
 
 	@Override
-	public Formatter visitRelational(Relational value) throws IOException {
+	public CodeWriter visitRelational(Relational value) throws IOException {
 		return visitBinaryExpression(value);
 	}
 
 	@Override
-	public Formatter visitEquality(Equality value) throws IOException {
+	public CodeWriter visitEquality(Equality value) throws IOException {
 		return visitBinaryExpression(value);
 	}
 
 	@Override
-	public Formatter visitBand(Band value) throws IOException {
+	public CodeWriter visitBand(Band value) throws IOException {
 		return visitBinaryExpression(value);
 	}
 
 	@Override
-	public Formatter visitXor(Xor value) throws IOException {
+	public CodeWriter visitXor(Xor value) throws IOException {
 		return visitBinaryExpression(value);
 	}
 
 	@Override
-	public Formatter visitBor(Bor value) throws IOException {
+	public CodeWriter visitBor(Bor value) throws IOException {
 		return visitBinaryExpression(value);
 	}
 
 	@Override
-	public Formatter visitAnd(And value) throws IOException {
+	public CodeWriter visitAnd(And value) throws IOException {
 		return visitBinaryExpression(value);
 	}
 
 	@Override
-	public Formatter visitOr(Or value) throws IOException {
+	public CodeWriter visitOr(Or value) throws IOException {
 		return visitBinaryExpression(value);
 	}
 
 	@Override
-	public Formatter visitConditional(Conditional value) throws IOException {
+	public CodeWriter visitConditional(Conditional value) throws IOException {
 		f.expression(value.getCondition());
 		f.whiteSpace();
 		f.questionMark();
@@ -337,19 +337,19 @@ public class ExpressionWriter implements
 	}
 
 	@Override
-	public Formatter visitAssignment(Assignment value) throws IOException {
+	public CodeWriter visitAssignment(Assignment value) throws IOException {
 		return visitBinaryExpression(value);
 	}
 
 	@Override
-	public Formatter visitComma(Comma value) throws IOException {
+	public CodeWriter visitComma(Comma value) throws IOException {
 		f.expression(value.getLeft());
 		f.comma().whiteSpace();
 		f.indented().expression(value.getRight());
 		return f;
 	}
 
-	private Formatter visitBinaryExpression(JSBinaryExpression value)
+	private CodeWriter visitBinaryExpression(JSBinaryExpression value)
 			throws IOException {
 		f.expression(value.getLeft());
 		f.operator(value.getOperator());

@@ -11,38 +11,38 @@ import org.hisrc.jscm.codemodel.literal.JSNullLiteral;
 import org.hisrc.jscm.codemodel.literal.JSStringLiteral;
 
 public class LiteralWriter implements
-		JSLiteralVisitor<Formatter, IOException> {
+		JSLiteralVisitor<CodeWriter, IOException> {
 
-	private final Formatter f;
+	private final CodeWriter f;
 
-	public LiteralWriter(Formatter formatter) {
+	public LiteralWriter(CodeWriter formatter) {
 		Validate.notNull(formatter);
 		this.f = formatter;
 	}
 
 	@Override
-	public Formatter visit(JSStringLiteral value) throws IOException {
+	public CodeWriter visit(JSStringLiteral value) throws IOException {
 
 		return f.string(value.asString());
 	}
 
 	@Override
-	public Formatter visit(JSNullLiteral value) throws IOException {
+	public CodeWriter visit(JSNullLiteral value) throws IOException {
 		return f._null();
 	}
 
 	@Override
-	public Formatter visit(JSBooleanLiteral value) throws IOException {
+	public CodeWriter visit(JSBooleanLiteral value) throws IOException {
 		return f._boolean(value.asBoolean());
 	}
 
 	@Override
-	public Formatter visit(JSDecimalIntegerLiteral value) throws IOException {
+	public CodeWriter visit(JSDecimalIntegerLiteral value) throws IOException {
 		return f.decimal(value.asDecimal());
 	}
 
 	@Override
-	public Formatter visit(JSDecimalNonIntegerLiteral value)
+	public CodeWriter visit(JSDecimalNonIntegerLiteral value)
 			throws IOException {
 		return f.decimal(value.asDecimal());
 	}
