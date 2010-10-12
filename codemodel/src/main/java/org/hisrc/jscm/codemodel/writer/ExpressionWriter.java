@@ -164,11 +164,9 @@ public class ExpressionWriter implements
 		final List<JSSourceElement> sourceElements = value.getBody()
 				.getSourceElements();
 		for (int index = 0; index < sourceElements.size(); index++) {
-			if (index > 0) {
-				fi.lineTerminator();
-			}
 			final JSSourceElement sourceElement = sourceElements.get(index);
 			fi.sourceElement(sourceElement);
+			fi.lineTerminator();
 		}
 
 		f.closeCurlyBracket();

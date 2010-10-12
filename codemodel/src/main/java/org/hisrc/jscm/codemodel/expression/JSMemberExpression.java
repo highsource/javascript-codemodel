@@ -17,6 +17,8 @@ public interface JSMemberExpression extends JSNewExpression {
 
 	public JSCallExpression.MemberCall invoke();
 
+	public JSCallExpression.MemberCall invoke(String name);
+
 	public interface Member extends JSMemberExpression {
 		public JSMemberExpression getBase();
 	}

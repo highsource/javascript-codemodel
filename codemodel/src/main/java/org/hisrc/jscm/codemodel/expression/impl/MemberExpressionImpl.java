@@ -13,6 +13,7 @@ import org.hisrc.jscm.codemodel.expression.JSCallExpression;
 import org.hisrc.jscm.codemodel.expression.JSExpression;
 import org.hisrc.jscm.codemodel.expression.JSExpressionVisitor;
 import org.hisrc.jscm.codemodel.expression.JSMemberExpression;
+import org.hisrc.jscm.codemodel.expression.JSCallExpression.MemberCall;
 import org.hisrc.jscm.codemodel.impl.IdentifierNameImpl;
 
 public abstract class MemberExpressionImpl extends NewExpressionImpl implements
@@ -25,6 +26,12 @@ public abstract class MemberExpressionImpl extends NewExpressionImpl implements
 	@Override
 	public JSCallExpression.MemberCall invoke() {
 		return new CallExpressionImpl.MemberCallImpl(getCodeModel(), this);
+	}
+
+	@Override
+	public MemberCall invoke(String name) {
+		Validate.notNull(name);
+		return property(name).invoke();
 	}
 
 	@Override

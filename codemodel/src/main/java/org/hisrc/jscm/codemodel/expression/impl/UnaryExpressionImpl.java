@@ -52,7 +52,7 @@ public abstract class UnaryExpressionImpl extends MultiplicativeExpressionImpl
 	public JSUnaryExpression.Unary not() {
 		return new UnaryImpl(getCodeModel(), this, UnaryOperator.NOT);
 	}
-
+	
 	public static class UnaryImpl extends UnaryExpressionImpl implements Unary {
 
 		private final JSUnaryExpression base;
