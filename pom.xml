@@ -17,7 +17,7 @@
 	</parent>
 	<issueManagement>
 		<system>JIRA</system>
-		<url>http://jira.highsource.org/browse/JNLP</url>
+		<url>http://jira.highsource.org/browse/JSCM</url>
 	</issueManagement>
 	<inceptionYear>2010</inceptionYear>
 	<developers>
