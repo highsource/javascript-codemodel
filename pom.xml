@@ -7,7 +7,7 @@
 	<artifactId>js-codemodel-project</artifactId>
 	<packaging>pom</packaging>
 	<version>1.0-SNAPSHOT</version>
-	<name>JavaScript Codemodel Project</name>
+	<name>JavaScript Code Model Project</name>
 	<description>JavaScript Code Model Project provides a Java API for programmatic creation and manipulation of JavaScript source code.</description>
 	<url>http://static.highsource.org/jscm/</url>
 	<parent>
