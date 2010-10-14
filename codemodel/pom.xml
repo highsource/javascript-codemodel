@@ -26,6 +26,26 @@
 	<build>
 		<defaultGoal>install</defaultGoal>
 		<plugins>
+			<plugin> 
+				<groupId>org.apache.maven.plugins</groupId> 
+				<artifactId>maven-javadoc-plugin</artifactId> 
+				<version>2.5</version> 
+				<executions> 
+					<execution> 
+						<id>attach-javadocs</id> 
+						<goals> 
+							<goal>jar</goal> 
+						</goals> 
+						<configuration>
+							<minmemory>128m</minmemory>
+							<maxmemory>1g</maxmemory>
+							<additionalJOption>-J-verbose:gc</additionalJOption>
+							<!--quiet>true</quiet-->
+							<notree>true</notree>
+						</configuration>
+					</execution> 
+				</executions> 
+			</plugin> 
 			<plugin>
 				<groupId>org.codehaus.mojo</groupId>
 				<artifactId>cobertura-maven-plugin</artifactId>
