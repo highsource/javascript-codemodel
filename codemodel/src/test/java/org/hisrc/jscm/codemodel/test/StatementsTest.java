@@ -54,10 +54,10 @@ public class StatementsTest {
 			body.block().block().block().block().debugger();
 		}
 		{
-			body.variable("a").getVariable();
-			body.variable("b", codeModel.string("b"));
+			body.var("a").getVariable();
+			body.var("b", codeModel.string("b"));
 
-			body.variable("c", codeModel.string("c")).comma("d")
+			body.var("c", codeModel.string("c")).comma("d")
 					.comma("e", codeModel.string("e"));
 		}
 		body.empty();

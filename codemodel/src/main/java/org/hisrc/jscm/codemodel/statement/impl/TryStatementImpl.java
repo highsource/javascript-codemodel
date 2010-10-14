@@ -1,9 +1,9 @@
 package org.hisrc.jscm.codemodel.statement.impl;
 
-import org.apache.commons.lang.Validate;
 import org.hisrc.jscm.codemodel.JSCodeModel;
 import org.hisrc.jscm.codemodel.expression.JSVariable;
 import org.hisrc.jscm.codemodel.expression.impl.VariableImpl;
+import org.hisrc.jscm.codemodel.lang.Validate;
 import org.hisrc.jscm.codemodel.statement.JSBlock;
 import org.hisrc.jscm.codemodel.statement.JSStatementVisitor;
 import org.hisrc.jscm.codemodel.statement.JSTryStatement;
@@ -36,14 +36,17 @@ public class TryStatementImpl extends StatementImpl implements JSTryStatement {
 		}
 	}
 
+	@Override
 	public JSBlock getBody() {
 		return _try;
 	}
 
+	@Override
 	public JSBlock getCatch() {
 		return _catch;
 	}
 
+	@Override
 	public JSBlock getFinally() {
 		return _finally;
 	}

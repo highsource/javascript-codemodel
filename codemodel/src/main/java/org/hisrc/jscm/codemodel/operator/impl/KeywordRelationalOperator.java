@@ -1,6 +1,6 @@
 package org.hisrc.jscm.codemodel.operator.impl;
 
-import org.apache.commons.lang.Validate;
+import org.hisrc.jscm.codemodel.lang.Validate;
 import org.hisrc.jscm.codemodel.operator.JSKeywordBinaryOperator;
 import org.hisrc.jscm.codemodel.operator.JSOperatorVisitor;
 

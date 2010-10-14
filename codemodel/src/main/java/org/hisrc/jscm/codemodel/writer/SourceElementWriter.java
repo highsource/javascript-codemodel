@@ -3,11 +3,11 @@ package org.hisrc.jscm.codemodel.writer;
 import java.io.IOException;
 import java.util.List;
 
-import org.apache.commons.lang.Validate;
 import org.hisrc.jscm.codemodel.JSFunctionDeclaration;
 import org.hisrc.jscm.codemodel.JSSourceElement;
 import org.hisrc.jscm.codemodel.JSSourceElementVisitor;
 import org.hisrc.jscm.codemodel.expression.JSVariable;
+import org.hisrc.jscm.codemodel.lang.Validate;
 import org.hisrc.jscm.codemodel.statement.JSStatement;
 
 public class SourceElementWriter implements

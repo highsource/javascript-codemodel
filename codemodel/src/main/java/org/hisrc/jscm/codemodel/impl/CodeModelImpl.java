@@ -5,7 +5,6 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.apache.commons.lang.Validate;
 import org.hisrc.jscm.codemodel.JSCodeModel;
 import org.hisrc.jscm.codemodel.JSProgram;
 import org.hisrc.jscm.codemodel.expression.JSArrayLiteral;
@@ -18,6 +17,7 @@ import org.hisrc.jscm.codemodel.expression.impl.FunctionExpressionImpl;
 import org.hisrc.jscm.codemodel.expression.impl.GlobalVariableImpl;
 import org.hisrc.jscm.codemodel.expression.impl.ObjectLiteralImpl;
 import org.hisrc.jscm.codemodel.expression.impl.ThisImpl;
+import org.hisrc.jscm.codemodel.lang.Validate;
 import org.hisrc.jscm.codemodel.literal.JSBooleanLiteral;
 import org.hisrc.jscm.codemodel.literal.JSDecimalIntegerLiteral;
 import org.hisrc.jscm.codemodel.literal.JSDecimalNonIntegerLiteral;

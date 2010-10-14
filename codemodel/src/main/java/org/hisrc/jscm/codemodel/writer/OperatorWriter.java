@@ -2,8 +2,8 @@ package org.hisrc.jscm.codemodel.writer;
 
 import java.io.IOException;
 
-import org.apache.commons.lang.Validate;
 import org.hisrc.jscm.codemodel.io.IndentedAppendable;
+import org.hisrc.jscm.codemodel.lang.Validate;
 import org.hisrc.jscm.codemodel.operator.JSAssignmentOperator;
 import org.hisrc.jscm.codemodel.operator.JSBinaryOperator;
 import org.hisrc.jscm.codemodel.operator.JSKeywordBinaryOperator;

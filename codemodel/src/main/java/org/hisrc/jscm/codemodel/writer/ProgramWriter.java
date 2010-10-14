@@ -2,10 +2,10 @@ package org.hisrc.jscm.codemodel.writer;
 
 import java.io.IOException;
 
-import org.apache.commons.lang.Validate;
 import org.hisrc.jscm.codemodel.JSProgram;
 import org.hisrc.jscm.codemodel.JSProgramVisitor;
 import org.hisrc.jscm.codemodel.JSSourceElement;
+import org.hisrc.jscm.codemodel.lang.Validate;
 
 public class ProgramWriter implements JSProgramVisitor<CodeWriter, IOException> {
 

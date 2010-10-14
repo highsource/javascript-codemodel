@@ -5,11 +5,11 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-import org.apache.commons.lang.Validate;
 import org.hisrc.jscm.codemodel.JSCodeModel;
 import org.hisrc.jscm.codemodel.expression.JSArrayLiteral;
 import org.hisrc.jscm.codemodel.expression.JSAssignmentExpression;
 import org.hisrc.jscm.codemodel.expression.JSExpressionVisitor;
+import org.hisrc.jscm.codemodel.lang.Validate;
 
 public class ArrayLiteralImpl extends PrimaryExpressionImpl implements
 		JSArrayLiteral {

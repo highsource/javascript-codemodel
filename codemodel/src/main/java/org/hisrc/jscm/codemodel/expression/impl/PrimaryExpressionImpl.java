@@ -1,10 +1,10 @@
 package org.hisrc.jscm.codemodel.expression.impl;
 
-import org.apache.commons.lang.Validate;
 import org.hisrc.jscm.codemodel.JSCodeModel;
 import org.hisrc.jscm.codemodel.expression.JSExpression;
 import org.hisrc.jscm.codemodel.expression.JSExpressionVisitor;
 import org.hisrc.jscm.codemodel.expression.JSPrimaryExpression;
+import org.hisrc.jscm.codemodel.lang.Validate;
 
 public abstract class PrimaryExpressionImpl extends MemberExpressionImpl
 		implements JSPrimaryExpression {

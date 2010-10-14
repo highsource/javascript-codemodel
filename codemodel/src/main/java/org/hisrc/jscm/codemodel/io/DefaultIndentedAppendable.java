@@ -1,6 +1,6 @@
 package org.hisrc.jscm.codemodel.io;
 
-import org.apache.commons.lang.Validate;
+import org.hisrc.jscm.codemodel.lang.Validate;
 
 public class DefaultIndentedAppendable extends AbstractIndentedAppendable {
 

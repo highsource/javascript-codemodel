@@ -9,9 +9,9 @@ public interface JSStatementGenerator {
 
 	public JSBlock block();
 
-	public JSVariableStatement variable(String name);
+	public JSVariableStatement var(String name);
 
-	public JSVariableStatement variable(String name,
+	public JSVariableStatement var(String name,
 			JSAssignmentExpression expression);
 
 	public JSEmptyStatement empty();

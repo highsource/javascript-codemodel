@@ -1,9 +1,9 @@
 package org.hisrc.jscm.codemodel.statement.impl;
 
-import org.apache.commons.lang.Validate;
 import org.hisrc.jscm.codemodel.JSCodeModel;
 import org.hisrc.jscm.codemodel.expression.JSExpression;
 import org.hisrc.jscm.codemodel.expression.JSLeftHandSideExpression;
+import org.hisrc.jscm.codemodel.lang.Validate;
 import org.hisrc.jscm.codemodel.statement.JSForInStatement;
 import org.hisrc.jscm.codemodel.statement.JSStatementVisitor;
 

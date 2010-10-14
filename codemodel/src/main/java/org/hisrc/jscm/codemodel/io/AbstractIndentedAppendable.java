@@ -2,7 +2,7 @@ package org.hisrc.jscm.codemodel.io;
 
 import java.io.IOException;
 
-import org.apache.commons.lang.Validate;
+import org.hisrc.jscm.codemodel.lang.Validate;
 
 public abstract class AbstractIndentedAppendable implements IndentedAppendable {
 
@@ -36,12 +36,14 @@ public abstract class AbstractIndentedAppendable implements IndentedAppendable {
 		}
 	}
 
+	@Override
 	public IndentedAppendable append(CharSequence str) throws IOException {
 		pre();
 		appendable.append(str);
 		return this;
 	}
 
+	@Override
 	public IndentedAppendable append(CharSequence charSequence, int start,
 			int end) throws IOException {
 		pre();
@@ -49,12 +51,14 @@ public abstract class AbstractIndentedAppendable implements IndentedAppendable {
 		return this;
 	}
 
+	@Override
 	public synchronized IndentedAppendable append(char c) throws IOException {
 		pre();
 		appendable.append(c);
 		return this;
 	}
 
+	@Override
 	public IndentedAppendable indent(final CharSequence indentation) {
 		Validate.notNull(indentation);
 		final CharSequence _indentation = indentation;
@@ -90,11 +94,13 @@ public abstract class AbstractIndentedAppendable implements IndentedAppendable {
 		};
 	}
 
+	@Override
 	public IndentedAppendable whiteSpace() {
 		setWhiteSpace(true);
 		return this;
 	}
 
+	@Override
 	public IndentedAppendable lineTerminator() {
 		setLineTerminator(true);
 		return this;

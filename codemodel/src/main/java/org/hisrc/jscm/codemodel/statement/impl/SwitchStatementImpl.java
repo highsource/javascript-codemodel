@@ -4,9 +4,9 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import org.apache.commons.lang.Validate;
 import org.hisrc.jscm.codemodel.JSCodeModel;
 import org.hisrc.jscm.codemodel.expression.JSExpression;
+import org.hisrc.jscm.codemodel.lang.Validate;
 import org.hisrc.jscm.codemodel.statement.JSStatement;
 import org.hisrc.jscm.codemodel.statement.JSStatementVisitor;
 import org.hisrc.jscm.codemodel.statement.JSSwitchStatement;

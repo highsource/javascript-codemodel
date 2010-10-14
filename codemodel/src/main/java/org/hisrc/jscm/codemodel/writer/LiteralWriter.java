@@ -2,7 +2,7 @@ package org.hisrc.jscm.codemodel.writer;
 
 import java.io.IOException;
 
-import org.apache.commons.lang.Validate;
+import org.hisrc.jscm.codemodel.lang.Validate;
 import org.hisrc.jscm.codemodel.literal.JSBooleanLiteral;
 import org.hisrc.jscm.codemodel.literal.JSDecimalIntegerLiteral;
 import org.hisrc.jscm.codemodel.literal.JSDecimalNonIntegerLiteral;

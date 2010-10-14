@@ -1,10 +1,10 @@
 package org.hisrc.jscm.codemodel.statement.impl;
 
-import org.apache.commons.lang.Validate;
 import org.hisrc.jscm.codemodel.JSCodeModel;
 import org.hisrc.jscm.codemodel.expression.JSExpression;
 import org.hisrc.jscm.codemodel.expression.JSVariable;
 import org.hisrc.jscm.codemodel.expression.impl.VariableImpl;
+import org.hisrc.jscm.codemodel.lang.Validate;
 import org.hisrc.jscm.codemodel.statement.JSForVarInStatement;
 import org.hisrc.jscm.codemodel.statement.JSStatementVisitor;
 

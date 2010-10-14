@@ -2,9 +2,9 @@ package org.hisrc.jscm.codemodel.writer;
 
 import java.io.IOException;
 
-import org.apache.commons.lang.Validate;
 import org.hisrc.jscm.codemodel.JSIdentifierName;
 import org.hisrc.jscm.codemodel.JSPropertyNameVisitor;
+import org.hisrc.jscm.codemodel.lang.Validate;
 import org.hisrc.jscm.codemodel.literal.JSNumericLiteral;
 import org.hisrc.jscm.codemodel.literal.JSStringLiteral;
 

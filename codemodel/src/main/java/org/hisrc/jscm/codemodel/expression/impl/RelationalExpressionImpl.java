@@ -1,10 +1,10 @@
 package org.hisrc.jscm.codemodel.expression.impl;
 
-import org.apache.commons.lang.Validate;
 import org.hisrc.jscm.codemodel.JSCodeModel;
 import org.hisrc.jscm.codemodel.expression.JSExpressionVisitor;
 import org.hisrc.jscm.codemodel.expression.JSRelationalExpression;
 import org.hisrc.jscm.codemodel.expression.JSShiftExpression;
+import org.hisrc.jscm.codemodel.lang.Validate;
 import org.hisrc.jscm.codemodel.operator.JSBinaryOperator;
 import org.hisrc.jscm.codemodel.operator.impl.KeywordRelationalOperator;
 import org.hisrc.jscm.codemodel.operator.impl.RelationalOperator;

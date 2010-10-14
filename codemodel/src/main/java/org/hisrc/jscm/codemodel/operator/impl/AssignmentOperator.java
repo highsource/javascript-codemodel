@@ -1,6 +1,6 @@
 package org.hisrc.jscm.codemodel.operator.impl;
 
-import org.apache.commons.lang.Validate;
+import org.hisrc.jscm.codemodel.lang.Validate;
 import org.hisrc.jscm.codemodel.operator.JSAssignmentOperator;
 import org.hisrc.jscm.codemodel.operator.JSOperatorVisitor;
 
@@ -17,6 +17,7 @@ public enum AssignmentOperator implements JSAssignmentOperator {
 		this.operatorAsString = operatorAsString;
 	}
 
+	@Override
 	public String asString() {
 		return operatorAsString;
 	}

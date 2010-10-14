@@ -3,7 +3,7 @@ package org.hisrc.jscm.codemodel.writer;
 import java.io.IOException;
 import java.util.List;
 
-import org.apache.commons.lang.Validate;
+import org.hisrc.jscm.codemodel.lang.Validate;
 import org.hisrc.jscm.codemodel.operator.impl.AssignmentOperator;
 import org.hisrc.jscm.codemodel.statement.JSBlock;
 import org.hisrc.jscm.codemodel.statement.JSBreakStatement;

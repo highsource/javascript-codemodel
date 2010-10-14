@@ -1,10 +1,10 @@
 package org.hisrc.jscm.codemodel.expression.impl;
 
-import org.apache.commons.lang.Validate;
 import org.hisrc.jscm.codemodel.JSCodeModel;
 import org.hisrc.jscm.codemodel.expression.JSExpressionVisitor;
 import org.hisrc.jscm.codemodel.expression.JSMultiplicativeExpression;
 import org.hisrc.jscm.codemodel.expression.JSUnaryExpression;
+import org.hisrc.jscm.codemodel.lang.Validate;
 import org.hisrc.jscm.codemodel.operator.impl.MultiplicativeOperator;
 
 public abstract class MultiplicativeExpressionImpl extends

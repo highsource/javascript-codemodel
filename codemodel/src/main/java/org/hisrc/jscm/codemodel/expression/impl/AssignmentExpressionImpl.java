@@ -1,10 +1,10 @@
 package org.hisrc.jscm.codemodel.expression.impl;
 
-import org.apache.commons.lang.Validate;
 import org.hisrc.jscm.codemodel.JSCodeModel;
 import org.hisrc.jscm.codemodel.expression.JSAssignmentExpression;
 import org.hisrc.jscm.codemodel.expression.JSExpressionVisitor;
 import org.hisrc.jscm.codemodel.expression.JSLeftHandSideExpression;
+import org.hisrc.jscm.codemodel.lang.Validate;
 import org.hisrc.jscm.codemodel.operator.impl.AssignmentOperator;
 
 public abstract class AssignmentExpressionImpl extends ExpressionImpl implements
@@ -21,8 +21,9 @@ public abstract class AssignmentExpressionImpl extends ExpressionImpl implements
 		private final JSAssignmentExpression right;
 		private final AssignmentOperator operator;
 
-		public AssignmentImpl(JSCodeModel codeModel, JSLeftHandSideExpression left,
-				JSAssignmentExpression right, AssignmentOperator operator) {
+		public AssignmentImpl(JSCodeModel codeModel,
+				JSLeftHandSideExpression left, JSAssignmentExpression right,
+				AssignmentOperator operator) {
 			super(codeModel);
 			Validate.notNull(left);
 			Validate.notNull(right);
@@ -33,14 +34,17 @@ public abstract class AssignmentExpressionImpl extends ExpressionImpl implements
 
 		}
 
+		@Override
 		public JSLeftHandSideExpression getLeft() {
 			return left;
 		}
 
+		@Override
 		public JSAssignmentExpression getRight() {
 			return right;
 		}
 
+		@Override
 		public AssignmentOperator getOperator() {
 			return operator;
 		}

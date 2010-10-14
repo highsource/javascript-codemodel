@@ -31,7 +31,7 @@ public class PrototypeExampleTest {
 		JSGlobalVariable $document = codeModel.globalVariable("document");
 
 		JSObjectLiteral _Prototype = codeModel.object();
-		program.variable("Prototype", _Prototype);
+		program.var("Prototype", _Prototype);
 
 		{
 			_Prototype.append("Version", codeModel.string("1.6.1"));
@@ -39,9 +39,9 @@ public class PrototypeExampleTest {
 		{
 			final Function function = codeModel.function();
 			JSFunctionBody body = function.getBody();
-			JSVariable $ua = body.variable("ua",
+			JSVariable $ua = body.var("ua",
 					$navigator.p("userAgent")).getVariable();
-			JSVariable $isOpera = body.variable(
+			JSVariable $isOpera = body.var(
 					"isOpera",
 					$Object.p("prototype").p("toString")
 							.i("call").args($window.p("opera"))
@@ -85,7 +85,7 @@ public class PrototypeExampleTest {
 
 				JSVariable $constructor = _ElementExtensions
 						.getBody()
-						.variable(
+						.var(
 								"constructor",
 								$window.p("Element").or(
 										$window.p("HTMLElement")))
@@ -106,16 +106,16 @@ public class PrototypeExampleTest {
 						.nee(codeModel.string("undefined")))._then()
 						._return(codeModel._boolean(true));
 
-				JSVariable $div = b.variable(
+				JSVariable $div = b.var(
 						"div",
 						$document.i("createElement").args(
 								codeModel.string("div"))).getVariable();
-				JSVariable $form = b.variable(
+				JSVariable $form = b.var(
 						"form",
 						$document.i("createElement").args(
 								codeModel.string("form"))).getVariable();
 
-				JSVariable $isSupported = b.variable("isSupported",
+				JSVariable $isSupported = b.var("isSupported",
 						codeModel._boolean(false)).getVariable();
 
 				b._if($div.e(codeModel.string("__proto__")).and(

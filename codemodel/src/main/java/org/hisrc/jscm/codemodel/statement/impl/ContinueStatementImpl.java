@@ -1,10 +1,10 @@
 package org.hisrc.jscm.codemodel.statement.impl;
 
-import org.apache.commons.lang.Validate;
 import org.hisrc.jscm.codemodel.JSCodeModel;
+import org.hisrc.jscm.codemodel.lang.Validate;
 import org.hisrc.jscm.codemodel.statement.JSContinueStatement;
-import org.hisrc.jscm.codemodel.statement.JSStatementVisitor;
 import org.hisrc.jscm.codemodel.statement.JSLabelledStatement.JSLabel;
+import org.hisrc.jscm.codemodel.statement.JSStatementVisitor;
 
 public class ContinueStatementImpl extends StatementImpl implements
 		JSContinueStatement {

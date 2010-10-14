@@ -3,7 +3,6 @@ package org.hisrc.jscm.codemodel.writer;
 import java.io.IOException;
 import java.util.List;
 
-import org.apache.commons.lang.Validate;
 import org.hisrc.jscm.codemodel.JSPropertyName;
 import org.hisrc.jscm.codemodel.JSSourceElement;
 import org.hisrc.jscm.codemodel.expression.JSAdditiveExpression.Additive;
@@ -42,6 +41,7 @@ import org.hisrc.jscm.codemodel.expression.JSShiftExpression.Shift;
 import org.hisrc.jscm.codemodel.expression.JSThis;
 import org.hisrc.jscm.codemodel.expression.JSUnaryExpression.Unary;
 import org.hisrc.jscm.codemodel.expression.JSVariable;
+import org.hisrc.jscm.codemodel.lang.Validate;
 import org.hisrc.jscm.codemodel.literal.JSLiteral;
 
 public class ExpressionWriter implements

@@ -1,10 +1,10 @@
 package org.hisrc.jscm.codemodel.expression.impl;
 
-import org.apache.commons.lang.Validate;
 import org.hisrc.jscm.codemodel.JSCodeModel;
 import org.hisrc.jscm.codemodel.expression.JSAdditiveExpression;
 import org.hisrc.jscm.codemodel.expression.JSExpressionVisitor;
 import org.hisrc.jscm.codemodel.expression.JSShiftExpression;
+import org.hisrc.jscm.codemodel.lang.Validate;
 import org.hisrc.jscm.codemodel.operator.impl.ShiftOperator;
 
 public abstract class ShiftExpressionImpl extends RelationalExpressionImpl
@@ -14,14 +14,17 @@ public abstract class ShiftExpressionImpl extends RelationalExpressionImpl
 		super(codeModel);
 	}
 
+	@Override
 	public Shift shl(JSAdditiveExpression value) {
 		return new ShiftImpl(getCodeModel(), this, value, ShiftOperator.SHL);
 	}
 
+	@Override
 	public Shift shr(JSAdditiveExpression value) {
 		return new ShiftImpl(getCodeModel(), this, value, ShiftOperator.SHR);
 	}
 
+	@Override
 	public Shift shrz(JSAdditiveExpression value) {
 		return new ShiftImpl(getCodeModel(), this, value, ShiftOperator.SHRZ);
 	}
@@ -43,14 +46,17 @@ public abstract class ShiftExpressionImpl extends RelationalExpressionImpl
 			this.operator = operator;
 		}
 
+		@Override
 		public JSShiftExpression getLeft() {
 			return left;
 		}
 
+		@Override
 		public JSAdditiveExpression getRight() {
 			return right;
 		}
 
+		@Override
 		public ShiftOperator getOperator() {
 			return operator;
 		}

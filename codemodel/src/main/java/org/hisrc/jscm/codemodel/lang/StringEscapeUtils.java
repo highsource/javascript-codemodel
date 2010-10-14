@@ -4,6 +4,9 @@ import java.util.Locale;
 
 public class StringEscapeUtils {
 
+	private StringEscapeUtils() {
+	}
+
 	public static final String escapeEcmaScript(String string) {
 		if (string == null) {
 			return null;

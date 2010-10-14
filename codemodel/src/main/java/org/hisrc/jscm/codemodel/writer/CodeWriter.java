@@ -3,7 +3,6 @@ package org.hisrc.jscm.codemodel.writer;
 import java.io.IOException;
 import java.math.BigDecimal;
 
-import org.apache.commons.lang.Validate;
 import org.hisrc.jscm.codemodel.JSProgram;
 import org.hisrc.jscm.codemodel.JSPropertyName;
 import org.hisrc.jscm.codemodel.JSSourceElement;
@@ -11,6 +10,7 @@ import org.hisrc.jscm.codemodel.expression.JSExpression;
 import org.hisrc.jscm.codemodel.io.DefaultIndentedAppendable;
 import org.hisrc.jscm.codemodel.io.IndentedAppendable;
 import org.hisrc.jscm.codemodel.lang.StringEscapeUtils;
+import org.hisrc.jscm.codemodel.lang.Validate;
 import org.hisrc.jscm.codemodel.literal.JSLiteral;
 import org.hisrc.jscm.codemodel.operator.JSOperator;
 import org.hisrc.jscm.codemodel.statement.JSBlock;

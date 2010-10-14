@@ -1,10 +1,10 @@
 package org.hisrc.jscm.codemodel.statement.impl;
 
-import org.apache.commons.lang.Validate;
 import org.hisrc.jscm.codemodel.JSCodeModel;
 import org.hisrc.jscm.codemodel.expression.JSAssignmentExpression;
 import org.hisrc.jscm.codemodel.expression.JSExpression;
 import org.hisrc.jscm.codemodel.expression.JSLeftHandSideExpression;
+import org.hisrc.jscm.codemodel.lang.Validate;
 import org.hisrc.jscm.codemodel.statement.JSBlock;
 import org.hisrc.jscm.codemodel.statement.JSBreakStatement;
 import org.hisrc.jscm.codemodel.statement.JSContinueStatement;
@@ -50,12 +50,12 @@ public abstract class StatementGeneratorImpl implements JSStatementGenerator {
 	}
 
 	@Override
-	public JSVariableStatement variable(String name) {
+	public JSVariableStatement var(String name) {
 		return add(new VariableStatementImpl(getCodeModel(), name));
 	}
 
 	@Override
-	public JSVariableStatement variable(String name,
+	public JSVariableStatement var(String name,
 			JSAssignmentExpression expression) {
 		return add(new VariableStatementImpl(getCodeModel(), name, expression));
 	}

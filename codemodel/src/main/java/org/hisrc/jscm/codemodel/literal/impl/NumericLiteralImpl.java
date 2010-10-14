@@ -1,8 +1,8 @@
 package org.hisrc.jscm.codemodel.literal.impl;
 
-import org.apache.commons.lang.Validate;
 import org.hisrc.jscm.codemodel.JSCodeModel;
 import org.hisrc.jscm.codemodel.JSPropertyNameVisitor;
+import org.hisrc.jscm.codemodel.lang.Validate;
 import org.hisrc.jscm.codemodel.literal.JSNumericLiteral;
 
 public abstract class NumericLiteralImpl extends LiteralImpl implements

@@ -1,10 +1,10 @@
 package org.hisrc.jscm.codemodel.expression.impl;
 
-import org.apache.commons.lang.Validate;
 import org.hisrc.jscm.codemodel.JSCodeModel;
 import org.hisrc.jscm.codemodel.expression.JSAdditiveExpression;
 import org.hisrc.jscm.codemodel.expression.JSExpressionVisitor;
 import org.hisrc.jscm.codemodel.expression.JSMultiplicativeExpression;
+import org.hisrc.jscm.codemodel.lang.Validate;
 import org.hisrc.jscm.codemodel.operator.impl.AdditiveOperator;
 
 public abstract class AdditiveExpressionImpl extends ShiftExpressionImpl
@@ -14,11 +14,13 @@ public abstract class AdditiveExpressionImpl extends ShiftExpressionImpl
 		super(codeModel);
 	}
 
+	@Override
 	public Additive plus(JSMultiplicativeExpression value) {
 		return new AdditiveImpl(getCodeModel(), this, value,
 				AdditiveOperator.PLUS);
 	}
 
+	@Override
 	public Additive minus(JSMultiplicativeExpression value) {
 		return new AdditiveImpl(getCodeModel(), this, value,
 				AdditiveOperator.MINUS);
@@ -42,14 +44,17 @@ public abstract class AdditiveExpressionImpl extends ShiftExpressionImpl
 			this.operator = operator;
 		}
 
+		@Override
 		public JSAdditiveExpression getLeft() {
 			return left;
 		}
 
+		@Override
 		public JSMultiplicativeExpression getRight() {
 			return right;
 		}
 
+		@Override
 		public AdditiveOperator getOperator() {
 			return operator;
 		}
