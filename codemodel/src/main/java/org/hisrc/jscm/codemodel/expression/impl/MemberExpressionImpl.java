@@ -10,10 +10,10 @@ import org.hisrc.jscm.codemodel.JSCodeModel;
 import org.hisrc.jscm.codemodel.JSPropertyName;
 import org.hisrc.jscm.codemodel.expression.JSAssignmentExpression;
 import org.hisrc.jscm.codemodel.expression.JSCallExpression;
+import org.hisrc.jscm.codemodel.expression.JSCallExpression.MemberCall;
 import org.hisrc.jscm.codemodel.expression.JSExpression;
 import org.hisrc.jscm.codemodel.expression.JSExpressionVisitor;
 import org.hisrc.jscm.codemodel.expression.JSMemberExpression;
-import org.hisrc.jscm.codemodel.expression.JSCallExpression.MemberCall;
 import org.hisrc.jscm.codemodel.impl.IdentifierNameImpl;
 
 public abstract class MemberExpressionImpl extends NewExpressionImpl implements
@@ -24,6 +24,11 @@ public abstract class MemberExpressionImpl extends NewExpressionImpl implements
 	}
 
 	@Override
+	public JSCallExpression.MemberCall i() {
+		return invoke();
+	}
+
+	@Override
 	public JSCallExpression.MemberCall invoke() {
 		return new CallExpressionImpl.MemberCallImpl(getCodeModel(), this);
 	}
@@ -31,7 +36,17 @@ public abstract class MemberExpressionImpl extends NewExpressionImpl implements
 	@Override
 	public MemberCall invoke(String name) {
 		Validate.notNull(name);
-		return property(name).invoke();
+		return p(name).i();
+	}
+
+	@Override
+	public MemberCall i(String name) {
+		return invoke(name);
+	}
+
+	@Override
+	public MemberElement e(JSExpression index) {
+		return element(index);
 	}
 
 	@Override
@@ -40,8 +55,18 @@ public abstract class MemberExpressionImpl extends NewExpressionImpl implements
 	}
 
 	@Override
+	public MemberProperty p(JSPropertyName name) {
+		return property(name);
+	}
+
+	@Override
 	public MemberProperty property(JSPropertyName name) {
 		return new MemberPropertyImpl(getCodeModel(), this, name);
+	}
+
+	@Override
+	public MemberProperty p(String name) {
+		return property(name);
 	}
 
 	@Override

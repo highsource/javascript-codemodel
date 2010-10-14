@@ -7,11 +7,19 @@ import org.hisrc.jscm.codemodel.JSPropertyName;
 // 11.2
 public interface JSCallExpression extends JSLeftHandSideExpression {
 
+	public JSCallExpression.CallArgs i();
+
 	public JSCallExpression.CallArgs invoke();
+
+	public JSCallExpression.CallElement e(JSExpression index);
 
 	public JSCallExpression.CallElement element(JSExpression index);
 
+	public JSCallExpression.CallProperty p(String name);
+
 	public JSCallExpression.CallProperty property(String name);
+
+	public JSCallExpression.CallProperty p(JSPropertyName name);
 
 	public JSCallExpression.CallProperty property(JSPropertyName name);
 

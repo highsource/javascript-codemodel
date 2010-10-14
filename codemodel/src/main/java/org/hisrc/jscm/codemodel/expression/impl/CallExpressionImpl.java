@@ -23,8 +23,18 @@ public abstract class CallExpressionImpl extends LeftHandSideExpressionImpl
 	}
 
 	@Override
+	public CallArgs i() {
+		return invoke();
+	}
+
+	@Override
 	public CallArgs invoke() {
 		return new CallArgsImpl(getCodeModel(), this);
+	}
+
+	@Override
+	public CallElement e(JSExpression index) {
+		return element(index);
 	}
 
 	@Override
@@ -33,9 +43,19 @@ public abstract class CallExpressionImpl extends LeftHandSideExpressionImpl
 	}
 
 	@Override
+	public CallProperty p(String name) {
+		return property(name);
+	}
+
+	@Override
 	public CallProperty property(String name) {
 		return new CallPropertyImpl(getCodeModel(), this,
 				new IdentifierNameImpl(name));
+	}
+
+	@Override
+	public CallProperty p(JSPropertyName name) {
+		return property(name);
 	}
 
 	@Override

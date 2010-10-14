@@ -19,7 +19,7 @@ import org.junit.Test;
 
 public class PrototypeExampleTest {
 
-	private JSCodeModel codeModel = new CodeModelImpl();
+	private final JSCodeModel codeModel = new CodeModelImpl();
 
 	@Test
 	public void programsPrototype() throws IOException {
@@ -40,28 +40,28 @@ public class PrototypeExampleTest {
 			final Function function = codeModel.function();
 			JSFunctionBody body = function.getBody();
 			JSVariable $ua = body.variable("ua",
-					$navigator.property("userAgent")).getVariable();
+					$navigator.p("userAgent")).getVariable();
 			JSVariable $isOpera = body.variable(
 					"isOpera",
-					$Object.property("prototype").property("toString")
-							.invoke("call").args($window.property("opera"))
+					$Object.p("prototype").p("toString")
+							.i("call").args($window.p("opera"))
 							.eq(codeModel.string("[object Opera]")))
 					.getVariable();
 			body._return(codeModel
 					.object()
 					.append("IE",
-							$window.property("attachEvent").not().not()
+							$window.p("attachEvent").not().not()
 									.and($isOpera.not()))
 					.append("Opera", $isOpera)
 					.append("WebKit",
-							$ua.invoke("indexOf")
+							$ua.i("indexOf")
 									.args(codeModel.string("AppleWebKit/"))
 									.gt(codeModel.integer(-1)))
 					.append("Gecko",
-							$ua.invoke("indexOf")
+							$ua.i("indexOf")
 									.args(codeModel.string("Gecko"))
 									.gt(codeModel.integer(-1))
-									.and($ua.invoke("indexOf")
+									.and($ua.i("indexOf")
 											.args(codeModel.string("KHTML"))
 											.eeq(codeModel.integer(-1))))
 			// Regexps are not supported at the moment
@@ -69,16 +69,17 @@ public class PrototypeExampleTest {
 			// codeModel.regexp("/Apple.*Mobile.*Safari/").call("test").args($ua))
 			);
 
-			_Prototype.append("Browser", function.brackets().invoke());
+			_Prototype.append("Browser", function.brackets().i());
 		}
 
 		{
 			final JSObjectLiteral _BrowserFeatures = codeModel.object();
 			_Prototype.append("BrowserFeatures", _BrowserFeatures);
 
-			_BrowserFeatures.append("XPath", $document.property("evaluate").not().not());
-			_BrowserFeatures.append("SelectorsAPI", $document.property("querySelector").not()
-					.not());
+			_BrowserFeatures.append("XPath", $document.p("evaluate")
+					.not().not());
+			_BrowserFeatures.append("SelectorsAPI",
+					$document.p("querySelector").not().not());
 			{
 				final Function _ElementExtensions = codeModel.function();
 
@@ -86,39 +87,40 @@ public class PrototypeExampleTest {
 						.getBody()
 						.variable(
 								"constructor",
-								$window.property("Element").or(
-										$window.property("HTMLElement")))
+								$window.p("Element").or(
+										$window.p("HTMLElement")))
 						.getVariable();
 				_ElementExtensions.getBody()._return(
-						$constructor.and($constructor.property("prototype"))
+						$constructor.and($constructor.p("prototype"))
 								.brackets().not().not());
-				_BrowserFeatures.append("ElementExtensions", _ElementExtensions.brackets()
-						.invoke());
+				_BrowserFeatures.append("ElementExtensions", _ElementExtensions
+						.brackets().i());
 			}
 
 			{
 				final Function f = codeModel.function();
-				_BrowserFeatures.append("SpecificElementExtensions", f.brackets().invoke());
+				_BrowserFeatures.append("SpecificElementExtensions", f
+						.brackets().i());
 				JSFunctionBody b = f.getBody();
-				b._if($window.property("HTMLDivElement").typeof()
+				b._if($window.p("HTMLDivElement").typeof()
 						.nee(codeModel.string("undefined")))._then()
 						._return(codeModel._boolean(true));
 
 				JSVariable $div = b.variable(
 						"div",
-						$document.invoke("createElement").args(
+						$document.i("createElement").args(
 								codeModel.string("div"))).getVariable();
 				JSVariable $form = b.variable(
 						"form",
-						$document.invoke("createElement").args(
+						$document.i("createElement").args(
 								codeModel.string("form"))).getVariable();
 
 				JSVariable $isSupported = b.variable("isSupported",
 						codeModel._boolean(false)).getVariable();
 
-				b._if($div.element(codeModel.string("__proto__")).and(
-						$div.element(codeModel.string("__proto__"))
-								.nee($form.element(codeModel
+				b._if($div.e(codeModel.string("__proto__")).and(
+						$div.e(codeModel.string("__proto__"))
+								.nee($form.e(codeModel
 										.string("__proto__"))).brackets()))
 						._then()
 						.block()
@@ -131,8 +133,9 @@ public class PrototypeExampleTest {
 
 		}
 		{
-			_Prototype.append("ScriptFragment", codeModel
-					.string("<script[^>]*>([\\\\S\\\\s]*?)<\\/script>"));
+			_Prototype.append("ScriptFragment",
+					codeModel.string("<script[^>]*>([\\S\\s]*?)</script>"));
+			// <script[^>]*>([\\S\\s]*?)<\/script>
 		}
 		{
 			// o.append("JSONFilter",
@@ -156,14 +159,12 @@ public class PrototypeExampleTest {
 		stringCodeWriter.program(program);
 		stringWriter.close();
 
-		
 		String test = IOUtils.toString(getClass().getResourceAsStream(
 				"Prototype[0].test.js"));
 		String sample = stringWriter.toString();
-		
-		Assert.assertEquals(test.length(), sample.length());
-		Assert.assertEquals(
-				test, sample);
+
+		// Assert.assertEquals(test.length(), sample.length());
+		Assert.assertEquals(test, sample);
 
 	}
 }

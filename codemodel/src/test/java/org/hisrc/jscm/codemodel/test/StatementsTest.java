@@ -45,7 +45,7 @@ public class StatementsTest {
 		{
 			body.functionDeclaration("g").getBody().functionDeclaration("h")
 					.getBody().functionDeclaration("i");
-			body.expression(window.property("open").invoke()
+			body.expression(window.p("open").i()
 					.args(codeModel._this()));
 			body.block();
 			body.block().block();

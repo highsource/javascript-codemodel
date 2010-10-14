@@ -10,6 +10,7 @@ import org.hisrc.jscm.codemodel.JSSourceElement;
 import org.hisrc.jscm.codemodel.expression.JSExpression;
 import org.hisrc.jscm.codemodel.io.DefaultIndentedAppendable;
 import org.hisrc.jscm.codemodel.io.IndentedAppendable;
+import org.hisrc.jscm.codemodel.lang.StringEscapeUtils;
 import org.hisrc.jscm.codemodel.literal.JSLiteral;
 import org.hisrc.jscm.codemodel.operator.JSOperator;
 import org.hisrc.jscm.codemodel.statement.JSBlock;
@@ -55,8 +56,8 @@ public class CodeWriter {
 	}
 
 	public CodeWriter string(String value) throws IOException {
-		// TODO
-		writer.append('\"').append(value).append('\"');
+		writer.append('\'').append(StringEscapeUtils.escapeEcmaScript(value))
+				.append('\'');
 		return this;
 	}
 

@@ -117,19 +117,19 @@ public class ExpressionsTest {
 
 		JSBlock callExpressions = leftHandSideExpressions.block();
 
-		callExpressions.expression(x.invoke().args(y).args(y).args(y));
-		callExpressions.expression(x.invoke().args(y));
-		callExpressions.expression(x.invoke().args(y, y, y));
-		callExpressions.expression(x.invoke().args(y).invoke()
+		callExpressions.expression(x.i().args(y).args(y).args(y));
+		callExpressions.expression(x.i().args(y));
+		callExpressions.expression(x.i().args(y, y, y));
+		callExpressions.expression(x.i().args(y).i()
 				.args(codeModel.integer(0), codeModel.integer(1)));
 
-		callExpressions.expression(x.invoke().args(y)
-				.element(codeModel.integer(0)));
-		callExpressions.expression(x.invoke().args(y).property("zero"));
-		callExpressions.expression(x.invoke().args(y)
-				.property(codeModel.integer(0)));
-		callExpressions.expression(x.invoke().args(y)
-				.property(codeModel.string("two")));
+		callExpressions.expression(x.i().args(y)
+				.e(codeModel.integer(0)));
+		callExpressions.expression(x.i().args(y).p("zero"));
+		callExpressions.expression(x.i().args(y)
+				.p(codeModel.integer(0)));
+		callExpressions.expression(x.i().args(y)
+				.p(codeModel.string("two")));
 
 		JSBlock newExpressions = leftHandSideExpressions.block();
 
@@ -145,10 +145,10 @@ public class ExpressionsTest {
 		foo.getBody().expression(a.plus(b));
 		foo.getBody()._return(c);
 		memberExpressions.expression(foo);
-		memberExpressions.expression(x.element(codeModel.integer(0)));
-		memberExpressions.expression(x.property("zero"));
-		memberExpressions.expression(x.property(codeModel.integer(1)));
-		memberExpressions.expression(x.property(codeModel.string("two")));
+		memberExpressions.expression(x.e(codeModel.integer(0)));
+		memberExpressions.expression(x.p("zero"));
+		memberExpressions.expression(x.p(codeModel.integer(1)));
+		memberExpressions.expression(x.p(codeModel.string("two")));
 		memberExpressions.expression(x.instantiate().args(y));
 
 		JSBlock primaryExpressions = memberExpressions.block();
