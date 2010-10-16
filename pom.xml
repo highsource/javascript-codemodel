@@ -46,6 +46,15 @@
 	<modules>
 		<module>codemodel</module>
 	</modules>
+	<mailingLists>
+		<mailingList>
+			<name>User List</name>
+			<subscribe>js-codemodel-users-request@lists.sourceforge.net</subscribe>
+			<unsubscribe>js-codemodel-users-request@lists.sourceforge.net</unsubscribe>
+			<post>js-codemodel-users@lists.sourceforge.net</post>
+			<archive>http://sourceforge.net/mailarchive/forum.php?forum_name=js-codemodel-users</archive>
+		</mailingList>
+	</mailingLists>
 	<dependencies>
 		<dependency>
 			<groupId>junit</groupId>
@@ -104,6 +113,41 @@
 			</plugin>
 		</plugins>
 	</build>
+	<reporting>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-project-info-reports-plugin</artifactId>
+				<version>2.1.2</version>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-javadoc-plugin</artifactId>
+				<version>2.6</version>
+				<configuration>
+					<minmemory>128m</minmemory>
+					<maxmemory>1g</maxmemory>
+					<additionalJOption>-J-verbose:gc</additionalJOption>
+					<!--quiet>true</quiet-->
+					<notree>true</notree>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-jxr-plugin</artifactId>
+				<version>2.1</version>
+				<configuration> 
+					<aggregate>false</aggregate>
+				</configuration> 
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-surefire-report-plugin</artifactId>
+				<version>2.4.3</version>
+			</plugin>
+		</plugins>
+	</reporting>
+
 
 	<properties> 
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding> 
