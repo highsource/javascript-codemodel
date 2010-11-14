@@ -1,6 +1,7 @@
 package org.hisrc.jscm.codemodel.writer;
 
 import java.io.IOException;
+import java.util.List;
 
 import org.hisrc.jscm.codemodel.JSProgram;
 import org.hisrc.jscm.codemodel.JSProgramVisitor;
@@ -19,7 +20,12 @@ public class ProgramWriter implements JSProgramVisitor<CodeWriter, IOException> 
 	@Override
 	public CodeWriter visitProgram(JSProgram value) throws IOException {
 		Validate.notNull(value);
-		for (JSSourceElement sourceElement : value.getSourceElements()) {
+		final List<JSSourceElement> sourceElements = value.getSourceElements();
+		for (int index = 0, size = sourceElements.size(); index < size; index++) {
+			if (index > 0) {
+				f.lineTerminator();
+			}
+			final JSSourceElement sourceElement = sourceElements.get(index);
 			f.sourceElement(sourceElement);
 
 		}
