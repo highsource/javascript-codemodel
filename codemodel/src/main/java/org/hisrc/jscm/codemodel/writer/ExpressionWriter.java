@@ -85,12 +85,63 @@ public class ExpressionWriter implements
 		f.openSquareBracket();
 		final CodeWriter fi = f.indented();
 
-		for (int index = 0; index < value.getElements().size(); index++) {
-			if (index > 0) {
+		final List<JSAssignmentExpression> elements = value.getElements();
+		final int elementsCount = elements.size();
+		// for (int index = 0; index < elementsCount; index++) {
+		// final boolean first = (index == 0);
+		// final boolean last = (index == (elementsCount - 1));
+		// final JSAssignmentExpression element = elements.get(index);
+		// element.acceptExpressionVisitor(new DefaultExpressionVisitor<Void,
+		// IOException>() {
+		//
+		// @Override
+		// public Void visitLiteral(JSLiteral value) throws IOException {
+		// if (!first) {
+		// fi.comma().whiteSpace();
+		// }
+		// return null;
+		// }
+		//
+		// @Override
+		// public Void visitExpression(JSExpression value)
+		// throws IOException {
+		// if (!first) {
+		// fi.comma();
+		// }
+		// fi.lineTerminator();
+		// return null;
+		// }
+		//
+		// });
+		// fi.expression(element);
+		// element.acceptExpressionVisitor(new DefaultExpressionVisitor<Void,
+		// IOException>() {
+		//
+		// @Override
+		// public Void visitLiteral(JSLiteral value) throws IOException {
+		// return null;
+		// }
+		//
+		// @Override
+		// public Void visitExpression(JSExpression value)
+		// throws IOException {
+		// if (last) {
+		// fi.lineTerminator();
+		// }
+		// return null;
+		// }
+		//
+		// });
+		//
+		// }
+
+		for (int index = 0; index < elementsCount; index++) {
+			final boolean first = (index == 0);
+			final JSAssignmentExpression element = elements.get(index);
+
+			if (!first) {
 				fi.comma().whiteSpace();
 			}
-			final JSAssignmentExpression element = value.getElements().get(
-					index);
 			fi.expression(element);
 
 		}
@@ -354,4 +405,5 @@ public class ExpressionWriter implements
 		f.expression(value.getRight());
 		return f;
 	}
+
 }

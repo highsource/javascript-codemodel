@@ -123,13 +123,10 @@ public class ExpressionsTest {
 		callExpressions.expression(x.i().args(y).i()
 				.args(codeModel.integer(0), codeModel.integer(1)));
 
-		callExpressions.expression(x.i().args(y)
-				.e(codeModel.integer(0)));
+		callExpressions.expression(x.i().args(y).e(codeModel.integer(0)));
 		callExpressions.expression(x.i().args(y).p("zero"));
-		callExpressions.expression(x.i().args(y)
-				.p(codeModel.integer(0)));
-		callExpressions.expression(x.i().args(y)
-				.p(codeModel.string("two")));
+		callExpressions.expression(x.i().args(y).p(codeModel.integer(0)));
+		callExpressions.expression(x.i().args(y).p(codeModel.string("two")));
 
 		JSBlock newExpressions = leftHandSideExpressions.block();
 
@@ -170,6 +167,8 @@ public class ExpressionsTest {
 
 		primaryExpressions.expression(codeModel.array());
 		primaryExpressions.expression(codeModel.array().append(x, y));
+		primaryExpressions.expression(codeModel.array().append(
+				codeModel.integer(0), codeModel.string("a")));
 		primaryExpressions.expression(codeModel.object());
 		primaryExpressions.expression(codeModel.object().append("zero", x)
 				.append(codeModel.integer(1), x)
