@@ -3,7 +3,7 @@
 	<groupId>org.hisrc.jscm</groupId>
 	<artifactId>js-codemodel-project</artifactId>
 	<packaging>pom</packaging>
-	<version>1.1</version>
+	<version>1.2-SNAPSHOT</version>
 	<name>JavaScript Code Model Project</name>
 	<description>JavaScript Code Model Project provides a Java API for programmatic creation and manipulation of JavaScript source code.</description>
 	<url>http://static.highsource.org/jscm/</url>
@@ -32,9 +32,9 @@
 		</license>
 	</licenses>
 	<scm>
-		<connection>scm:svn:https://js-codemodel.svn.sourceforge.net/svnroot/js-codemodel/tags/1.1</connection>
-		<developerConnection>scm:svn:https://js-codemodel.svn.sourceforge.net/svnroot/js-codemodel/tags/1.1</developerConnection>
-		<url>http://js-codemodel.svn.sourceforge.net/viewvc/js-codemodel/tags/1.1</url>
+		<connection>scm:svn:https://js-codemodel.svn.sourceforge.net/svnroot/js-codemodel/trunk</connection>
+		<developerConnection>scm:svn:https://js-codemodel.svn.sourceforge.net/svnroot/js-codemodel/trunk</developerConnection>
+		<url>http://js-codemodel.svn.sourceforge.net/viewvc/js-codemodel/trunk</url>
 	</scm>
 	<organization>
 		<name>Highsource</name>
