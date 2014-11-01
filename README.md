@@ -6,7 +6,7 @@ JSCM models grammatical structure of JavaScript (accoring to the [ECMAScript spe
 
 Once object model of the JavaScript program is built, it can be formatted and printed out into a writer. The result is well-formatted (with indentation, line breaks etc.) and is almost guaranteed to be in correct JavaScript syntax.
 
-# Using JavaScript Code Model
+# Using JavaScript CodeModel
 
 Usage is rather straightforward. Here's a small example:
 
@@ -41,7 +41,7 @@ function factorial(x) {
 }
 ```
 
-# Getting JavaScript Code Model
+# Getting JavaScript CodeModel
 
 For a single JAR file, check [releases](https://github.com/highsource/javascript-codemodel/releases).
 
