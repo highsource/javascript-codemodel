@@ -1,12 +1,12 @@
-# JavaScript Code Model 
+# JavaScript CodeModel 
 
-JavaScript Code Model project (JSCM for short) provides a Java API for programmatic creation and manipulation of JavaScript source code.
+JavaScript CodeModel project (JSCM for short) provides a Java API for programmatic creation and manipulation of JavaScript source code.
 
 JSCM models grammatical structure of JavaScript (accoring to the [ECMAScript specification](http://www.ecma-international.org/publications/files/ECMA-ST/ECMA-262.pdf)) in Java classes. This allows building JavaScript code from Java programmatically.
 
 Once object model of the JavaScript program is built, it can be formatted and printed out into a writer. The result is well-formatted (with indentation, line breaks etc.) and is almost guaranteed to be in correct JavaScript syntax.
 
-h1. Using JavaScript Code Model
+# Using JavaScript Code Model
 
 Usage is rather straightforward. Here's a small example:
 
@@ -43,7 +43,7 @@ function factorial(x) {
 
 # Getting JavaScript Code Model
 
-## Maven Artifacts
+For a single JAR file, check [releases](https://github.com/highsource/javascript-codemodel/releases).
 
 If you're using Apache Maven (or compatible build tools), please use the following dependency:
 
