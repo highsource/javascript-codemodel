@@ -1,14 +1,14 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
-	<artifactId>js-codemodel</artifactId>
+	<artifactId>javascript-parser</artifactId>
 	<packaging>jar</packaging>
-	<name>JavaScript Code Model</name>
+	<name>JSCM - JavaScript Parser</name>
 	<parent>
 		<groupId>org.hisrc.jscm</groupId>
 		<artifactId>js-codemodel-project</artifactId>
 		<version>1.2-SNAPSHOT</version>
 	</parent>
-	<dependencies>
+	<!--dependencies>
 		<dependency>
 			<groupId>commons-io</groupId>
 			<artifactId>commons-io</artifactId>
@@ -19,11 +19,11 @@
 			<artifactId>codemodel</artifactId>
 			<scope>test</scope>
 		</dependency>
-	</dependencies>
+	</dependencies-->
 	<build>
 		<defaultGoal>install</defaultGoal>
 		<plugins>
-			<plugin> 
+			<!--plugin> 
 				<groupId>org.apache.maven.plugins</groupId> 
 				<artifactId>maven-javadoc-plugin</artifactId> 
 				<version>2.5</version> 
@@ -37,66 +37,37 @@
 							<minmemory>128m</minmemory>
 							<maxmemory>1g</maxmemory>
 							<additionalJOption>-J-verbose:gc</additionalJOption>
-							<!--quiet>true</quiet-->
 							<notree>true</notree>
 						</configuration>
 					</execution> 
 				</executions> 
-			</plugin> 
+			</plugin--> 
 			<plugin>
 				<groupId>org.codehaus.mojo</groupId>
-				<artifactId>cobertura-maven-plugin</artifactId>
-				<configuration>
-					<instrumentation>
-						<!--
-							ignores> <ignore>com.example.boringcode.*</ignore> </ignores>
-							<excludes> <exclude>com/example/dullcode/**/*.class</exclude>
-							<exclude>com/example/**/*Test.class</exclude> </excludes -->
-					</instrumentation>
-				</configuration>
+				<artifactId>javacc-maven-plugin</artifactId>
+				<version>2.6</version>
 				<executions>
 					<execution>
+						<id>javacc</id>
 						<goals>
-							<goal>clean</goal>
+							<goal>javacc</goal>
 						</goals>
-					</execution>
-				</executions>
-			</plugin>
-			<plugin>
-				<groupId>org.codehaus.mojo</groupId>
-				<artifactId>cobertura-maven-plugin</artifactId>
-				<configuration>
-					<check>
-						<branchRate>95</branchRate>
-						<lineRate>95</lineRate>
-						<haltOnFailure>false</haltOnFailure>
-						<totalBranchRate>95</totalBranchRate>
-						<totalLineRate>95</totalLineRate>
-						<packageLineRate>95</packageLineRate>
-						<packageBranchRate>95</packageBranchRate>
-						<!--regexes>
-							<regex>
-								<pattern>com.example.reallyimportant.*</pattern>
-								<branchRate>90</branchRate>
-								<lineRate>80</lineRate>
-							</regex>
-							<regex>
-								<pattern>com.example.boringcode.*</pattern>
-								<branchRate>40</branchRate>
-								<lineRate>30</lineRate>
-							</regex>
-						</regexes-->
-					</check>
-				</configuration>
-				<executions>
-					<execution>
-						<goals>
-							<goal>clean</goal>
-							<goal>check</goal>
-						</goals>
+						<configuration>
+							<!--lookAhead>2</lookAhead>
+							<isStatic>false</isStatic-->
+						</configuration>
 					</execution>
 				</executions>
 			</plugin>
 		</plugins>
 	</build>
+	<reporting>
+		<plugins>
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>javacc-maven-plugin</artifactId>
+				<version>2.6</version>
+			</plugin>
+		</plugins>
+	</reporting>
 </project>
