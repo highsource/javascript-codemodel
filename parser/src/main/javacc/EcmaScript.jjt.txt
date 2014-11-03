@@ -1,3 +1,17 @@
+/*
+      Copyright (c) 2004-2005, The Dojo Foundation
+      All Rights Reserved.
+
+      Licensed under the Academic Free License version 2.1 or above OR the
+      modified BSD license. For more information on Dojo licensing, see:
+
+              http://dojotoolkit.org/community/licensing.shtml <http://dojotoolkit.org/community/licensing.shtml>
+
+      Code donated to the Dojo Foundation by AOL LLC under the terms of
+      the Dojo CCLA (http://dojotoolkit.org/ccla.txt).
+
+ */
+
 options {
 
 	/*
@@ -29,25 +43,100 @@ options {
 	UNICODE_INPUT = true;
 
 	/*
+	 * Default value is false. Generate a multi mode parse tree. 
+	 * The default for this is false, generating a simple mode parse tree.
+	 */
+	MULTI=true;
+
+	/*
+	 * Default value is false. Instead of making each non-decorated 
+	 * production an indefinite node, make it void instead.
+	 */
+	NODE_DEFAULT_VOID=true;
+
+	/*
+	 * The package to generate the node classes into. 
+	 */
+	NODE_PACKAGE = "org.dojo.jsl.parser";
+
+	/*
+	 * Default value is false. Insert a jjtAccept() method in the 
+	 * node classes, and generate a visitor implementation with an entry for every 
+	 * node type used in the grammar.
+	 */
+	VISITOR=true;
+
+	/*
+	 * Default value is false. Insert calls to user-defined parser 
+	 * methods on entry and exit of every node scope. See Node Scope Hooks above.
+	 */
+	NODE_SCOPE_HOOK=true;
+
+	/*
 	 * JDK Version
 	 */
 	JDK_VERSION = "1.5";
 }
 
-PARSER_BEGIN(EcmaScriptParser)
+PARSER_BEGIN(EcmaScript)
 
-package org.hisrc.jscm.parser;
+package org.dojo.jsl.parser;
 
-import org.hisrc.jscm.codemodel.*;
-import org.hisrc.jscm.codemodel.literal.*;
-import org.hisrc.jscm.parser.impl.*;
+import java.io.*;
+import java.util.*;
 
-public class EcmaScriptParser {
+public class EcmaScript {
 
-	private final JSCodeModelBuilder builder = new CodeModelBuilderImpl();
+	public static void main(String args[]){
+		EcmaScript parser;
+		if(args.length == 0){
+			System.out.println("EcmaScript Parser:  Reading from standard input . . .");
+			parser = new EcmaScript(System.in);
+		} else if(args.length == 1){
+			System.out.println("EcmaScript Parser:  Reading from file " + args[0] + " . . .");
+			try {
+				parser = new EcmaScript(new FileInputStream(args[0]), "UTF-8");
+			} catch(java.io.FileNotFoundException e){
+				System.out.println("EcmaScript Parser:  File " + args[0] + " not found.");
+				return;
+			}
+		} else {
+			System.out.println("EcmaScript Parser:  Usage is one of:");
+			System.out.println("         EcmaScript < inputfile");
+			System.out.println("OR");
+			System.out.println("         EcmaScript inputfile");
+			return;
+		}
+		try {
+			SimpleNode n = parser.Program();
+			System.out.println("EcmaScript parser:  EcmaScript program parsed successfully.");
+		} catch (ParseException e) {
+			System.out.println(e.getMessage());
+			System.out.println("EcmaScript parser:  Encountered errors during parse.");
+		}
+	}
 
+	void jjtreeOpenNodeScope(Node n){
+		Token t = getToken(1);
+		if(t != null){
+			((SimpleNode) n).setBeginToken(t);
+		}
+	}
+
+	void jjtreeCloseNodeScope(Node n){
+		Token t = getToken(0);
+		if(t != null){
+			((SimpleNode) n).setEndToken(t);
+		}
+	}
 }
-PARSER_END(EcmaScriptParser)
+PARSER_END(EcmaScript)
+
+TOKEN_MGR_DECLS : { 
+	public int htmlTokenNestingLevel = 0;
+	public boolean expectActionScript = false;
+}
+
 
 /*****************************************
  * LEXICAL & REGEXP GRAMMARS STARTS HERE *
@@ -91,7 +180,6 @@ MORE:
 }
 
 */
-
 
 /* Section 7.2 : White Space */
 
@@ -172,6 +260,8 @@ MORE :
 	< ~[] >
 }
 
+
+
 /* Section 7.5.1: Reserved Words */
 
 <DEFAULT, IN_REGEX>
@@ -241,6 +331,30 @@ TOKEN :
 | 
 	< TRY: "try" > : DEFAULT
 }
+
+
+/* JScript .NET Tokens
+
+TOKEN :
+{
+	< BYTE: "byte" >
+	| < SBYTE: "sbyte" >
+	| < SHORT: "short" >
+	| < USHORT: "ushort" >
+	| < UINT: "uint" >
+	| < LONG: "long" >
+	| < ULONG: "ulong" >
+	| < FLOAT: "float" >
+	| < NUMBER: "Number" >
+	| < DOUBLE: "double" >
+	| < DECIMAL: "decimal" >
+	| < BOOLEAN: "boolean" >
+	| < STRING: "String" >
+	| < CHAR: "char" >
+}
+
+*/
+
 
 /* Section 7.7: Punctuators */
 
@@ -342,6 +456,7 @@ TOKEN :
 	< INTANCE_OF: "instanceof" > : DEFAULT
 }
 
+
 /* Section 7.8.3: Numeric Literals */
 
 <DEFAULT, IN_REGEX>
@@ -371,7 +486,7 @@ TOKEN:
 <DEFAULT, IN_REGEX>
 TOKEN:
 {
-	< HEX_INTEGER_LITERAL: "0" ["x", "X"] (<HEX_DIGIT>)+ > : IN_REGEX
+	< HEX_INTEGER_LITERAL: "0" ["x","X"] (<HEX_DIGIT>)+ > : IN_REGEX
 }
 
 <DEFAULT, IN_REGEX>
@@ -382,6 +497,7 @@ TOKEN:
 {
 	< DECIMAL_DIGIT: ["0"-"9"] >
 }
+
 
 /* Section 7.8: Literals */
 /*
@@ -397,6 +513,7 @@ MORE:
 }
 
 */
+
 
 /* Section 7.8.1: NULL Literals */
 
@@ -1240,6 +1357,7 @@ MORE:
 
 */
 
+
 /* A.6 Universal Resource Identifier Character Classes */
 
 
@@ -1383,17 +1501,37 @@ TOKEN:
 
 */
 
+/*****************************************
+ * ECMA SYNTACTIC GRAMMARS  STARTS HERE  *
+ *****************************************/
+
+	/* Section 11.1: Primary Expressions */
+
+	void PrimaryExpression() #void :
+	{}
+	{
+		LOOKAHEAD("this") "this" #ThisReference
+		| LOOKAHEAD("{") ObjectLiteral()
+		| LOOKAHEAD("(") ( "(" Expression() ")" ) #ParenExpression
+		| LOOKAHEAD(Identifier()) Identifier()
+		| LOOKAHEAD("[") ArrayLiteral()
+		| LOOKAHEAD(2) Literal() 
+	}
+
 	/* Section 7.8: Literals */
 
-	JSLiteral Literal() :
+	void Literal() #Literal :
 	{
 	  Token t;
-//	  Map objLiteral;
-//	  List arrayLiteral;
+	  Map objLiteral;
+	  List arrayLiteral;
 	}
 	{
-		t = <DECIMAL_LITERAL> { return this.builder.decimalLiteral(token); }
-	/* |
+		t = <DECIMAL_LITERAL> 
+		{
+			jjtThis.setDecimalValue(t.image);
+		}
+	|
 		t = <HEX_INTEGER_LITERAL>
 		{
 			jjtThis.setHexValue(t.image);
@@ -1403,19 +1541,788 @@ TOKEN:
 		{
 			jjtThis.setStringValue(t.image);
 		}
-	|*/
+	|
 		t = <BOOLEAN_LITERAL>
 		{
-			return this.builder.booleanLiteral(t);
+			jjtThis.setBooleanValue(t.image);
 		}
 	|
 		t = <NULL_LITERAL>
 		{
-			return this.builder.nullLiteral(t);
-		}/*
+			jjtThis.setNullValue();
+		}
 	| 
 		t = <REGULAR_EXPRESSION_LITERAL>
 		{
 			jjtThis.setRegexValue(t.image);
-		}*/
+		}
+	}
+
+
+	void Identifier() #Identifier :
+	{
+	  Token t;
+	}
+	{
+	  t=<IDENTIFIER_NAME>
+	  {
+	    jjtThis.setName(t.image);
+	  }
+	}
+
+	/* Section 11.1.4: Array Initialiser */
+
+	void ArrayLiteral() #ArrayLiteral : 
+	{}
+	{
+		"[" (
+				LOOKAHEAD(2) ( Elision() )? "]" 
+						| LOOKAHEAD(ElementList() Elision()) ElementList() Elision() "]" 
+						| ( ElementList() )? "]" 
+		)
+	}		 
+
+	void ElementList() #void :
+	{}
+	{
+		( Elision() )? AssignmentExpression() ( LOOKAHEAD(Elision()	AssignmentExpression()) Elision()  AssignmentExpression())*
+	}
+
+	void Elision() #void :
+	{}
+	{
+		(",")+
+	}
+
+	/* Section 11.1.5: Object Initialiser */
+
+	void ObjectLiteral() #ObjectLiteral :
+	{}
+	{
+		"{" ( PropertyNameAndValueList() )? "}"
+	}
+
+	void PropertyNameAndValueList() #void :
+	{}
+	{
+		PropertyNameAndValue() ( LOOKAHEAD( "," PropertyNameAndValue()) "," PropertyNameAndValue() | "," )* 
+	}
+
+	void PropertyNameAndValue() #LiteralField :
+	{}
+	{
+		PropertyName() ":" AssignmentExpression() 
+	}
+
+	void PropertyName() #void :
+	{}
+	{
+		Identifier() 
+		| 
+		<STRING_LITERAL> #Literal
+		| 
+		<DECIMAL_LITERAL> #Literal
+	}
+
+
+	/* Section 11.2: Left-Hand-Side Expressions */
+
+	void MemberExpression() #void :
+	{}
+	{ 
+		( ( 
+				LOOKAHEAD("function") FunctionExpression()
+				| PrimaryExpression()  
+		) (LOOKAHEAD(2) MemberExpressionPart())*	 ) #CompositeReference(>1)
+		|	 AllocationExpression()
+	}
+
+	void MemberExpressionForIn() #void :
+	{}
+	{ 
+		( ( 
+				LOOKAHEAD("function") FunctionExpression()
+				| PrimaryExpression()  
+		) (LOOKAHEAD(2) MemberExpressionPart())*	 ) #CompositeReference(>1)
+	}
+
+	void AllocationExpression() #AllocationExpression :
+	{}
+	{
+		( "new" MemberExpression() ( (LOOKAHEAD(Arguments()) Arguments() (LOOKAHEAD(2) MemberExpressionPart())* ) * ) ) #CompositeReference(>1)
+	}
+
+	void MemberExpressionPart() #void :
+	{}
+	{
+		( "[" Expression() "]" ) #PropertyValueReference | ( "." Identifier() ) #PropertyIdentifierReference
+
+	}
+
+	void CallExpression() #CompositeReference(>1) : 
+	{}
+	{
+		MemberExpression() Arguments() ( LOOKAHEAD(2) CallExpressionPart() )*
+	}
+
+	void CallExpressionForIn() #CompositeReference(>1) : 
+	{}
+	{
+		MemberExpressionForIn() Arguments() ( LOOKAHEAD(2) CallExpressionPart() )*
+	}
+
+	void CallExpressionPart() #void :
+	{}
+	{
+		Arguments() | ( "[" Expression() "]" ) #PropertyValueReference | ( "." Identifier() ) #PropertyIdentifierReference
+	}
+
+	void Arguments() #FunctionCallParameters :
+	{}
+	{
+		"(" (ArgumentList())? ")"
+	}
+
+
+	void ArgumentList() #void :
+	{}
+	{
+		AssignmentExpression() ("," AssignmentExpression())*
+	}
+
+
+	void LeftHandSideExpression() #void : 
+	{}
+	{
+		LOOKAHEAD(MemberExpression() "(") CallExpression() | MemberExpression() 
+	}
+
+
+	void LeftHandSideExpressionForIn() #void : 
+	{}
+	{
+		LOOKAHEAD(CallExpression()) CallExpressionForIn() | MemberExpressionForIn() 
+	}
+
+	/* Section 11.3 Postfix Expressions */
+
+	void PostfixExpression() #PostfixExpression(>1) :
+	{}
+	{
+		LeftHandSideExpression() [ LOOKAHEAD(1) PostfixOperator() ]
+	}
+
+	void PostfixOperator() #Operator :
+	{}
+	{
+		( "++" | "--")
+	} 
+
+
+	/* Section 11.4 Unary Operators */
+
+	void UnaryExpression() #UnaryExpression(>1) :
+	{}
+	{ 
+		PostfixExpression() | ( LOOKAHEAD(1) UnaryOperator() UnaryExpression() )+
+	}
+
+	void UnaryOperator() #Operator :
+	{}
+	{
+		("delete" | "void" | "typeof" | "++" | "--" | "+" | "-" | "~" | "!")
+	}
+
+
+	/* Section 11.5: Multiplicative Operators */
+
+
+	void MultiplicativeExpression() #BinaryExpressionSequence(>1) :
+	{}
+	{ 
+		UnaryExpression() ( MultiplicativeOperator() UnaryExpression() )*
+	}
+
+
+	void MultiplicativeOperator() #Operator :
+	{}
+	{
+		("*" | <SLASH> | "%")
+	}
+
+	/* Section 11.6: Additive Operators */
+
+	void AdditiveExpression() #BinaryExpressionSequence(>1) : 
+	{}
+	{
+		MultiplicativeExpression() ( LOOKAHEAD(1) AdditiveOperator() MultiplicativeExpression())*
+	}
+
+	void AdditiveOperator() #Operator :
+	{}
+	{
+		("+" | "-")
+	}
+
+
+	/* Section 11.7: Bitwise Shift Operators */
+
+	void ShiftExpression() #BinaryExpressionSequence(>1) :
+	{}
+	{
+		AdditiveExpression() ( ShiftOperator() AdditiveExpression() )*
+	}
+
+	void ShiftOperator() #Operator :
+	{}
+	{
+		("<<" | ">>" | ">>>")
+	}
+
+	/* Section 11.4: Relational Operators */
+
+	void RelationalExpression() #BinaryExpressionSequence(>1) :
+	{}
+	{
+		ShiftExpression() ( RelationalOperator() ShiftExpression() )*
+	}
+
+	void RelationalOperator() #Operator :
+	{}
+	{
+		("<" | ">" | "<=" | ">=" | "instanceof" | "in")
+	}
+
+	void RelationalExpressionNoIn() #BinaryExpressionSequence(>1) :
+	{}
+	{
+		ShiftExpression() ( RelationalNoInOperator() ShiftExpression() )*
+	}
+
+
+	void RelationalNoInOperator() #Operator :
+	{}
+	{
+		("<" | ">" | "<=" | ">=" | "instanceof")
+	}
+
+	/* Section 11.9: Equality Operators */
+
+	void EqualityExpression() #BinaryExpressionSequence(>1) :
+	{}
+	{
+		RelationalExpression() ( EqualityOperator() RelationalExpression() )*
+	}
+
+	void EqualityExpressionNoIn() #BinaryExpressionSequence(>1) :
+	{}
+	{
+		RelationalExpressionNoIn() ( EqualityOperator() RelationalExpressionNoIn())*
+	}
+
+	void EqualityOperator() #Operator :
+	{}
+	{
+		("==" | "!=" | "===" | "!==")
+	}
+
+	/* Section 11.10: Binary Bitwise Operators */
+
+	void BitwiseANDExpression() #BinaryExpressionSequence(>1) :
+	{}
+	{
+		EqualityExpression() ( BitwiseANDOperator() EqualityExpression())*
+	}
+
+	void BitwiseANDExpressionNoIn() #BinaryExpressionSequence(>1) :
+	{}
+	{
+		EqualityExpressionNoIn() (BitwiseANDOperator() EqualityExpressionNoIn())*
+	}
+
+	void BitwiseANDOperator() #Operator :
+	{}
+	{
+		"&"
+	}
+
+	void BitwiseXORExpression() #BinaryExpressionSequence(>1) :
+	{}
+	{
+		BitwiseANDExpression() (BitwiseXOROperator() BitwiseANDExpression())*
+	}
+
+	void BitwiseXORExpressionNoIn() #BinaryExpressionSequence(>1) :
+	{}
+	{
+		BitwiseANDExpressionNoIn() (BitwiseXOROperator() BitwiseANDExpressionNoIn())*
+	}
+
+	void BitwiseXOROperator() #Operator :
+	{}
+	{
+		"^"
+	}
+
+	void BitwiseORExpression() #BinaryExpressionSequence(>1) :
+	{}
+	{
+		BitwiseXORExpression() (BitwiseOROperator() BitwiseXORExpression())*
+	}
+
+	void BitwiseORExpressionNoIn() #BinaryExpressionSequence(>1) :
+	{}
+	{
+		BitwiseXORExpressionNoIn() (BitwiseOROperator() BitwiseXORExpressionNoIn())*
+	}
+
+	void BitwiseOROperator() #Operator :
+	{}
+	{
+		"|"
+	}
+	/* Section 11.11: Binary Logical Operators */
+
+	void LogicalANDExpression() #AndExpressionSequence(>1) :
+	{}
+	{
+		BitwiseORExpression() (LogicalANDOperator() BitwiseORExpression())*
+	}
+
+	void LogicalANDExpressionNoIn() #AndExpressionSequence(>1) :
+	{}
+	{ 
+		BitwiseORExpressionNoIn() (LogicalANDOperator() BitwiseORExpressionNoIn())*
+	}
+
+	void LogicalANDOperator() #Operator :
+	{}
+	{
+		"&&"
+	}
+
+	void LogicalORExpression() #OrExpressionSequence(>1) :
+	{}
+	{
+		LogicalANDExpression() (LogicalOROperator() LogicalANDExpression())*
+	}
+
+	void LogicalORExpressionNoIn() #OrExpressionSequence(>1) :
+	{}
+	{
+		LogicalANDExpressionNoIn() (LogicalOROperator() LogicalANDExpressionNoIn())*
+	}
+
+	void LogicalOROperator() #Operator :
+	{}
+	{
+		"||"
+	}
+
+	/* Section 11.12: Conditional Operator */
+
+	void ConditionalExpression() #ConditionalExpression(>1) :
+	{}
+	{
+		LogicalORExpression() [ "?" AssignmentExpression() ":" AssignmentExpression() ]
+	}
+
+	void ConditionalExpressionNoIn() #ConditionalExpression(>1) :
+	{}
+	{
+		LogicalORExpressionNoIn() [ "?" AssignmentExpression() ":" AssignmentExpressionNoIn() ]
+	}
+
+
+	/* Section 11.13: Assignment Operators */
+
+	void AssignmentExpression() #AssignmentExpression(>1) :
+	{}
+	{
+		LOOKAHEAD(LeftHandSideExpression() AssignmentOperator()) LeftHandSideExpression() AssignmentOperator() AssignmentExpression() 
+		| ConditionalExpression() 
+	}
+
+	void AssignmentExpressionNoIn() #AssignmentExpression(>1) : 
+	{}
+	{
+		LOOKAHEAD(LeftHandSideExpression() AssignmentOperator()) LeftHandSideExpression() AssignmentOperator() AssignmentExpressionNoIn()
+		| ConditionalExpressionNoIn() 
+	}
+
+	void AssignmentOperator() #Operator :
+	{}
+	{
+		("=" | "*=" | <SLASHASSIGN> | "%=" | "+=" | "-=" | "<<=" | ">>=" | ">>>=" | "&=" | "^=" | "|=")
+	}
+
+
+	/* Section 11.14: Comma Operator */
+
+	void Expression() #ExpressionList(>1) :
+	{}
+	{
+		AssignmentExpression() ( "," AssignmentExpression() )*
+	}
+
+	void ExpressionNoIn() :
+	{}
+	{
+		AssignmentExpressionNoIn() ( "," AssignmentExpressionNoIn() )*
+	}
+
+
+
+	/* Section 12: STATEMENTS */
+
+	void Statement() #void :
+	{}
+	{
+		LOOKAHEAD(Block()) Block()	  
+		| LOOKAHEAD("var" Identifier() ":") JScriptVarStatement() // JScript .NET declaratrion
+		| LOOKAHEAD("var" Identifier()) VariableStatement()
+		| EmptyStatement()
+		| LOOKAHEAD(Identifier() ":") LabelledStatement()
+		| LOOKAHEAD(ExpressionStatement())  ExpressionStatement()
+		| LOOKAHEAD("if" "(") IfStatement()
+		| IterationStatement()
+		| LOOKAHEAD("continue") ContinueStatement()
+		| LOOKAHEAD("break") BreakStatement()
+		| LOOKAHEAD("import") ImportStatement()
+		| ReturnStatement()
+		| WithStatement()
+		| SwitchStatement()
+		| ThrowStatement()
+		| TryStatement()
+	}
+
+
+	/* 12.1 Block Statement */
+
+	void Block() #Block :
+	{}
+	{
+		"{" ( StatementList() )? "}"
+	}
+
+	void StatementList() #StatementList(>1) : 
+	{}
+	{
+		( Statement() )+
+	}
+
+
+	/* Section 12.2: Variable statement */
+
+	void VariableStatement() #VariableStatement :
+	{}
+	{
+		"var" VariableDeclarationList() (LOOKAHEAD(2) ";")?
+	}
+
+	void VariableDeclarationList() #VariableDeclarationList(>1) :
+	{}
+	{
+		VariableDeclaration() ( "," VariableDeclaration() )*
+	}
+
+	void VariableDeclarationListNoIn() #VariableDeclarationList(>1) :
+	{}
+	{
+		VariableDeclarationNoIn() ( "," VariableDeclarationNoIn() )*
+	}
+
+	void VariableDeclaration() #VariableDeclaration :
+	{}
+	{
+		Identifier() ( Initialiser() )?
+	}
+
+	void VariableDeclarationNoIn() :
+	{}
+	{
+		Identifier() ( InitialiserNoIn() )? #EmptyExpression(jjtree.nodeArity()==0)
+	}
+
+	void Initialiser() #void :
+	{}
+	{
+		"=" AssignmentExpression()
+	}
+
+	void InitialiserNoIn() #void :
+	{}
+	{
+		"=" AssignmentExpressionNoIn()
+	}
+
+
+	/* Section 12.3: Empty Statement */
+
+	void EmptyStatement() #EmptyStatement :
+	{}
+	{
+		";"
+	}
+
+
+	/* Section 12.4: Expression Statement */
+
+	void ExpressionStatement() #ExpressionStatement :
+	{}
+	{
+		Expression() (LOOKAHEAD(2) ";")?
+	}
+
+
+	/* Section 12.5: The if Statement */
+
+	void IfStatement() #IfStatement :
+	{}
+	{
+		"if" "(" Expression() ")" Statement() [ LOOKAHEAD(1) "else" Statement() ]
+	}
+
+
+	/* Section 12.6: Iteration Statements */
+
+	void IterationStatement() #void :
+	{}
+	{
+		( "do" Statement() "while" "(" Expression() ")" (LOOKAHEAD(2) ";")? ) #DoStatement
+		| ( "while" "(" Expression() ")" Statement() ) #WhileStatement
+		| LOOKAHEAD("for" "(" (ExpressionNoIn())? ";") ( "for" "(" ( ExpressionNoIn() )? #EmptyExpression(jjtree.nodeArity()==0) ";" ( Expression() )? #EmptyExpression(jjtree.nodeArity()==0) ";" ( Expression() )? #EmptyExpression(jjtree.nodeArity()==0) ")" Statement() ) #ForStatement 
+		| LOOKAHEAD("for" "(" "var" VariableDeclarationList() ";") ( "for" "(" "var" VariableDeclarationList() ";" ( Expression() )? #EmptyExpression(jjtree.nodeArity()==0) ";" ( Expression() )? #EmptyExpression(jjtree.nodeArity()==0) ")" Statement() ) #ForVarStatement
+		| LOOKAHEAD("for" "(" "var" VariableDeclarationNoIn() "in") ( "for" "(" "var" VariableDeclarationNoIn() "in" Expression() ")" Statement() ) #ForVarInStatement
+		| ( "for" "(" LeftHandSideExpressionForIn() "in" Expression() ")" Statement() ) #ForInStatement
+	}
+
+
+	/* Section 12.7: The continue Statement */
+
+	void ContinueStatement() #ContinueStatement :
+	{}
+	{
+		"continue" ( LOOKAHEAD(Identifier()) Identifier() )? (LOOKAHEAD(";") ";")?
+	}
+
+
+	/* Section 12.8: The break Statement */
+
+	void BreakStatement() #BreakStatement :
+	{}
+	{
+		"break" ( LOOKAHEAD(Identifier()) Identifier() )? (LOOKAHEAD(";") ";")?
+	}
+
+
+	/* Section 12.9 The return Statement */
+
+	void ReturnStatement() #ReturnStatement :
+	{}
+	{
+		"return" ( LOOKAHEAD(Expression()) Expression() )? #EmptyExpression(jjtree.nodeArity()==0) (LOOKAHEAD(";") ";")?
+	}
+
+
+	/* Section 12.10: The with Statement */
+
+	void WithStatement() #WithStatement :
+	{}
+	{
+		"with" "(" Expression() ")" Statement()
+	}
+
+
+	/* 12.11 The switch Statement */
+
+	void SwitchStatement() #SwitchStatement :
+	{}
+	{
+		"switch" "(" Expression() ")" CaseBlock()
+	}
+
+	void CaseBlock() #CaseGroups :
+	{}
+	{
+		"{" ( CaseClauses() )? 
+				( 
+						"}" | DefaultClause() ( CaseClauses() )? "}" 
+				)
+	}
+
+	void CaseClauses() #void :
+	{}
+	{
+		( CaseClause() )+
+	}
+
+	void CaseClause()  #CaseGroup :
+	{}
+	{
+		( ( "case" Expression() ":" ) #CaseGuard ) ( StatementList() )?
+	}
+
+	void DefaultClause() #CaseGroup :
+	{}
+	{
+		( ( "default" ":" ) #CaseGuard ) ( StatementList() )?
+	}
+
+
+	/* Section 12.12: Labelled Statements */
+
+	void LabelledStatement() :
+	{}
+	{
+		Identifier() ":" Statement()
+	}
+
+	void ThrowStatement() #ThrowStatement :
+	{}
+	{
+		"throw" Expression() (LOOKAHEAD(";") ";")?
+	}
+
+	void TryStatement() #TryStatement : 
+	{}
+	{
+		"try" Block() 
+		( 
+				( Finally() | Catch() [Finally()])
+		)
+	}  
+
+	void Catch() #CatchClause :
+	{}
+	{
+		"catch" "(" Identifier() ")" Block()
+	}
+
+	void Finally() #FinallyClause :
+	{}
+	{
+		"finally" Block()
+	}
+
+	/* Section 13: Function Definition */
+
+	void FunctionDeclaration() #FunctionDeclaration :
+	{}
+	{
+		"function" Identifier() ( "(" ( FormalParameterList() )? ")" ) #FormalParameterList FunctionBody()  
+	}
+
+	void FunctionExpression() #FunctionDeclaration :
+	{}
+	{
+		"function" ( Identifier() )? ( "(" ( FormalParameterList() )? ")" ) #FormalParameterList FunctionBody()
+	}
+
+	void FormalParameterList() #void :
+	{}
+	{
+		Identifier() ( "," Identifier() )*
+	}
+
+	void FunctionBody() #Block :
+	{}
+	{
+		"{" (SourceElements())? "}" 
+	}
+
+
+	/* Section 14: Program */
+
+	ASTProgram Program() #Program :
+	{}
+	{  
+		(SourceElements())?
+				<EOF>
+		{ return jjtThis; }
+	}
+
+	void SourceElements() #void :
+	{}
+	{
+		(SourceElement())+ 
+	}
+
+	void SourceElement() #void :
+	{}
+	{
+		LOOKAHEAD(FunctionDeclaration()) FunctionDeclaration() | Statement()
+	}
+
+
+	/*
+	 * Grammar for parsing JScript .NET contructs: ( import System; var contents :
+	 * String = reader.ReadToEnd(); ) Refer: src/hostenv_jsc.js
+	 */
+
+	void ImportStatement():
+	{}
+	{
+		"import" Name() [ "." "*" ] ";"
+	}
+
+
+	void Name():
+	{}
+	{
+		<IDENTIFIER_NAME> ( LOOKAHEAD(2) "." <IDENTIFIER_NAME> )*
+	}
+
+
+	void JScriptVarStatement() #VariableStatement :
+	{}
+	{
+		"var" JScriptVarDeclarationList() (LOOKAHEAD(2) ";")?
+	}
+
+	void JScriptVarDeclarationList() #VariableDeclarationList(>1) :
+	{}
+	{
+		JScriptVarDeclaration() ( "," JScriptVarDeclaration() )*
+	}
+
+	/*
+	 * void JScriptVarDeclaration() #VariableDeclaration : {} { Identifier() ":" (
+	 * "byte" | "sbyte" | "short" | "ushort" | "uint" | "long" | "ulong" |
+	 * "float" | "Number" | "double" | "decimal" | "boolean" | "String" | "char" ) (
+	 * Initialiser() )? }
+	 */
+
+	void JScriptVarDeclaration() #VariableDeclaration :
+	{}
+	{
+		Identifier() ":" <IDENTIFIER_NAME> ( Initialiser() )?
+	}
+
+	JAVACODE
+	void insertSemiColon(){
+
+		Token inputToken = getToken(1);
+		if(inputToken.kind == SEMICOLON){
+			inputToken = getNextToken();
+		} else if((inputToken.kind != EOF) && (inputToken.kind != RBRACE)){
+			if(inputToken.specialToken != null){
+				boolean foundLineSeparator = false;
+				Token specialT = inputToken.specialToken;	 
+
+				while((specialT != null) && (! foundLineSeparator)){
+					if((specialT.kind == LINE_TERMINATOR) || (specialT.kind == SINGLE_LINE_COMMENT)){
+						foundLineSeparator = true;
+					}
+
+					specialT = specialT.specialToken;
+				}
+
+				if(! foundLineSeparator){
+					throw generateParseException();
+				}
+			} else {
+				throw generateParseException();
+			}
+		} 
 	}

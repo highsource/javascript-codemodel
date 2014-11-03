@@ -8,8 +8,13 @@
 		<artifactId>js-codemodel-project</artifactId>
 		<version>1.2-SNAPSHOT</version>
 	</parent>
-	<!--dependencies>
+	<dependencies>
 		<dependency>
+			<groupId>${project.groupId}</groupId>
+			<artifactId>js-codemodel</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+		<!--dependency>
 			<groupId>commons-io</groupId>
 			<artifactId>commons-io</artifactId>
 			<scope>test</scope>
@@ -18,8 +23,8 @@
 			<groupId>com.sun.codemodel</groupId>
 			<artifactId>codemodel</artifactId>
 			<scope>test</scope>
-		</dependency>
-	</dependencies-->
+		</dependency-->
+	</dependencies>
 	<build>
 		<defaultGoal>install</defaultGoal>
 		<plugins>
@@ -55,6 +60,25 @@
 						<configuration>
 							<!--lookAhead>2</lookAhead>
 							<isStatic>false</isStatic-->
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>build-helper-maven-plugin</artifactId>
+				<version>1.8</version>
+				<executions>
+					<execution>
+						<id>add-javacc-source</id>
+						<phase>generate-sources</phase>
+						<goals>
+							<goal>add-source</goal>
+						</goals>
+						<configuration>
+							<sources>
+								<source>${project.build.directory}/generated-sources/javacc</source>
+							</sources>
 						</configuration>
 					</execution>
 				</executions>

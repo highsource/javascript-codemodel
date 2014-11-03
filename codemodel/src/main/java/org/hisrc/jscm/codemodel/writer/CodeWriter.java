@@ -2,6 +2,7 @@ package org.hisrc.jscm.codemodel.writer;
 
 import java.io.IOException;
 import java.math.BigDecimal;
+import java.math.BigInteger;
 
 import org.hisrc.jscm.codemodel.JSProgram;
 import org.hisrc.jscm.codemodel.JSPropertyName;
@@ -69,6 +70,13 @@ public class CodeWriter {
 	public CodeWriter decimal(BigDecimal value) throws IOException {
 		Validate.notNull(value);
 		writer.append(value.toString());
+		return this;
+	}
+
+	public CodeWriter hexInteger(BigInteger value) throws IOException {
+		Validate.notNull(value);
+		writer.append("0x");
+		writer.append(value.toString(16));
 		return this;
 	}
 

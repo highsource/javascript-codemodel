@@ -12,5 +12,7 @@ public interface JSLiteralVisitor<V, E extends Exception> {
 	public V visit(JSDecimalIntegerLiteral value) throws E;
 
 	public V visit(JSDecimalNonIntegerLiteral value) throws E;
+	
+	public V visit(JSHexIntegerLiteral value) throws E;
 
 }

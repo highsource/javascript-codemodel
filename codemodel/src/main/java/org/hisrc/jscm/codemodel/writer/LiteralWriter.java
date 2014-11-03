@@ -6,6 +6,7 @@ import org.hisrc.jscm.codemodel.lang.Validate;
 import org.hisrc.jscm.codemodel.literal.JSBooleanLiteral;
 import org.hisrc.jscm.codemodel.literal.JSDecimalIntegerLiteral;
 import org.hisrc.jscm.codemodel.literal.JSDecimalNonIntegerLiteral;
+import org.hisrc.jscm.codemodel.literal.JSHexIntegerLiteral;
 import org.hisrc.jscm.codemodel.literal.JSLiteralVisitor;
 import org.hisrc.jscm.codemodel.literal.JSNullLiteral;
 import org.hisrc.jscm.codemodel.literal.JSStringLiteral;
@@ -45,6 +46,11 @@ public class LiteralWriter implements
 	public CodeWriter visit(JSDecimalNonIntegerLiteral value)
 			throws IOException {
 		return f.decimal(value.asDecimal());
+	}
+	
+	@Override
+	public CodeWriter visit(JSHexIntegerLiteral value) throws IOException {
+		return f.hexInteger(value.asInteger());
 	}
 
 }
