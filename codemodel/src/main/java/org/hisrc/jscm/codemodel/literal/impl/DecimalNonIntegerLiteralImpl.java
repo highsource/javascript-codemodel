@@ -10,12 +10,12 @@ import org.hisrc.jscm.codemodel.literal.JSLiteralVisitor;
 public class DecimalNonIntegerLiteralImpl extends DecimalLiteralImpl implements
 		JSDecimalNonIntegerLiteral {
 
-	private final double valueAsDouble;
+	private final BigDecimal value;
 
 	public DecimalNonIntegerLiteralImpl(JSCodeModel codeModel, BigDecimal value) {
 		super(codeModel, value);
 		Validate.notNull(value);
-		this.valueAsDouble = value.doubleValue();
+		this.value = value;
 	}
 
 	@Override
@@ -26,7 +26,11 @@ public class DecimalNonIntegerLiteralImpl extends DecimalLiteralImpl implements
 
 	@Override
 	public double asDouble() {
-		return valueAsDouble;
+		return value.doubleValue();
 	}
 
+	@Override
+	public BigDecimal asNumber() {
+		return value;
+	}
 }

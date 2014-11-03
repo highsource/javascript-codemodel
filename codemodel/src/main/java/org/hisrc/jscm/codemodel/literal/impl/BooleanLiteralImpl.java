@@ -15,7 +15,6 @@ public class BooleanLiteralImpl extends LiteralImpl implements JSBooleanLiteral 
 
 	@Override
 	public boolean asBoolean() {
-
 		return value;
 	}
 

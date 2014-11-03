@@ -1,6 +1,7 @@
 package org.hisrc.jscm.codemodel.literal.impl;
 
 import java.math.BigDecimal;
+import java.math.BigInteger;
 
 import org.hisrc.jscm.codemodel.JSCodeModel;
 import org.hisrc.jscm.codemodel.lang.Validate;
@@ -10,12 +11,12 @@ import org.hisrc.jscm.codemodel.literal.JSLiteralVisitor;
 public class HexIntegerLiteralImpl extends NumericLiteralImpl implements
 		JSHexIntegerLiteral {
 
-	private final long valueAsLong;
+	private final BigInteger value;
 
-	public HexIntegerLiteralImpl(JSCodeModel codeModel, long value) {
+	public HexIntegerLiteralImpl(JSCodeModel codeModel, BigInteger value) {
 		super(codeModel, new BigDecimal(value));
 		Validate.notNull(value);
-		this.valueAsLong = value;
+		this.value = value;
 	}
 
 	@Override
@@ -26,7 +27,12 @@ public class HexIntegerLiteralImpl extends NumericLiteralImpl implements
 
 	@Override
 	public long asLong() {
-		return valueAsLong;
+		return value.longValue();
+	}
+
+	@Override
+	public BigInteger asNumber() {
+		return value;
 	}
 
 }

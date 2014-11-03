@@ -4,13 +4,13 @@ import java.math.BigInteger;
 
 public interface JSHexIntegerLiteral extends JSNumericLiteral {
 
-	public char[] asDigits();
-
-	public byte[] asBytes();
-	
+//	public char[] asDigits();
+//
+//	public byte[] asBytes();
+//	
 	public long asLong();
 	
 	public BigInteger asNumber();
 	
-	public BigInteger asInteger();
+//	public BigInteger asInteger();
 }

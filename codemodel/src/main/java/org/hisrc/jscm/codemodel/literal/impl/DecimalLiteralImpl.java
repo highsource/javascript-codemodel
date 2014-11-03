@@ -9,17 +9,17 @@ import org.hisrc.jscm.codemodel.literal.JSDecimalLiteral;
 public abstract class DecimalLiteralImpl extends NumericLiteralImpl implements
 		JSDecimalLiteral {
 
-	private final BigDecimal valueAsDecimal;
+	private final BigDecimal value;
 
 	public DecimalLiteralImpl(JSCodeModel codeModel, BigDecimal value) {
 		super(codeModel, value);
 		Validate.notNull(value);
-		this.valueAsDecimal = value;
+		this.value = value;
 	}
 
 	@Override
 	public BigDecimal asDecimal() {
-		return valueAsDecimal;
+		return value;
 	}
 
 }

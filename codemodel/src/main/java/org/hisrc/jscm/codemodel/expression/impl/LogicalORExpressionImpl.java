@@ -6,8 +6,8 @@ import org.hisrc.jscm.codemodel.expression.JSExpressionVisitor;
 import org.hisrc.jscm.codemodel.expression.JSLogicalANDExpression;
 import org.hisrc.jscm.codemodel.expression.JSLogicalORExpression;
 import org.hisrc.jscm.codemodel.lang.Validate;
-import org.hisrc.jscm.codemodel.literal.impl.BinaryOperatorImpl;
 import org.hisrc.jscm.codemodel.operator.JSBinaryOperator;
+import org.hisrc.jscm.codemodel.operator.impl.BinaryOperatorImpl;
 
 public abstract class LogicalORExpressionImpl extends ConditionalExpressionImpl
 		implements JSLogicalORExpression {

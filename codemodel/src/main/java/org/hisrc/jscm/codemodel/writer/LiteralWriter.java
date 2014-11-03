@@ -50,7 +50,7 @@ public class LiteralWriter implements
 	
 	@Override
 	public CodeWriter visit(JSHexIntegerLiteral value) throws IOException {
-		return f.hexInteger(value.asInteger());
+		return f.hexInteger(value.asNumber());
 	}
 
 }
