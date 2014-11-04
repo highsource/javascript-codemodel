@@ -3,10 +3,13 @@ package org.hisrc.jscm.parser.impl;
 import java.math.BigInteger;
 
 import org.hisrc.jscm.codemodel.JSCodeModel;
+import org.hisrc.jscm.codemodel.JSIdentifierName;
 import org.hisrc.jscm.codemodel.expression.JSArrayLiteral;
 import org.hisrc.jscm.codemodel.expression.JSThis;
 import org.hisrc.jscm.codemodel.impl.CodeModelImpl;
+import org.hisrc.jscm.codemodel.impl.IdentifierNameImpl;
 import org.hisrc.jscm.codemodel.literal.JSBooleanLiteral;
+import org.hisrc.jscm.codemodel.literal.JSDecimalIntegerLiteral;
 import org.hisrc.jscm.codemodel.literal.JSDecimalLiteral;
 import org.hisrc.jscm.codemodel.literal.JSHexIntegerLiteral;
 import org.hisrc.jscm.codemodel.literal.JSNullLiteral;
@@ -51,6 +54,20 @@ public class CodeModelBuilderImpl implements JSCodeModelBuilder {
 	public JSDecimalLiteral decimalLiteral(Token token) throws ParseException {
 		return null;
 	}
+	
+	@Override
+	public JSDecimalIntegerLiteral decimalIntegerLiteral(Token token)
+			throws ParseException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+	
+	@Override
+	public JSDecimalIntegerLiteral decimalIntegerLiteral(Token mainPart,
+			Token exponentpart) throws ParseException {
+		// TODO Auto-generated method stub
+		return null;
+	}
 
 	@Override
 	public JSStringLiteral stringLiteral(Token token) throws ParseException {
@@ -66,4 +83,10 @@ public class CodeModelBuilderImpl implements JSCodeModelBuilder {
 				.hexInteger(new BigInteger(token.image.substring(2), 16));
 	}
 
+	
+	@Override
+	public JSIdentifierName identifierName(Token token) throws ParseException {
+		// TODO Incorrect
+		return new IdentifierNameImpl(token.image);
+	}
 }
