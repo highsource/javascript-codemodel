@@ -1563,19 +1563,23 @@ JSPropertyName PropertyName() :
 Identifier */
 
 
-/* Section 11.2: Left-Hand-Side Expressions */
+/* 11.2 Left-Hand-Side Expressions */
 
 JSMemberExpression MemberExpression() :
 {
-	JSMemberExpression expression;
+	JSMemberExpression expression0;
+	JSExpression expression1;
+	JSIdentifierName identifierName;
+	JSAssignmentExpression[] arguments;
 }
 {
-	expression = PrimaryExpression() { return expression; }
-	/* TODO
-	FunctionExpression
-MemberExpression [ Expression ]
-MemberExpression . IdentifierName
-new MemberExpression Arguments */
+	expression0 = PrimaryExpression() { return expression0; }
+|	expression0 = FunctionExpression() { return expression0; }
+|	expression0 = MemberExpression() (
+		"[" expression1 = Expression() "]" { return expression0.element(expression1); }
+	|	"."	identifierName = IdentifierName() { return expression0.property(identifierName); }
+	)
+|	"new" expression0 = MemberExpression() arguments = Arguments(expression0) { return expression0.instantiate().args(arguments); }
 }
 
 JSNewExpression NewExpression() :
@@ -1583,45 +1587,52 @@ JSNewExpression NewExpression() :
 	JSNewExpression expression;
 }
 {
-	"new" expression = NewExpression() { return expression._new(); }
-|	expression = MemberExpression() { return expression; }
+	expression = MemberExpression() { return expression; }
+|	"new" expression = NewExpression() { return expression._new(); }
 }
 
 JSCallExpression CallExpression() :
 {
-	JSCallExpression callExpression;
 	JSMemberExpression memberExpression;
-	
+	JSCallExpression callExpression;
+	JSAssignmentExpression[] arguments;
+	JSExpression expression;
+	JSIdentifierName identifierName;
 }
 {
-	memberExpression = MemberExpression() callExpression = Arguments(memberExpression) { return callExpression; }
-/* TODO CallExpression Arguments
-CallExpression [ Expression ]
-CallExpression . IdentifierName*/
+	memberExpression = MemberExpression() arguments = Arguments() { return memberExpression.invoke().args(arguments); }
+|	callExpression = CallExpression() (
+		arguments = Arguments() { return callExpression.invoke().args(arguments); }
+	|	"[" expression = Expression() "]" { return callExpression.element(expression); }
+	|	"."	identifierName = IdentifierName() { return callExpression.property(identifierName); }
+	)	
 }
 
-
-JSCallExpression Arguments(JSMemberExpression expression) :
-{}
+JSAssignmentExpression[] Arguments() :
 {
-	"(" ")" { return expression.invoke(); }
-	/* ( ArgumentList ) */
 }
-
-/* TODO
-ArgumentList : See 11.2
-AssignmentExpression
-ArgumentList , AssignmentExpression
-*/
+{
+	/* TODO */
+	{ return null; }
+}
 
 JSLeftHandSideExpression LeftHandSideExpression() :
 {
 	JSLeftHandSideExpression expression;
 }
 {
-	/* TODO NewExpression */
-	expression = CallExpression() { return expression; }
+	expression = NewExpression() { return expression; }
+|	expression = CallExpression() { return expression; }
 }
+
+JSIdentifierName IdentifierName() :
+{
+	Token t;
+}
+{
+	t = <IDENTIFIER_NAME> { return this.builder.identifierName(t); }
+}
+
 
 /* 11.3 Postfix Expressions */
 JSPostfixExpression PostfixExpression() :
@@ -1629,12 +1640,10 @@ JSPostfixExpression PostfixExpression() :
 	JSLeftHandSideExpression expression;
 }
 {
-	
 	expression = LeftHandSideExpression() (
 		"++" /* TODO [no LineTerminator here] */ { return expression.postIncr(); }
 	|	"--" /* TODO [no LineTerminator here] */ { return expression.postDecr(); }
-	|	{ return expression; }
-	)
+	) ? { return expression; }
 }
 
 /* 11.4 Unary Operators */
@@ -1696,15 +1705,133 @@ JSShiftExpression ShiftExpression() :
 	) * { return expression0; }
 }
 
+/* 11.8 Relational Operators */
+JSRelationalExpression RelationalExpression() :
+{
+	JSRelationalExpression expression0;
+	JSShiftExpression expression1;
+}
+{
+	expression0 = ShiftExpression() (
+		"<" expression1 = ShiftExpression() { expression0 = expression0.lt(expression1); }
+	|	">" expression1 = ShiftExpression() { expression0 = expression0.gt(expression1); }
+	|	"<=" expression1 = ShiftExpression() { expression0 = expression0.le(expression1); }
+	|	">=" expression1 = ShiftExpression() { expression0 = expression0.gt(expression1); }
+	|	"instanceof" expression1 = ShiftExpression() { expression0 = expression0._instanceof(expression1); }
+	|	"in" expression1 = ShiftExpression() { expression0 = expression0.in(expression1); }
+	) * { return expression0; }
+}
 
+/* 11.9 Equality Operators */
+JSEqualityExpression EqualityExpression() :
+{
+	JSEqualityExpression expression0;
+	JSRelationalExpression expression1;
+}
+{
+	expression0 = RelationalExpression() (
+		"==" expression1 = RelationalExpression() { expression0 = expression0.eq(expression1); }
+	|	"!=" expression1 = RelationalExpression() { expression0 = expression0.ne(expression1); }
+	|	"===" expression1 = RelationalExpression() { expression0 = expression0.eeq(expression1); }
+	|	"!==" expression1 = RelationalExpression() { expression0 = expression0.nee(expression1); }
+	) * { return expression0; }
+}
 
+/* 11.10 Binary Bitwise Operators */
+JSBitwiseANDExpression BitwiseANDExpression() :
+{
+	JSBitwiseANDExpression expression0;
+	JSEqualityExpression expression1;
+}
+{
+	expression0 = EqualityExpression() (
+		"&" expression1 = EqualityExpression() { expression0 = expression0.band(expression1); }
+	) * { return expression0; }
+}
 
+JSBitwiseXORExpression BitwiseXORExpression() :
+{
+	JSBitwiseXORExpression expression0;
+	JSBitwiseANDExpression expression1;
+}
+{
+	expression0 = BitwiseANDExpression() (
+		"^" expression1 = BitwiseANDExpression() { expression0 = expression0.xor(expression1); }
+	) * { return expression0; }
+}
 
+JSBitwiseORExpression BitwiseORExpression() :
+{
+	JSBitwiseORExpression expression0;
+	JSBitwiseXORExpression expression1;
+}
+{
+	expression0 = BitwiseXORExpression() (
+		"|" expression1 = BitwiseXORExpression() { expression0 = expression0.bor(expression1); }
+	) * { return expression0; }
+}
+
+/* 11.11 Binary Logical Operators */
+JSLogicalANDExpression LogicalANDExpression() :
+{
+	JSLogicalANDExpression expression0;
+	JSBitwiseORExpression expression1;
+}
+{
+	expression0 = BitwiseORExpression() (
+		"&&" expression1 = BitwiseORExpression() { expression0 = expression0.and(expression1); }
+	) * { return expression0; }
+}
+
+JSLogicalORExpression LogicalORExpression() :
+{
+	JSLogicalORExpression expression0;
+	JSLogicalANDExpression expression1;
+}
+{
+	expression0 = LogicalANDExpression() (
+		"||" expression1 = LogicalANDExpression() { expression0 = expression0.or(expression1); }
+	) * { return expression0; }
+}
+
+/* 11.12 Conditional Operator ( ? : ) */
+JSConditionalExpression ConditionalExpression() :
+{
+	JSLogicalORExpression expression0;
+	JSAssignmentExpression expression1;
+	JSAssignmentExpression expression2;
+}
+{
+	expression0 = LogicalORExpression() (
+		"?" expression1 = AssignmentExpression() ":" expression2 = AssignmentExpression() { return expression0.cond(expression1, expression2); }
+	) ? { return expression0; }
+}
 
 /* 11.13 Assignment Operators */
 JSAssignmentExpression AssignmentExpression() :
-{}
-{ { return null; } }
+{
+	JSLeftHandSideExpression expression0;
+	JSAssignmentExpression expression1;
+	JSConditionalExpression expression;
+}
+{
+	LOOKAHEAD(LeftHandSideExpression() ("=" | "*=" | "/=" | "%=" | "+=" | "-=" | "<<=" | ">>=" | ">>>=" | "&=" | "^=" | "|="))
+	expression0 = LeftHandSideExpression() (
+		"=" expression1 = AssignmentExpression() { return expression0.assign(expression1); }
+	|	"*=" expression1 = AssignmentExpression() { return expression0.mulAssign(expression1); }
+	|	"/=" expression1 = AssignmentExpression() { return expression0.divAssign(expression1); }
+	|	"%=" expression1 = AssignmentExpression() { return expression0.modAssign(expression1); }
+	|	"+=" expression1 = AssignmentExpression() { return expression0.plusAssign(expression1); }
+	|	"-=" expression1 = AssignmentExpression() { return expression0.minusAssign(expression1); }
+	|	"<<=" expression1 = AssignmentExpression() { return expression0.shlAssign(expression1); }
+	|	">>=" expression1 = AssignmentExpression() { return expression0.shrAssign(expression1); }
+	|	">>>=" expression1 = AssignmentExpression() { return expression0.shrzAssign(expression1); }
+	|	"&=" expression1 = AssignmentExpression() { return expression0.bandAssign(expression1); }
+	|	"^=" expression1 = AssignmentExpression() { return expression0.xorAssign(expression1); }
+	|	"|=" expression1 = AssignmentExpression() { return expression0.borAssign(expression1); }
+	) 
+|	expression = ConditionalExpression() { return expression; } 
+}
 
 
 /* Section 11.14: Comma Operator */
@@ -1715,5 +1842,33 @@ JSExpression Expression() :
 	JSAssignmentExpression expression1;
 }
 {
-	expression0 = AssignmentExpression() ( "," expression1 = AssignmentExpression() {expression0 = expression0.comma(expression1);} )* { return expression0; }
+	expression0 = AssignmentExpression() (
+		"," expression1 = AssignmentExpression() { expression0 = expression0.comma(expression1); }
+	)* { return expression0; }
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/* 13 Function Definition */
+JSFunctionExpression FunctionExpression() :
+{
+}
+{
+	/* TODO */
+	"function" "(" ")" "{" "}" { return null; }
+}
+
