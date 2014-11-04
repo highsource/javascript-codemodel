@@ -422,51 +422,16 @@ TOKEN:
 }
 
 /* Section 7.8.3: Numeric Literals */
-/*
-JSNumericLiteral NumericLiteral()
-{
-	Token t;
-}
-{
-	LOOKAHEAD( <DECIMAL_INTEGER_LITERAL> "." ) DecimalNonIntegerLiteral()
-|	LOOKAHEAD( "." ) DecimalNonIntegerLiteral()	
-|	t = <HEX_INTEGER_LITERAL> { return this.builder.hexIntegerLiteral(t) };
-}
-
-JSNumericLiteral DecimalLiteral()
-{
-	Token t;
-}
-{
-	LOOKAHEAD( <DECIMAL_INTEGER_LITERAL> "." ) DecimalNonIntegerLiteral()
-|	LOOKAHEAD( "." ) DecimalNonIntegerLiteral()	
-|	DecimalIntegerLiteral();
-}
-*/
 
 JSNumericLiteral NumericLiteral() :
 {
 	Token t;
 }
 {
-	LOOKAHEAD(<HEX_INTEGER_LITERAL>) t=<HEX_INTEGER_LITERAL> { return this.builder.hexIntegerLiteral(t); }
-|	{ return DecimalLiteral(); }
+	t=<HEX_INTEGER_LITERAL> { return this.builder.hexIntegerLiteral(t); }
+|	t=<DECIMAL_LITERAL> { return this.builder.decimalLiteral(t); }
 }
-JSDecimalLiteral DecimalLiteral() :
-{
-	Token t1;
-	Token t2;
-	Token t3;
-}
-{
-	LOOKAHEAD(3) t1 = <DECIMAL_INTEGER_LITERAL> "." t2 = <DECIMAL_DIGITS> t3 = <EXPONENT_PART> { return this.builder.decimalNonIntegerLiteral(t1, t2, t3); }
-|	LOOKAHEAD(3) t1 = <DECIMAL_INTEGER_LITERAL> "." t2 = <DECIMAL_DIGITS> { return this.builder.decimalNonIntegerLiteral(t1, t2); }
-|	LOOKAHEAD(2) t1 = <DECIMAL_INTEGER_LITERAL> "." t3 = <EXPONENT_PART> { return this.builder.decimalNonIntegerLiteral(t1, null, t3); }
-|	LOOKAHEAD(3) "." t2 = <DECIMAL_DIGITS> t3 = <EXPONENT_PART> { return this.builder.decimalNonIntegerLiteral(null, t2, t3); }
-|	"." t2 = <DECIMAL_DIGITS> { return this.builder.decimalNonIntegerLiteral(null, t2); }
-|	LOOKAHEAD(2) t1 = <DECIMAL_INTEGER_LITERAL> t3= <EXPONENT_PART> { return this.builder.decimalIntegerLiteral(t1, t3); }
-|	t1 = <DECIMAL_INTEGER_LITERAL> { return this.builder.decimalIntegerLiteral(t1); }
-}
+
 
 /* Section 7.8.4: String Literals */
 
@@ -1495,7 +1460,7 @@ JSPrimaryExpression PrimaryExpression() :
 
 JSArrayLiteral ArrayLiteral()  : 
 {
-	JSArrayLiteral arrayLiteral = this.builder.array();
+	JSArrayLiteral arrayLiteral = this.builder.arrayLiteral();
 }
 {
 	"[" (Elision(arrayLiteral))? "]" { return arrayLiteral; }
@@ -1542,10 +1507,213 @@ void Elision(JSArrayLiteral arrayLiteral):
 		PropertyName() ":" AssignmentExpression() 
 	}
 */
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/* 11.1.5 Object Initialiser */
+JSObjectLiteral ObjectLiteral() :
+{
+	JSObjectLiteral objectLiteral = this.builder.objectLiteral();
+}
+{
+	"{" ( PropertyNameAndValueList(objectLiteral) )? "}" { return objectLiteral; }
+}
+
+JSObjectLiteral PropertyNameAndValueList(JSObjectLiteral objectLiteral) :
+{}
+{
+	PropertyAssignment(objectLiteral) ( LOOKAHEAD( "," PropertyAssignment(objectLiteral)) "," PropertyAssignment(objectLiteral) | "," )* { return objectLiteral; } 
+}
+
+JSObjectLiteral PropertyAssignment(JSObjectLiteral objectLiteral) : 
+{
+	JSPropertyName name;
+	JSAssignmentExpression expression; 
+}
+{
+	name = PropertyName() ":" expression = AssignmentExpression() { return objectLiteral.append(name, expression); }
+	/* TODO
+	get PropertyName ( ) { FunctionBody }
+	set PropertyName ( PropertySetParameterList ) { FunctionBody }*/
+}
+
 JSPropertyName PropertyName() :
 { Token t;}
 {
 	t = <IDENTIFIER_NAME> { return this.builder.identifierName(t); }
 |	t = <STRING_LITERAL> { return this.builder.stringLiteral(t); }
 |	t = <DECIMAL_LITERAL> { return this.builder.decimalLiteral(t); }
+}
+
+/* TODO PropertySetParameterList :
+Identifier */
+
+
+/* Section 11.2: Left-Hand-Side Expressions */
+
+JSMemberExpression MemberExpression() :
+{
+	JSMemberExpression expression;
+}
+{
+	expression = PrimaryExpression() { return expression; }
+	/* TODO
+	FunctionExpression
+MemberExpression [ Expression ]
+MemberExpression . IdentifierName
+new MemberExpression Arguments */
+}
+
+JSNewExpression NewExpression() :
+{
+	JSNewExpression expression;
+}
+{
+	"new" expression = NewExpression() { return expression._new(); }
+|	expression = MemberExpression() { return expression; }
+}
+
+JSCallExpression CallExpression() :
+{
+	JSCallExpression callExpression;
+	JSMemberExpression memberExpression;
+	
+}
+{
+	memberExpression = MemberExpression() callExpression = Arguments(memberExpression) { return callExpression; }
+/* TODO CallExpression Arguments
+CallExpression [ Expression ]
+CallExpression . IdentifierName*/
+}
+
+
+JSCallExpression Arguments(JSMemberExpression expression) :
+{}
+{
+	"(" ")" { return expression.invoke(); }
+	/* ( ArgumentList ) */
+}
+
+/* TODO
+ArgumentList : See 11.2
+AssignmentExpression
+ArgumentList , AssignmentExpression
+*/
+
+JSLeftHandSideExpression LeftHandSideExpression() :
+{
+	JSLeftHandSideExpression expression;
+}
+{
+	/* TODO NewExpression */
+	expression = CallExpression() { return expression; }
+}
+
+/* 11.3 Postfix Expressions */
+JSPostfixExpression PostfixExpression() :
+{
+	JSLeftHandSideExpression expression;
+}
+{
+	
+	expression = LeftHandSideExpression() (
+		"++" /* TODO [no LineTerminator here] */ { return expression.postIncr(); }
+	|	"--" /* TODO [no LineTerminator here] */ { return expression.postDecr(); }
+	|	{ return expression; }
+	)
+}
+
+/* 11.4 Unary Operators */
+JSUnaryExpression UnaryExpression() :
+{
+	JSUnaryExpression expression;
+}
+{
+	"delete" expression = UnaryExpression() { return expression.delete(); }
+|	"void" expression = UnaryExpression() { return expression._void(); }
+|	"typeof" expression = UnaryExpression() { return expression.typeof(); }
+|	"++" expression = UnaryExpression() { return expression.preIncr(); }
+|	"--" expression = UnaryExpression() { return expression.preDecr(); }
+|	"+" expression = UnaryExpression() { return expression.positive(); }
+|	"-" expression = UnaryExpression() { return expression.negative(); }
+|	"~" expression = UnaryExpression() { return expression.complement(); }
+|	"!" expression = UnaryExpression() { return expression.not(); }
+|	expression = PostfixExpression() { return expression; }
+}
+
+/* 11.5 Multiplicative Operators */
+JSMultiplicativeExpression MultiplicativeExpression() :
+{
+	JSMultiplicativeExpression expression0;
+	JSUnaryExpression expression1;
+}
+{
+	expression0 = UnaryExpression() (
+		"*" expression1 = UnaryExpression() { expression0 = expression0.mul(expression1); }
+	|	"/" expression1 = UnaryExpression() { expression0 = expression0.div(expression1); }
+	|	"%" expression1 = UnaryExpression() { expression0 = expression0.mod(expression1); }
+	) * { return expression0; }
+}
+
+/* 11.6 Additive Operators */
+JSAdditiveExpression AdditiveExpression() :
+{
+	JSAdditiveExpression expression0;
+	JSMultiplicativeExpression expression1;
+}
+{
+	expression0 = MultiplicativeExpression() (
+		"+" expression1 = MultiplicativeExpression() { expression0 = expression0.plus(expression1); }
+	|	"-" expression1 = MultiplicativeExpression() { expression0 = expression0.minus(expression1); }
+	) * { return expression0; }
+}
+
+/* 11.7 Bitwise Shift Operators */
+JSShiftExpression ShiftExpression() :
+{
+	JSShiftExpression expression0;
+	JSAdditiveExpression expression1;
+}
+{
+	expression0 = AdditiveExpression() (
+		"<<" expression1 = AdditiveExpression() { expression0 = expression0.shl(expression1); }
+	|	">>" expression1 = AdditiveExpression() { expression0 = expression0.shr(expression1); }
+	|	">>>" expression1 = AdditiveExpression() { expression0 = expression0.shrz(expression1); }
+	) * { return expression0; }
+}
+
+
+
+
+
+
+/* 11.13 Assignment Operators */
+JSAssignmentExpression AssignmentExpression() :
+{}
+{ { return null; } }
+
+
+/* Section 11.14: Comma Operator */
+
+JSExpression Expression() :
+{
+	JSExpression expression0;
+	JSAssignmentExpression expression1;
+}
+{
+	expression0 = AssignmentExpression() ( "," expression1 = AssignmentExpression() {expression0 = expression0.comma(expression1);} )* { return expression0; }
 }
