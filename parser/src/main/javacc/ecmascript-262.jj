@@ -39,7 +39,10 @@ PARSER_BEGIN(EcmaScriptParser)
 package org.hisrc.jscm.parser;
 
 import org.hisrc.jscm.codemodel.*;
+import org.hisrc.jscm.codemodel.expression.*;
 import org.hisrc.jscm.codemodel.literal.*;
+import org.hisrc.jscm.codemodel.operator.*;
+import org.hisrc.jscm.codemodel.statement.*;
 import org.hisrc.jscm.parser.impl.*;
 
 public class EcmaScriptParser {
@@ -1388,34 +1391,83 @@ TOKEN:
 	JSLiteral Literal() :
 	{
 	  Token t;
-//	  Map objLiteral;
-//	  List arrayLiteral;
 	}
 	{
 		t = <DECIMAL_LITERAL> { return this.builder.decimalLiteral(token); }
-	/* |
-		t = <HEX_INTEGER_LITERAL>
-		{
-			jjtThis.setHexValue(t.image);
-		}
+	 |
+		t = <HEX_INTEGER_LITERAL> { return this.builder.hexIntegerLiteral(token); }
+	 |
+		t = <STRING_LITERAL> { return this.builder.stringLiteral(token); }
+	 |
+		t = <BOOLEAN_LITERAL> { return this.builder.booleanLiteral(t); }
 	|
-		t = <STRING_LITERAL>
-		{
-			jjtThis.setStringValue(t.image);
-		}
-	|*/
-		t = <BOOLEAN_LITERAL>
-		{
-			return this.builder.booleanLiteral(t);
-		}
-	|
-		t = <NULL_LITERAL>
-		{
-			return this.builder.nullLiteral(t);
-		}/*
+		t = <NULL_LITERAL> { return this.builder.nullLiteral(t); }
+/*
 	| 
 		t = <REGULAR_EXPRESSION_LITERAL>
 		{
 			jjtThis.setRegexValue(t.image);
-		}*/
+		}
+*/
 	}
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+/*****************************************
+ * ECMA SYNTACTIC GRAMMARS  STARTS HERE  *
+ *****************************************/
+
+/* Section 11.1: Primary Expressions */
+
+JSPrimaryExpression PrimaryExpression() :
+{}
+{
+		LOOKAHEAD("this") { return this.builder._this(); }
+/*		| LOOKAHEAD("{") ObjectLiteral()
+		| LOOKAHEAD("(") ( "(" Expression() ")" ) #ParenExpression
+		| LOOKAHEAD(Identifier()) Identifier()
+		| LOOKAHEAD("[") ArrayLiteral()*/
+		| LOOKAHEAD(2) { return Literal(); } 
+}
+	
+	
+		/* Section 11.1.4: Array Initialiser */
+
+JSArrayLiteral ArrayLiteral()  : 
+{
+	JSArrayLiteral arrayLiteral = this.builder.array();
+}
+{
+	"[" (Elision(arrayLiteral))? "]" { return arrayLiteral; }
+}
+
+/*
+{
+		"[" (
+				LOOKAHEAD(2) ( Elision() )? "]" 
+						| LOOKAHEAD(ElementList() Elision()) ElementList() Elision() "]" 
+						| ( ElementList() )? "]" 
+		)
+}		 
+
+	void ElementList() #void :
+	{}
+	{
+		( Elision() )? AssignmentExpression() ( LOOKAHEAD(Elision()	AssignmentExpression()) Elision()  AssignmentExpression())*
+	}*/
+
+void Elision(JSArrayLiteral arrayLiteral):
+{}
+{
+		("," { arrayLiteral.elision(); })+
+}

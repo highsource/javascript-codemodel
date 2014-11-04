@@ -1,6 +1,7 @@
 package org.hisrc.jscm.codemodel.expression.impl;
 
 import org.hisrc.jscm.codemodel.JSCodeModel;
+import org.hisrc.jscm.codemodel.expression.JSArrayElementVisitor;
 import org.hisrc.jscm.codemodel.expression.JSAssignmentExpression;
 import org.hisrc.jscm.codemodel.expression.JSExpressionVisitor;
 import org.hisrc.jscm.codemodel.expression.JSLeftHandSideExpression;
@@ -12,6 +13,12 @@ public abstract class AssignmentExpressionImpl extends ExpressionImpl implements
 
 	public AssignmentExpressionImpl(JSCodeModel codeModel) {
 		super(codeModel);
+	}
+
+	@Override
+	public <V, E extends Exception> V acceptArrayElementVisitor(
+			JSArrayElementVisitor<V, E> visitor) throws E {
+		return visitor.visitAssignment(this);
 	}
 
 	public static class AssignmentImpl extends AssignmentExpressionImpl

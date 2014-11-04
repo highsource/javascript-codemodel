@@ -1,5 +1,8 @@
 package org.hisrc.jscm.codemodel;
 
+import java.math.BigDecimal;
+import java.math.BigInteger;
+
 import org.hisrc.jscm.codemodel.expression.JSArrayLiteral;
 import org.hisrc.jscm.codemodel.expression.JSFunctionExpression;
 import org.hisrc.jscm.codemodel.expression.JSGlobalVariable;
@@ -8,6 +11,7 @@ import org.hisrc.jscm.codemodel.expression.JSThis;
 import org.hisrc.jscm.codemodel.literal.JSBooleanLiteral;
 import org.hisrc.jscm.codemodel.literal.JSDecimalIntegerLiteral;
 import org.hisrc.jscm.codemodel.literal.JSDecimalNonIntegerLiteral;
+import org.hisrc.jscm.codemodel.literal.JSHexIntegerLiteral;
 import org.hisrc.jscm.codemodel.literal.JSNullLiteral;
 import org.hisrc.jscm.codemodel.literal.JSStringLiteral;
 
@@ -20,7 +24,13 @@ public interface JSCodeModel {
 
 	JSDecimalIntegerLiteral integer(long value);
 
+	JSDecimalIntegerLiteral integer(BigInteger value);
+
 	JSDecimalNonIntegerLiteral decimal(String value);
+
+	JSDecimalNonIntegerLiteral decimal(BigDecimal value);
+	
+	JSHexIntegerLiteral hexInteger(BigInteger value);
 
 	JSStringLiteral string(String value);
 

@@ -6,6 +6,7 @@ import java.util.Collections;
 import java.util.List;
 
 import org.hisrc.jscm.codemodel.JSCodeModel;
+import org.hisrc.jscm.codemodel.expression.JSArrayElement;
 import org.hisrc.jscm.codemodel.expression.JSArrayLiteral;
 import org.hisrc.jscm.codemodel.expression.JSAssignmentExpression;
 import org.hisrc.jscm.codemodel.expression.JSExpressionVisitor;
@@ -14,8 +15,8 @@ import org.hisrc.jscm.codemodel.lang.Validate;
 public class ArrayLiteralImpl extends PrimaryExpressionImpl implements
 		JSArrayLiteral {
 
-	private final List<JSAssignmentExpression> elements = new ArrayList<JSAssignmentExpression>();
-	private final List<JSAssignmentExpression> unmodifiableElements = Collections
+	private final List<JSArrayElement> elements = new ArrayList<JSArrayElement>();
+	private final List<JSArrayElement> unmodifiableElements = Collections
 			.unmodifiableList(elements);
 
 	public ArrayLiteralImpl(JSCodeModel codeModel) {
@@ -23,7 +24,7 @@ public class ArrayLiteralImpl extends PrimaryExpressionImpl implements
 	}
 
 	@Override
-	public List<JSAssignmentExpression> getElements() {
+	public List<JSArrayElement> getElements() {
 		return unmodifiableElements;
 	}
 
@@ -31,6 +32,12 @@ public class ArrayLiteralImpl extends PrimaryExpressionImpl implements
 	public JSArrayLiteral append(JSAssignmentExpression... elements) {
 		Validate.noNullElements(elements);
 		this.elements.addAll(Arrays.asList(elements));
+		return this;
+	}
+
+	@Override
+	public JSArrayLiteral elision() {
+		this.elements.add(new ElisionImpl(getCodeModel()));
 		return this;
 	}
 

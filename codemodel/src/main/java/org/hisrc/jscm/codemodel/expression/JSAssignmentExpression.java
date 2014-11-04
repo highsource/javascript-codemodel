@@ -3,7 +3,7 @@ package org.hisrc.jscm.codemodel.expression;
 import org.hisrc.jscm.codemodel.operator.impl.AssignmentOperator;
 
 // 11.14
-public interface JSAssignmentExpression extends JSExpression {
+public interface JSAssignmentExpression extends JSExpression, JSArrayElement {
 
 	public interface Assignment extends JSAssignmentExpression,
 			JSBinaryExpression {

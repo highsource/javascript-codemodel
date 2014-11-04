@@ -7,5 +7,10 @@ public interface JSArrayLiteral extends JSPrimaryExpression {
 
 	public JSArrayLiteral append(JSAssignmentExpression... element);
 
-	public List<JSAssignmentExpression> getElements();
+	// TODO possible API oncompatibility
+	public JSArrayLiteral elision();
+
+	// TODO API incompatibility
+	public List<JSArrayElement> getElements();
+
 }

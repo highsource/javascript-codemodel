@@ -6,6 +6,8 @@ import java.util.List;
 import org.hisrc.jscm.codemodel.JSPropertyName;
 import org.hisrc.jscm.codemodel.JSSourceElement;
 import org.hisrc.jscm.codemodel.expression.JSAdditiveExpression.Additive;
+import org.hisrc.jscm.codemodel.expression.JSArrayElement;
+import org.hisrc.jscm.codemodel.expression.JSArrayElementVisitor;
 import org.hisrc.jscm.codemodel.expression.JSArrayLiteral;
 import org.hisrc.jscm.codemodel.expression.JSAssignmentExpression;
 import org.hisrc.jscm.codemodel.expression.JSAssignmentExpression.Assignment;
@@ -18,6 +20,7 @@ import org.hisrc.jscm.codemodel.expression.JSCallExpression.CallElement;
 import org.hisrc.jscm.codemodel.expression.JSCallExpression.CallProperty;
 import org.hisrc.jscm.codemodel.expression.JSCallExpression.MemberCall;
 import org.hisrc.jscm.codemodel.expression.JSConditionalExpression.Conditional;
+import org.hisrc.jscm.codemodel.expression.JSElision;
 import org.hisrc.jscm.codemodel.expression.JSEqualityExpression.Equality;
 import org.hisrc.jscm.codemodel.expression.JSExpression;
 import org.hisrc.jscm.codemodel.expression.JSExpression.Comma;
@@ -85,7 +88,7 @@ public class ExpressionWriter implements
 		f.openSquareBracket();
 		final CodeWriter fi = f.indented();
 
-		final List<JSAssignmentExpression> elements = value.getElements();
+		final List<JSArrayElement> elements = value.getElements();
 		final int elementsCount = elements.size();
 		// for (int index = 0; index < elementsCount; index++) {
 		// final boolean first = (index == 0);
@@ -137,12 +140,26 @@ public class ExpressionWriter implements
 
 		for (int index = 0; index < elementsCount; index++) {
 			final boolean first = (index == 0);
-			final JSAssignmentExpression element = elements.get(index);
+			final JSArrayElement element = elements.get(index);
 
 			if (!first) {
 				fi.comma().whiteSpace();
 			}
-			fi.expression(element);
+			// TODO Not tested yet
+			element.acceptArrayElementVisitor(new JSArrayElementVisitor<CodeWriter, IOException>() {
+
+				@Override
+				public CodeWriter visitAssignment(
+						JSAssignmentExpression expression) throws IOException {
+					return fi.expression(expression);
+				}
+
+				@Override
+				public CodeWriter visitElision(JSElision value)
+						throws IOException {
+					return fi;
+				}
+			});
 
 		}
 		f.closeSquareBracket();

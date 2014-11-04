@@ -1,6 +1,7 @@
 package org.hisrc.jscm.codemodel.impl;
 
 import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
@@ -21,11 +22,13 @@ import org.hisrc.jscm.codemodel.lang.Validate;
 import org.hisrc.jscm.codemodel.literal.JSBooleanLiteral;
 import org.hisrc.jscm.codemodel.literal.JSDecimalIntegerLiteral;
 import org.hisrc.jscm.codemodel.literal.JSDecimalNonIntegerLiteral;
+import org.hisrc.jscm.codemodel.literal.JSHexIntegerLiteral;
 import org.hisrc.jscm.codemodel.literal.JSNullLiteral;
 import org.hisrc.jscm.codemodel.literal.JSStringLiteral;
 import org.hisrc.jscm.codemodel.literal.impl.BooleanLiteralImpl;
 import org.hisrc.jscm.codemodel.literal.impl.DecimalIntegerLiteralImpl;
 import org.hisrc.jscm.codemodel.literal.impl.DecimalNonIntegerLiteralImpl;
+import org.hisrc.jscm.codemodel.literal.impl.HexIntegerLiteralImpl;
 import org.hisrc.jscm.codemodel.literal.impl.NullLiteralImpl;
 import org.hisrc.jscm.codemodel.literal.impl.StringLiteralImpl;
 
@@ -64,6 +67,11 @@ public class CodeModelImpl implements JSCodeModel {
 
 	@Override
 	public JSDecimalIntegerLiteral integer(long value) {
+		return new DecimalIntegerLiteralImpl(this, BigInteger.valueOf(value));
+	}
+	
+	@Override
+	public JSDecimalIntegerLiteral integer(BigInteger value) {
 		return new DecimalIntegerLiteralImpl(this, value);
 	}
 
@@ -72,6 +80,18 @@ public class CodeModelImpl implements JSCodeModel {
 		Validate.notNull(value);
 		final BigDecimal bigDecimal = new BigDecimal(value);
 		return new DecimalNonIntegerLiteralImpl(this, bigDecimal);
+	}
+
+	@Override
+	public JSDecimalNonIntegerLiteral decimal(BigDecimal value) {
+		Validate.notNull(value);
+		return new DecimalNonIntegerLiteralImpl(this, value);
+	}
+	
+	@Override
+	public JSHexIntegerLiteral hexInteger(BigInteger value) {
+		Validate.notNull(value);
+		return new HexIntegerLiteralImpl(this, value);
 	}
 
 	@Override
