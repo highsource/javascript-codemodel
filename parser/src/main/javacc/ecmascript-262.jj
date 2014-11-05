@@ -1564,22 +1564,39 @@ Identifier */
 
 
 /* 11.2 Left-Hand-Side Expressions */
-
 JSMemberExpression MemberExpression() :
 {
-	JSMemberExpression expression0;
-	JSExpression expression1;
+	JSMemberExpression expression;
+}
+{ 
+	(
+		( 
+			/*LOOKAHEAD("function")*/
+			expression = FunctionExpression()
+/*		|	expression = PrimaryExpression()*/
+		)
+		(LOOKAHEAD(2) expression = MemberExpressionPropertyAccessor(expression))*
+	) { return expression; }
+|	expression = NewMemberExpression() { return expression; }
+}
+
+JSMemberExpression MemberExpressionPropertyAccessor(JSMemberExpression memberExpression) :
+{
+	JSExpression expression;
 	JSIdentifierName identifierName;
+}
+{
+	"[" expression = Expression() "]" { return memberExpression.element(expression); }
+|	"."	identifierName = IdentifierName() { return memberExpression.property(identifierName); }
+}
+
+JSMemberExpression NewMemberExpression() :
+{
+	JSMemberExpression expression0;
 	JSAssignmentExpression[] arguments;
 }
 {
-	expression0 = PrimaryExpression() { return expression0; }
-|	expression0 = FunctionExpression() { return expression0; }
-|	expression0 = MemberExpression() (
-		"[" expression1 = Expression() "]" { return expression0.element(expression1); }
-	|	"."	identifierName = IdentifierName() { return expression0.property(identifierName); }
-	)
-|	"new" expression0 = MemberExpression() arguments = Arguments(expression0) { return expression0.instantiate().args(arguments); }
+	"new" expression0 = MemberExpression() arguments = Arguments(expression0) { return expression0.instantiate().args(arguments); }
 }
 
 JSNewExpression NewExpression() :
@@ -1591,21 +1608,26 @@ JSNewExpression NewExpression() :
 |	"new" expression = NewExpression() { return expression._new(); }
 }
 
-JSCallExpression CallExpression() :
+JSCallExpression CallExpression() : 
 {
-	JSMemberExpression memberExpression;
 	JSCallExpression callExpression;
-	JSAssignmentExpression[] arguments;
+	JSAssignmentExpression[] arguments;	
+}
+{
+	callExpression = MemberExpression()
+	arguments = Arguments() { callExpression = callExpression.invoke().args(arguments); }
+	( LOOKAHEAD(2) CallExpressionPropertyAccessor(callExpression) )*
+	{ return callExpression; }
+}
+
+JSCallExpression CallExpressionPropertyAccessor(JSCallExpression callExpression) :
+{
 	JSExpression expression;
 	JSIdentifierName identifierName;
 }
 {
-	memberExpression = MemberExpression() arguments = Arguments() { return memberExpression.invoke().args(arguments); }
-|	callExpression = CallExpression() (
-		arguments = Arguments() { return callExpression.invoke().args(arguments); }
-	|	"[" expression = Expression() "]" { return callExpression.element(expression); }
-	|	"."	identifierName = IdentifierName() { return callExpression.property(identifierName); }
-	)	
+	"[" expression = Expression() "]" { return callExpression.element(expression); }
+|	"."	identifierName = IdentifierName() { return callExpression.property(identifierName); }
 }
 
 JSAssignmentExpression[] Arguments() :
