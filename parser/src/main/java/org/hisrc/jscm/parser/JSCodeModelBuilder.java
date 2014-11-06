@@ -33,4 +33,6 @@ public interface JSCodeModelBuilder {
 	public JSHexIntegerLiteral hexIntegerLiteral(Token token) throws ParseException;
 	
 	public JSIdentifierName identifierName(Token token) throws ParseException;
+	
+	public String identifier(Token token) throws ParseException;
 }

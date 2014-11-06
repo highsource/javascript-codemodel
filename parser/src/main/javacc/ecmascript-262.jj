@@ -499,6 +499,16 @@ TOKEN:
 */
 
 /* Section 7.6: Identifiers */
+String Identifier() : 
+{
+	Token t;
+}
+{
+	t = <IDENTIFIER_NAME>
+	{
+		return this.builder.identifier(t);
+	}
+}
 
 <DEFAULT, IN_REGEX>
 TOKEN:
@@ -1899,6 +1909,67 @@ JSExpression Expression() :
 
 
 
+
+/* 12 Statements */
+JSStatement Statement(JSStatementGenerator context) :
+{
+	JSStatement statement;
+}
+{
+/* Statement :
+Block
+VariableStatement
+EmptyStatement
+ExpressionStatement
+IfStatement
+IterationStatement
+ContinueStatement
+BreakStatement
+ReturnStatement
+WithStatement
+LabelledStatement
+SwitchStatement
+ThrowStatement
+TryStatement
+DebuggerStatement */
+
+	statement = Block(context) { return statement; }
+}
+
+JSBlock Block(JSStatementGenerator context) :
+{
+	JSBlock	block = context.block();
+}
+{
+	"{"
+	(
+		"}"
+		{ return block; }
+	|	( Statement(block) ) +
+		"}"
+		{ return block; }
+	)
+}
+
+
+JSVariableStatement VariableStatement(JSStatementGenerator context)
+{
+	JSVariableStatement variableStatement;
+	String identifier;
+	JSAssignmentExpression assignmentExpression;
+}
+{
+	"var"
+	(
+		identifier = Identifier()
+		(
+			"=" assignmentExpression = AssignmentExpression()
+		|				
+		)
+	)
+	
+	";"
+}
 
 
 
