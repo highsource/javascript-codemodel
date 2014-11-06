@@ -5,6 +5,7 @@ import java.math.BigInteger;
 import org.hisrc.jscm.codemodel.JSCodeModel;
 import org.hisrc.jscm.codemodel.JSIdentifierName;
 import org.hisrc.jscm.codemodel.expression.JSArrayLiteral;
+import org.hisrc.jscm.codemodel.expression.JSObjectLiteral;
 import org.hisrc.jscm.codemodel.expression.JSThis;
 import org.hisrc.jscm.codemodel.impl.CodeModelImpl;
 import org.hisrc.jscm.codemodel.impl.IdentifierNameImpl;
@@ -36,8 +37,13 @@ public class CodeModelBuilderImpl implements JSCodeModelBuilder {
 	}
 	
 	@Override
-	public JSArrayLiteral array() {
+	public JSArrayLiteral arrayLiteral() {
 		return codeModel.array();
+	}
+	
+	@Override
+	public JSObjectLiteral objectLiteral() {
+		return codeModel.object();
 	}
 
 	@Override
@@ -58,13 +64,6 @@ public class CodeModelBuilderImpl implements JSCodeModelBuilder {
 	@Override
 	public JSDecimalIntegerLiteral decimalIntegerLiteral(Token token)
 			throws ParseException {
-		// TODO Auto-generated method stub
-		return null;
-	}
-	
-	@Override
-	public JSDecimalIntegerLiteral decimalIntegerLiteral(Token mainPart,
-			Token exponentpart) throws ParseException {
 		// TODO Auto-generated method stub
 		return null;
 	}

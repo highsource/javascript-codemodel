@@ -1444,85 +1444,55 @@ TOKEN:
 /* Section 11.1: Primary Expressions */
 
 JSPrimaryExpression PrimaryExpression() :
-{ }
+{
+	JSObjectLiteral objectLiteral;
+	JSExpression expression;
+	JSArrayLiteral arrayLiteral;
+	JSLiteral literal;
+}
 {
 		LOOKAHEAD(<THIS>) <THIS> { return this.builder._this(); }
-/*		| LOOKAHEAD("{") ObjectLiteral()
-		| LOOKAHEAD("(") ( "(" Expression() ")" ) #ParenExpression
-		| LOOKAHEAD(Identifier()) Identifier()*/
-		| LOOKAHEAD("[") { return ArrayLiteral(); }
-		/* | LOOKAHEAD(2) { return Literal(); }*/ 
+		| LOOKAHEAD("{") objectLiteral = ObjectLiteral() { return objectLiteral; }
+		| LOOKAHEAD("(") ( "(" expression = Expression() ")" ) { return expression.brackets(); } 
+/*	TODO	| LOOKAHEAD(Identifier()) Identifier()*/
+		| LOOKAHEAD("[") arrayLiteral = ArrayLiteral() { return arrayLiteral; }
+		| LOOKAHEAD(2) literal = Literal() { return literal; } 
 }
 
-	
-	
-		/* Section 11.1.4: Array Initialiser */
-
-JSArrayLiteral ArrayLiteral()  : 
+/* 11.1.4 Array Initialiser */
+JSArrayLiteral ArrayLiteral() : 
 {
 	JSArrayLiteral arrayLiteral = this.builder.arrayLiteral();
 }
 {
-	"[" (Elision(arrayLiteral))? "]" { return arrayLiteral; }
-}
-
-/*
-{
-		"[" (
-				LOOKAHEAD(2) ( Elision() )? "]" 
-						| LOOKAHEAD(ElementList() Elision()) ElementList() Elision() "]" 
-						| ( ElementList() )? "]" 
-		)
+	"[" (
+		LOOKAHEAD(2) ( Elision(arrayLiteral) )? "]" 
+	|	LOOKAHEAD(ElementList() Elision()) ElementList(arrayLiteral) Elision(arrayLiteral) "]" 
+	|	( ElementList(arrayLiteral) )? "]" 
+	)
+	{ return arrayLiteral; }
 }		 
 
-	void ElementList() #void :
-	{}
-	{
-		( Elision() )? AssignmentExpression() ( LOOKAHEAD(Elision()	AssignmentExpression()) Elision()  AssignmentExpression())*
-	}*/
-
-void Elision(JSArrayLiteral arrayLiteral):
-{}
+void ElementList(JSArrayLiteral arrayLiteral) :
 {
-		("," { arrayLiteral.elision(); })+
+	JSAssignmentExpression expression;
+}
+{
+		( Elision(arrayLiteral) )?
+		expression = AssignmentExpression() { arrayLiteral.append(expression); }
+		(
+			LOOKAHEAD(Elision() AssignmentExpression())
+			Elision(arrayLiteral) expression = AssignmentExpression() { arrayLiteral.append(expression); }
+		)*
 }
 
-	/* Section 11.1.5: Object Initialiser */
-/*
-	void ObjectLiteral() #ObjectLiteral :
-	{}
-	{
-		"{" ( PropertyNameAndValueList() )? "}"
-	}
-
-	void PropertyNameAndValueList() #void :
-	{}
-	{
-		PropertyNameAndValue() ( LOOKAHEAD( "," PropertyNameAndValue()) "," PropertyNameAndValue() | "," )* 
-	}
-
-	void PropertyNameAndValue() #LiteralField :
-	{}
-	{
-		PropertyName() ":" AssignmentExpression() 
-	}
-*/
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+void Elision(JSArrayLiteral arrayLiteral) :
+{}
+{
+	(
+		"," { arrayLiteral.elision(); }
+	)+
+}
 
 /* 11.1.5 Object Initialiser */
 JSObjectLiteral ObjectLiteral() :
@@ -1567,17 +1537,18 @@ Identifier */
 JSMemberExpression MemberExpression() :
 {
 	JSMemberExpression expression;
+	JSAssignmentExpression[] arguments;
 }
 { 
 	(
 		( 
 			/*LOOKAHEAD("function")*/
 			expression = FunctionExpression()
-/*		|	expression = PrimaryExpression()*/
+		|	expression = PrimaryExpression()
 		)
 		(LOOKAHEAD(2) expression = MemberExpressionPropertyAccessor(expression))*
 	) { return expression; }
-|	expression = NewMemberExpression() { return expression; }
+| "new" expression = MemberExpression() arguments = Arguments() { return expression.instantiate().args(arguments); }
 }
 
 JSMemberExpression MemberExpressionPropertyAccessor(JSMemberExpression memberExpression) :
@@ -1590,20 +1561,12 @@ JSMemberExpression MemberExpressionPropertyAccessor(JSMemberExpression memberExp
 |	"."	identifierName = IdentifierName() { return memberExpression.property(identifierName); }
 }
 
-JSMemberExpression NewMemberExpression() :
-{
-	JSMemberExpression expression0;
-	JSAssignmentExpression[] arguments;
-}
-{
-	"new" expression0 = MemberExpression() arguments = Arguments(expression0) { return expression0.instantiate().args(arguments); }
-}
-
 JSNewExpression NewExpression() :
 {
 	JSNewExpression expression;
 }
 {
+	LOOKAHEAD(NewExpression() "(")
 	expression = MemberExpression() { return expression; }
 |	"new" expression = NewExpression() { return expression._new(); }
 }
@@ -1643,8 +1606,9 @@ JSLeftHandSideExpression LeftHandSideExpression() :
 	JSLeftHandSideExpression expression;
 }
 {
-	expression = NewExpression() { return expression; }
-|	expression = CallExpression() { return expression; }
+	LOOKAHEAD(MemberExpression() "(")
+	expression = CallExpression() { return expression; }
+| 	expression = MemberExpression() { return expression; }
 }
 
 JSIdentifierName IdentifierName() :

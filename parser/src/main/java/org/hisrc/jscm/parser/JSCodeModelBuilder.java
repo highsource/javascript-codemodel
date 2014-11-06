@@ -28,12 +28,6 @@ public interface JSCodeModelBuilder {
 
 	public JSDecimalIntegerLiteral decimalIntegerLiteral(Token token) throws ParseException;
 
-	public JSDecimalIntegerLiteral decimalIntegerLiteral(Token mainPart, Token exponentpart) throws ParseException;
-
-	public JSDecimalNonIntegerLiteral decimalNonIntegerLiteral(Token mainPart, Token digitsPart) throws ParseException;
-
-	public JSDecimalNonIntegerLiteral decimalNonIntegerLiteral(Token mainPart, Token digitsPart, Token exponentpart) throws ParseException;
-	
 	public JSStringLiteral stringLiteral(Token token) throws ParseException;
 	
 	public JSHexIntegerLiteral hexIntegerLiteral(Token token) throws ParseException;
