@@ -1941,6 +1941,12 @@ JSBlock Block(JSStatementGenerator context) :
 	JSBlock	block = context.block();
 }
 {
+	BlockContent (block) { return block; }
+}
+
+JSBlock BlockContent(JSBlock block) :
+{}
+{
 	"{"
 	(
 		"}"
@@ -1950,7 +1956,7 @@ JSBlock Block(JSStatementGenerator context) :
 		{ return block; }
 	)
 }
-
+/*
 
 JSVariableStatement VariableStatement(JSStatementGenerator context)
 {
@@ -1969,8 +1975,59 @@ JSVariableStatement VariableStatement(JSStatementGenerator context)
 	)
 	
 	";"
+}*/
+
+/* 12.14 The try Statement */
+/*
+TryStatement :
+	try Block Catch
+	try Block Finally
+	try Block Catch Finally
+Catch :
+	catch ( Identifier ) Block
+Finally :
+	finally Block */
+	
+JSTryStatement TryStatement(JSStatementGenerator context) :
+{
+	JSTryStatement.Try _try;
+	String identifier;
+	JSTryStatement.TryCatch _tryCatch;
+	JSTryStatement.TryCatchFinally _tryCatchFinally;
+	JSTryStatement.TryFinally _tryFinally;
+}
+{
+	"try"
+	{ _try = context._try(); }
+	BlockContent(_try.getBody())
+	(
+		"catch" "(" identifier = Identifier() ")"
+		{ _tryCatch = _try._catch(identifier); }
+		BlockContent(_tryCatch.getCatch())
+		(
+			"finally"
+			{ _tryCatchFinally = _tryCatch._finally(); }
+			BlockContent(_tryCatchFinally.getFinally())
+			{ return _tryCatchFinally; }
+		)?
+		{ return _tryCatch; }
+	|	"finally"
+		{ _tryFinally = _try._finally(); }
+		BlockContent(_tryFinally.getFinally())
+		{ return _tryFinally; }
+	)
 }
 
+/* 12.15 The debugger statement */
+/*
+DebuggerStatement :
+	debugger ;
+*/
+JSDebuggerStatement DebuggerStatement(JSStatementGenerator context) :
+{}
+{
+	"debugger" ";" { return context.debugger(); }
+}
 
 
 

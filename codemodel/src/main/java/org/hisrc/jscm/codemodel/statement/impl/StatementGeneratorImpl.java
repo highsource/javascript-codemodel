@@ -19,6 +19,7 @@ import org.hisrc.jscm.codemodel.statement.JSForVarStatement;
 import org.hisrc.jscm.codemodel.statement.JSIfStatement;
 import org.hisrc.jscm.codemodel.statement.JSLabelledStatement;
 import org.hisrc.jscm.codemodel.statement.JSLabelledStatement.JSLabel;
+import org.hisrc.jscm.codemodel.statement.JSTryStatement.Try;
 import org.hisrc.jscm.codemodel.statement.JSReturnStatement;
 import org.hisrc.jscm.codemodel.statement.JSStatement;
 import org.hisrc.jscm.codemodel.statement.JSStatementGenerator;

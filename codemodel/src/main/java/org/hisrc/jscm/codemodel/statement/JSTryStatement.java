@@ -12,4 +12,25 @@ public interface JSTryStatement extends JSStatement {
 
 	public JSVariable getException();
 
+	public interface Try {
+		
+		public JSBlock getBody();
+		public TryCatch _catch(String identifier);
+		public TryFinally _finally();
+		
+	}
+	
+	public interface TryCatch extends JSTryStatement {
+		public JSBlock getCatch();
+		public TryCatchFinally _finally();
+	}
+	
+	public interface TryCatchFinally extends JSTryStatement {
+		public JSBlock getCatch();
+		public JSBlock getFinally();
+	}
+	
+	public interface TryFinally extends JSTryStatement {
+		public JSBlock getFinally();
+	}
 }

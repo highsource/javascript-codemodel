@@ -61,5 +61,69 @@ public class TryStatementImpl extends StatementImpl implements JSTryStatement {
 			JSStatementVisitor<V, E> visitor) throws E {
 		return visitor.visitTry(this);
 	}
+	
+	/** TODO INVALID, does not add the try to the block. */
+
+	public static class TryImpl implements Try {
+
+		private final JSCodeModel codeModel;
+		private final JSBlock body;
+
+		public TryImpl(JSCodeModel codeModel) {
+			Validate.notNull(codeModel);
+			this.codeModel = codeModel;
+			this.body = new BlockImpl(codeModel);
+		}
+
+		public JSCodeModel getCodeModel() {
+			return codeModel;
+		}
+
+		@Override
+		public JSBlock getBody() {
+			return body;
+		}
+
+		@Override
+		public TryCatch _catch(String identifier) {
+			Validate.notNull(identifier);
+			return new TryCatchImpl(getCodeModel(), identifier);
+		}
+
+		@Override
+		public TryFinally _finally() {
+			return new TryFinallyImpl(getCodeModel());
+		}
+	}
+
+	public static class TryCatchImpl extends TryStatementImpl implements
+			TryCatch {
+
+		public TryCatchImpl(JSCodeModel codeModel, String exception) {
+			super(codeModel, exception, false);
+		}
+
+		@Override
+		public TryCatchFinally _finally() {
+			return new TryCatchFinallyImpl(getCodeModel(), getException()
+					.getName());
+		}
+	}
+
+	public static class TryCatchFinallyImpl extends TryStatementImpl implements
+			TryCatchFinally {
+
+		public TryCatchFinallyImpl(JSCodeModel codeModel, String exception) {
+			super(codeModel, exception, true);
+		}
+	}
+
+	public static class TryFinallyImpl extends TryStatementImpl implements
+			TryFinally {
+
+		public TryFinallyImpl(JSCodeModel codeModel) {
+			super(codeModel, null, true);
+		}
+	}
 
 }
