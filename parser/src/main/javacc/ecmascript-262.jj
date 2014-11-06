@@ -1536,19 +1536,21 @@ Identifier */
 /* 11.2 Left-Hand-Side Expressions */
 JSMemberExpression MemberExpression() :
 {
-	JSMemberExpression expression;
+	JSMemberExpression memberExpression;
 	JSAssignmentExpression[] arguments;
 }
 { 
 	(
 		( 
 			/*LOOKAHEAD("function")*/
-			expression = FunctionExpression()
-		|	expression = PrimaryExpression()
+			memberExpression = FunctionExpression()
+		|	memberExpression = PrimaryExpression()
 		)
-		(LOOKAHEAD(2) expression = MemberExpressionPropertyAccessor(expression))*
-	) { return expression; }
-| "new" expression = MemberExpression() arguments = Arguments() { return expression.instantiate().args(arguments); }
+		(LOOKAHEAD(2) memberExpression = MemberExpressionPropertyAccessor(memberExpression))*
+	) { return memberExpression; }
+|	"new" memberExpression = MemberExpression() 
+	memberExpression = NewMemberExpressionArguments(memberExpression)
+	{ return memberExpression; }
 }
 
 JSMemberExpression MemberExpressionPropertyAccessor(JSMemberExpression memberExpression) :
@@ -1573,32 +1575,90 @@ JSNewExpression NewExpression() :
 
 JSCallExpression CallExpression() : 
 {
+	JSMemberExpression memberExpression;
 	JSCallExpression callExpression;
 	JSAssignmentExpression[] arguments;	
 }
 {
-	callExpression = MemberExpression()
-	arguments = Arguments() { callExpression = callExpression.invoke().args(arguments); }
-	( LOOKAHEAD(2) CallExpressionPropertyAccessor(callExpression) )*
+	memberExpression = MemberExpression()
+	callExpression = MemberExpressionArguments(memberExpression)
+	( LOOKAHEAD(2) callExpression = CallExpressionPart(callExpression) )*
 	{ return callExpression; }
 }
 
-JSCallExpression CallExpressionPropertyAccessor(JSCallExpression callExpression) :
+JSCallExpression CallExpressionPart(JSCallExpression callExpression) :
 {
 	JSExpression expression;
 	JSIdentifierName identifierName;
+	JSAssignmentExpression[] arguments;
 }
 {
-	"[" expression = Expression() "]" { return callExpression.element(expression); }
+	callExpression = CallExpressionArguments(callExpression) { return callExpression; }
+|	"[" expression = Expression() "]" { return callExpression.element(expression); }
 |	"."	identifierName = IdentifierName() { return callExpression.property(identifierName); }
 }
 
-JSAssignmentExpression[] Arguments() :
+JSMemberExpression NewMemberExpressionArguments(JSMemberExpression memberExpression) :
 {
+	JSMemberExpression.MemberNew memberNew;
+	JSAssignmentExpression argument;
 }
 {
-	/* TODO */
-	{ return null; }
+	"("
+	(
+		")"
+		{ memberNew = memberExpression.instantiate(); return memberNew; }
+	|	argument = AssignmentExpression()
+		{ memberNew = memberExpression.instantiate().args(argument); }
+		(
+			"," argument = AssignmentExpression()
+			{ memberNew = memberNew.args(argument); }
+		) *
+		")"
+		{ return memberNew; }
+	)
+}
+
+JSCallExpression MemberExpressionArguments(JSMemberExpression memberExpression) :
+{
+	JSCallExpression.MemberCall memberCall;
+	JSAssignmentExpression argument;
+}
+{
+	"("
+	(
+		")"
+		{ memberCall = memberExpression.invoke(); return memberCall; }
+	|	argument = AssignmentExpression()
+		{ memberCall = memberExpression.invoke().args(argument); }
+		(
+			"," argument = AssignmentExpression()
+			{ memberCall = memberCall.args(argument); }
+		) *
+		")"
+		{ return memberCall; }
+	)
+}
+
+JSCallExpression CallExpressionArguments(JSCallExpression callExpression) :
+{
+	JSCallExpression.CallArgs callArgs;
+	JSAssignmentExpression argument;
+}
+{
+	"("
+	(
+		")"
+		{ callArgs = callExpression.invoke(); return callArgs; }
+	|	argument = AssignmentExpression()
+		{ callArgs = callExpression.invoke().args(argument); }
+		(
+			"," argument = AssignmentExpression()
+			{ callArgs = callArgs.args(argument); }
+		) *
+		")"
+		{ return callArgs; }
+	)
 }
 
 JSLeftHandSideExpression LeftHandSideExpression() :
