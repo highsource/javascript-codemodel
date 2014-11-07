@@ -1697,8 +1697,11 @@ JSPostfixExpression PostfixExpression() :
 }
 {
 	expression = LeftHandSideExpression() (
-		"++" /* TODO [no LineTerminator here] */ { return expression.postIncr(); }
-	|	"--" /* TODO [no LineTerminator here] */ { return expression.postDecr(); }
+	 	LOOKAHEAD( "++", {getToken(0).beginLine == getToken(1).beginLine})
+	 	"++" { return expression.postIncr(); }
+	|
+		LOOKAHEAD( "--", {getToken(0).beginLine == getToken(1).beginLine})	
+		"--" { return expression.postDecr(); }
 	) ? { return expression; }
 }
 
@@ -2023,10 +2026,10 @@ JSTryStatement TryStatement(JSStatementGenerator context) :
 DebuggerStatement :
 	debugger ;
 */
-JSDebuggerStatement DebuggerStatement(JSStatementGenerator context) :
+JSDebuggerStatement DebuggerStatement() :
 {}
 {
-	"debugger" ";" { return context.debugger(); }
+	"debugger" ";" { return this.builder.debugger(); }
 }
 
 
