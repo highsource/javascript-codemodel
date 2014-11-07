@@ -2,7 +2,9 @@ package org.hisrc.jscm.codemodel.statement;
 
 import java.util.List;
 
-public interface JSVariableStatement extends JSStatement, JSVariableDeclaration {
+// TODO API added
+public interface JSVariableStatement extends JSStatement,
+		JSVariableDeclaration, JSVariableDeclarationList {
 
 	public List<JSVariableDeclaration> getVariableDeclarations();
 
