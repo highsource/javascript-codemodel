@@ -8,8 +8,12 @@ public interface JSVariableDeclaration {
 
 	public JSAssignmentExpression getExpression();
 
-	public JSVariableDeclaration comma(String identifier);
+	// TODO Incompatibel API change
+	// TODO API removed
+	/* TODO remove these */
+	/*public JSVariableDeclaration comma(String identifier);
 
 	public JSVariableDeclaration comma(String identifier,
-			JSAssignmentExpression expression);
+			JSAssignmentExpression expression); */
+			
 }
