@@ -8,6 +8,10 @@ public interface JSSwitchStatement extends JSStatement {
 
 	public JSCaseClause _case(JSExpression expression);
 
+	// TODO API added
+	public JSCaseClause _case(JSExpression expression,
+			JSStatement... statements);
+
 	public JSDefaultClause _default();
 
 	public JSExpression getExpression();
