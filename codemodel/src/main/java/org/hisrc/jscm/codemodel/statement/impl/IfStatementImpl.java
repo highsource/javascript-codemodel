@@ -19,11 +19,22 @@ public class IfStatementImpl extends StatementImpl implements JSIfStatement {
 	private final JSStatementGenerator elseGenerator;
 
 	public IfStatementImpl(JSCodeModel codeModel, JSExpression expression) {
+		this(codeModel, expression, new EmptyStatementImpl(codeModel));
+	}
+
+	public IfStatementImpl(JSCodeModel codeModel, JSExpression expression,
+			JSStatement _then) {
+		this(codeModel, expression, _then, null);
+	}
+
+	public IfStatementImpl(JSCodeModel codeModel, JSExpression expression,
+			JSStatement _then, JSStatement _else) {
 		super(codeModel);
 		Validate.notNull(expression);
+		Validate.notNull(_then);
 		this._if = expression;
-		this._then = new EmptyStatementImpl(getCodeModel());
-		this._else = null;
+		this._then = _then;
+		this._else = _else;
 		this.thenGenerator = new StatementGeneratorImpl(codeModel) {
 
 			protected <S extends JSStatement> S add(S statement) {

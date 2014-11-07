@@ -14,6 +14,12 @@ public abstract class IterationStatementImpl extends StatementGeneratorImpl
 	public IterationStatementImpl(JSCodeModel codeModel) {
 		super(codeModel);
 	}
+	
+	public IterationStatementImpl(JSCodeModel codeModel, JSStatement statement) {
+		super(codeModel);
+		Validate.notNull(statement);
+		this.statement = statement;
+	}
 
 	protected <S extends JSStatement> S add(S statement) {
 		Validate.notNull(statement);

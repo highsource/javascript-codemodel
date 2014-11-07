@@ -4,31 +4,38 @@ import org.hisrc.jscm.codemodel.JSCodeModel;
 import org.hisrc.jscm.codemodel.expression.JSExpression;
 import org.hisrc.jscm.codemodel.lang.Validate;
 import org.hisrc.jscm.codemodel.statement.JSForStatement;
+import org.hisrc.jscm.codemodel.statement.JSStatement;
 import org.hisrc.jscm.codemodel.statement.JSStatementVisitor;
 
 public class ForStatementImpl extends IterationStatementImpl implements
 		JSForStatement {
 
-	private final JSExpression expression;
+	private JSExpression expression;
 
 	private JSExpression test;
 
 	private JSExpression update;
 
 	public ForStatementImpl(JSCodeModel codeModel) {
-		super(codeModel);
-		this.expression = null;
+		this(codeModel, null, null, null, new EmptyStatementImpl(codeModel));
 	}
 
 	public ForStatementImpl(JSCodeModel codeModel, JSExpression expression) {
-		super(codeModel);
-		Validate.notNull(expression);
-		this.expression = expression;
+		this(codeModel, expression, null, null, new EmptyStatementImpl(codeModel));
 	}
 
-	@Override
-	public JSExpression getExpression() {
-		return expression;
+	public ForStatementImpl(JSCodeModel codeModel, JSExpression expression,
+			JSExpression test, JSExpression update, JSStatement statement) {
+		super(codeModel, statement);
+		this.expression = expression;
+		this.test = test;
+		this.update = update;
+	}
+	
+	public JSForStatement expr(JSExpression expression) {
+		// Can be null
+		this.expression = expression; 
+		return this;
 	}
 
 	public JSForStatement test(JSExpression expression) {
@@ -41,6 +48,10 @@ public class ForStatementImpl extends IterationStatementImpl implements
 		// Can be null
 		this.update = expression;
 		return this;
+	}
+
+	public JSExpression getExpression() {
+		return expression;
 	}
 
 	public JSExpression getTest() {

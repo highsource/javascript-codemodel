@@ -1,6 +1,7 @@
 package org.hisrc.jscm.codemodel.statement.impl;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -10,38 +11,41 @@ import org.hisrc.jscm.codemodel.expression.JSVariable;
 import org.hisrc.jscm.codemodel.lang.Validate;
 import org.hisrc.jscm.codemodel.statement.JSStatementVisitor;
 import org.hisrc.jscm.codemodel.statement.JSVariableDeclaration;
+import org.hisrc.jscm.codemodel.statement.JSVariableDeclarationList;
 import org.hisrc.jscm.codemodel.statement.JSVariableStatement;
 
 public class VariableStatementImpl extends StatementImpl implements
 		JSVariableStatement {
 
-	private final JSVariable firstVariable;
-	private final JSAssignmentExpression firstExpression;
+	private final JSVariableDeclaration firstVariableDeclaration;
 
 	private final List<JSVariableDeclaration> variableDeclarations = new ArrayList<JSVariableDeclaration>();
 	private final List<JSVariableDeclaration> unmodifiableVariableDeclarations = Collections
 			.unmodifiableList(variableDeclarations);
 
 	public VariableStatementImpl(JSCodeModel codeModel, String name) {
-		super(codeModel);
-		Validate.notNull(name);
-		final JSVariableDeclaration firstVariableDeclaration = new VariableDeclarationImpl(
-				codeModel, this, name);
-		this.variableDeclarations.add(firstVariableDeclaration);
-		this.firstVariable = firstVariableDeclaration.getVariable();
-		this.firstExpression = null;
+		this(codeModel,
+				new JSVariableDeclaration[] { new VariableDeclarationImpl(
+						codeModel, name) });
 	}
 
 	public VariableStatementImpl(JSCodeModel codeModel, String name,
 			JSAssignmentExpression expression) {
+		this(codeModel,
+				new JSVariableDeclaration[] { new VariableDeclarationImpl(
+						codeModel, name, expression) });
+	}
+
+	public VariableStatementImpl(JSCodeModel codeModel,
+			JSVariableDeclaration[] variableDeclarations) {
 		super(codeModel);
-		Validate.notNull(name);
-		Validate.notNull(expression);
-		final JSVariableDeclaration firstVariableDeclaration = new VariableDeclarationImpl(
-				codeModel, this, name, expression);
-		this.variableDeclarations.add(firstVariableDeclaration);
-		this.firstVariable = firstVariableDeclaration.getVariable();
-		this.firstExpression = firstVariableDeclaration.getExpression();
+		Validate.noNullElements(variableDeclarations);
+		if (variableDeclarations.length < 1) {
+			throw new IllegalArgumentException(
+					"Variable declaration list for the for-var statement must not be empty.");
+		}
+		this.firstVariableDeclaration = variableDeclarations[0];
+		this.variableDeclarations.addAll(Arrays.asList(variableDeclarations));
 	}
 
 	@Override
@@ -49,14 +53,18 @@ public class VariableStatementImpl extends StatementImpl implements
 		return unmodifiableVariableDeclarations;
 	}
 
+	public JSVariableDeclaration getFirstVariableDeclaration() {
+		return firstVariableDeclaration;
+	}
+
 	@Override
 	public JSVariable getVariable() {
-		return firstVariable;
+		return getFirstVariableDeclaration().getVariable();
 	}
 
 	@Override
 	public JSAssignmentExpression getExpression() {
-		return firstExpression;
+		return getFirstVariableDeclaration().getExpression();
 	}
 
 	@Override
@@ -65,18 +73,18 @@ public class VariableStatementImpl extends StatementImpl implements
 		return visitor.visitVariable(this);
 	}
 
-	public JSVariableDeclaration comma(String name) {
+	public JSVariableDeclarationList comma(String name) {
 		final JSVariableDeclaration variableDeclaration = new VariableDeclarationImpl(
-				getCodeModel(), this, name);
+				getCodeModel(), name);
 		this.variableDeclarations.add(variableDeclaration);
-		return variableDeclaration;
+		return this;
 	}
 
-	public JSVariableDeclaration comma(String name,
+	public JSVariableDeclarationList comma(String name,
 			JSAssignmentExpression expression) {
 		final JSVariableDeclaration variableDeclaration = new VariableDeclarationImpl(
-				getCodeModel(), this, name, expression);
+				getCodeModel(), name, expression);
 		this.variableDeclarations.add(variableDeclaration);
-		return variableDeclaration;
+		return this;
 	}
 }

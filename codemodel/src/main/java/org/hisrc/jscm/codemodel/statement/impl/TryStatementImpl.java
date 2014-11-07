@@ -17,20 +17,35 @@ public class TryStatementImpl extends StatementImpl implements JSTryStatement {
 
 	public TryStatementImpl(JSCodeModel codeModel, String exception,
 			boolean _finally) {
+		this(codeModel, new BlockImpl(codeModel), exception,
+				(exception != null ? new BlockImpl(codeModel) : null),
+				(_finally ? new BlockImpl(codeModel) : null));
+	}
+
+	public TryStatementImpl(JSCodeModel codeModel, JSBlock _try,
+			String exception, JSBlock _catch, JSBlock _finally) {
 		super(codeModel);
-		if (!_finally) {
+
+		if (_finally == null) {
 			Validate.notNull(exception);
 		}
-		this._try = new BlockImpl(codeModel);
-		if (exception == null) {
+		if (exception != null) {
+			Validate.notNull(_catch);
+		}
+
+		this._try = _try;
+
+		if (exception != null && _catch != null) {
+			// TODO variable declaration
+			this.exception = new VariableImpl(codeModel, exception);
+			this._catch = _catch;
+		} else {
 			this.exception = null;
 			this._catch = null;
-		} else {
-			this.exception = new VariableImpl(codeModel, exception);
-			this._catch = new BlockImpl(codeModel);
 		}
-		if (_finally) {
-			this._finally = new BlockImpl(codeModel);
+
+		if (_finally != null) {
+			this._finally = _finally;
 		} else {
 			this._finally = null;
 		}
@@ -61,7 +76,7 @@ public class TryStatementImpl extends StatementImpl implements JSTryStatement {
 			JSStatementVisitor<V, E> visitor) throws E {
 		return visitor.visitTry(this);
 	}
-	
+
 	/** TODO INVALID, does not add the try to the block. */
 
 	public static class TryImpl implements Try {

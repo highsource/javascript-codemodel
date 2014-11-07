@@ -4,6 +4,7 @@ import org.hisrc.jscm.codemodel.JSCodeModel;
 import org.hisrc.jscm.codemodel.expression.JSExpression;
 import org.hisrc.jscm.codemodel.lang.Validate;
 import org.hisrc.jscm.codemodel.statement.JSDoWhileStatement;
+import org.hisrc.jscm.codemodel.statement.JSStatement;
 import org.hisrc.jscm.codemodel.statement.JSStatementVisitor;
 
 public class DoWhileStatementImpl extends IterationStatementImpl implements
@@ -12,9 +13,14 @@ public class DoWhileStatementImpl extends IterationStatementImpl implements
 	private final JSExpression expression;
 
 	public DoWhileStatementImpl(JSCodeModel codeModel, JSExpression expression) {
-		super(codeModel);
-		this.expression = expression;
+		this(codeModel, new EmptyStatementImpl(codeModel), expression);
+	}
+
+	public DoWhileStatementImpl(JSCodeModel codeModel, JSStatement statement,
+			JSExpression expression) {
+		super(codeModel, statement);
 		Validate.notNull(expression);
+		this.expression = expression;
 	}
 
 	public JSExpression getExpression() {

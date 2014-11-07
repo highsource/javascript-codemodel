@@ -1,6 +1,7 @@
 package org.hisrc.jscm.codemodel.statement.impl;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -19,7 +20,13 @@ public class BlockImpl extends StatementGeneratorImpl implements JSBlock {
 			.unmodifiableList(statements);
 
 	public BlockImpl(JSCodeModel codeModel) {
+		this(codeModel, new JSStatement[0]);
+	}
+
+	public BlockImpl(JSCodeModel codeModel, JSStatement[] statements) {
 		super(codeModel);
+		Validate.noNullElements(statements);
+		this.statements.addAll(Arrays.asList(statements));
 	}
 
 	public List<JSStatement> getStatements() {

@@ -1,6 +1,7 @@
 package org.hisrc.jscm.codemodel.statement.impl;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -10,14 +11,15 @@ import org.hisrc.jscm.codemodel.expression.JSExpression;
 import org.hisrc.jscm.codemodel.expression.JSVariable;
 import org.hisrc.jscm.codemodel.lang.Validate;
 import org.hisrc.jscm.codemodel.statement.JSForVarStatement;
+import org.hisrc.jscm.codemodel.statement.JSStatement;
 import org.hisrc.jscm.codemodel.statement.JSStatementVisitor;
 import org.hisrc.jscm.codemodel.statement.JSVariableDeclaration;
+import org.hisrc.jscm.codemodel.statement.JSVariableDeclarationList;
 
 public class ForVarStatementImpl extends IterationStatementImpl implements
 		JSForVarStatement {
 
-	private final JSVariable firstVariable;
-	private final JSAssignmentExpression firstExpression;
+	private final JSVariableDeclaration firstVariableDeclaration;
 
 	private final List<JSVariableDeclaration> variableDeclarations = new ArrayList<JSVariableDeclaration>();
 	private final List<JSVariableDeclaration> unmodifiableVariableDeclarations = Collections
@@ -28,25 +30,34 @@ public class ForVarStatementImpl extends IterationStatementImpl implements
 	private JSExpression update;
 
 	public ForVarStatementImpl(JSCodeModel codeModel, String name) {
-		super(codeModel);
-		Validate.notNull(name);
-		final JSVariableDeclaration firstVariableDeclaration = new VariableDeclarationImpl(
-				codeModel, this, name);
-		this.variableDeclarations.add(firstVariableDeclaration);
-		this.firstVariable = firstVariableDeclaration.getVariable();
-		this.firstExpression = null;
+		this(codeModel,
+				new JSVariableDeclaration[] { new VariableDeclarationImpl(
+						codeModel, name) }, null, null, new EmptyStatementImpl(
+						codeModel));
 	}
 
 	public ForVarStatementImpl(JSCodeModel codeModel, String name,
 			JSAssignmentExpression expression) {
-		super(codeModel);
-		Validate.notNull(name);
-		Validate.notNull(expression);
-		final JSVariableDeclaration firstVariableDeclaration = new VariableDeclarationImpl(
-				codeModel, this, name, expression);
-		this.variableDeclarations.add(firstVariableDeclaration);
-		this.firstVariable = firstVariableDeclaration.getVariable();
-		this.firstExpression = firstVariableDeclaration.getExpression();
+		this(codeModel,
+				new JSVariableDeclaration[] { new VariableDeclarationImpl(
+						codeModel, name, expression) }, null, null,
+				new EmptyStatementImpl(codeModel));
+	}
+
+	public ForVarStatementImpl(JSCodeModel codeModel,
+	/** TODO VariableDeclarationListNoIn */
+	JSVariableDeclaration[] variableDeclarations, JSExpression test,
+			JSExpression update, JSStatement statement) {
+		super(codeModel, statement);
+		Validate.noNullElements(variableDeclarations);
+		if (variableDeclarations.length < 1) {
+			throw new IllegalArgumentException(
+					"Variable declaration list for the for-var statement must not be empty.");
+		}
+		this.firstVariableDeclaration = variableDeclarations[0];
+		this.variableDeclarations.addAll(Arrays.asList(variableDeclarations));
+		this.test = test;
+		this.update = update;
 	}
 
 	@Override
@@ -54,29 +65,35 @@ public class ForVarStatementImpl extends IterationStatementImpl implements
 		return unmodifiableVariableDeclarations;
 	}
 
+	public JSVariableDeclaration getFirstVariableDeclaration() {
+		return this.firstVariableDeclaration;
+	}
+
 	@Override
 	public JSVariable getVariable() {
-		return firstVariable;
+		return getFirstVariableDeclaration().getVariable();
 	}
 
 	@Override
 	public JSAssignmentExpression getExpression() {
-		return firstExpression;
+		return getFirstVariableDeclaration().getExpression();
 	}
 
-	public JSVariableDeclaration comma(String name) {
+	@Override
+	public JSVariableDeclarationList comma(String identifier) {
 		final JSVariableDeclaration variableDeclaration = new VariableDeclarationImpl(
-				getCodeModel(), this, name);
+				getCodeModel(), identifier);
 		this.variableDeclarations.add(variableDeclaration);
-		return variableDeclaration;
+		return this;
 	}
 
-	public JSVariableDeclaration comma(String name,
+	@Override
+	public JSVariableDeclarationList comma(String identifier,
 			JSAssignmentExpression expression) {
 		final JSVariableDeclaration variableDeclaration = new VariableDeclarationImpl(
-				getCodeModel(), this, name);
+				getCodeModel(), identifier, expression);
 		this.variableDeclarations.add(variableDeclaration);
-		return variableDeclaration;
+		return this;
 	}
 
 	public JSForVarStatement test(JSExpression expression) {
@@ -104,6 +121,5 @@ public class ForVarStatementImpl extends IterationStatementImpl implements
 			JSStatementVisitor<V, E> visitor) throws E {
 		return visitor.visitForVar(this);
 	}
-	
 
 }

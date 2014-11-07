@@ -1,6 +1,7 @@
 package org.hisrc.jscm.codemodel.statement.impl;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -36,8 +37,14 @@ public class SwitchStatementImpl extends StatementImpl implements
 
 	@Override
 	public JSCaseClause _case(JSExpression expression) {
+		return _case(expression, new JSStatement[0]);
+	}
+
+	@Override
+	public JSCaseClause _case(JSExpression expression,
+			JSStatement... statements) {
 		final JSCaseClause caseClause = new CaseClauseImpl(getCodeModel(),
-				expression);
+				expression, statements);
 		if (this.defaultClause == null) {
 			this.firstCaseClauses.add(caseClause);
 		} else {
@@ -116,9 +123,16 @@ public class SwitchStatementImpl extends StatementImpl implements
 				.unmodifiableList(statements);
 
 		public CaseClauseImpl(JSCodeModel codeModel, JSExpression expression) {
+			this(codeModel, expression, new JSStatement[0]);
+		}
+
+		public CaseClauseImpl(JSCodeModel codeModel, JSExpression expression,
+				JSStatement[] statements) {
 			super(codeModel);
 			Validate.notNull(expression);
+			Validate.noNullElements(statements);
 			this.expression = expression;
+			this.statements.addAll(Arrays.asList(statements));
 		}
 
 		@Override
@@ -136,7 +150,5 @@ public class SwitchStatementImpl extends StatementImpl implements
 			this.statements.add(statement);
 			return statement;
 		}
-
 	}
-
 }

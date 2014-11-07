@@ -5,6 +5,7 @@ import org.hisrc.jscm.codemodel.expression.JSExpression;
 import org.hisrc.jscm.codemodel.expression.JSLeftHandSideExpression;
 import org.hisrc.jscm.codemodel.lang.Validate;
 import org.hisrc.jscm.codemodel.statement.JSForInStatement;
+import org.hisrc.jscm.codemodel.statement.JSStatement;
 import org.hisrc.jscm.codemodel.statement.JSStatementVisitor;
 
 public class ForInStatementImpl extends IterationStatementImpl implements
@@ -15,7 +16,13 @@ public class ForInStatementImpl extends IterationStatementImpl implements
 
 	public ForInStatementImpl(JSCodeModel codeModel,
 			JSLeftHandSideExpression expression, JSExpression _in) {
-		super(codeModel);
+		this(codeModel, expression, _in, new EmptyStatementImpl(codeModel));
+	}
+
+	public ForInStatementImpl(JSCodeModel codeModel,
+			JSLeftHandSideExpression expression, JSExpression _in,
+			JSStatement statement) {
+		super(codeModel, statement);
 		Validate.notNull(expression);
 		Validate.notNull(_in);
 		this.expression = expression;

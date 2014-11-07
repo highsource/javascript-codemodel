@@ -16,9 +16,15 @@ public class WithStatementImpl extends StatementGeneratorImpl implements
 	private JSStatement statement;
 
 	public WithStatementImpl(JSCodeModel codeModel, JSExpression expression) {
+		this(codeModel, expression, new EmptyStatementImpl(codeModel));
+	}
+	
+	public WithStatementImpl(JSCodeModel codeModel, JSExpression expression, JSStatement statement) {
 		super(codeModel);
 		Validate.notNull(expression);
+		Validate.notNull(statement);
 		this.expression = expression;
+		this.statement = statement;
 	}
 
 	@Override

@@ -11,43 +11,36 @@ public class VariableDeclarationImpl implements JSVariableDeclaration {
 
 	private final JSVariable variable;
 	private final JSAssignmentExpression expression;
-	private final JSVariableDeclaration parentVariableDeclaration;
 
-	public VariableDeclarationImpl(JSCodeModel codeModel,
-			JSVariableDeclaration parentVariableDeclaration, String name) {
+	public VariableDeclarationImpl(JSCodeModel codeModel, String name) {
 		Validate.notNull(codeModel);
-		Validate.notNull(parentVariableDeclaration);
 		Validate.notNull(name);
-		this.parentVariableDeclaration = parentVariableDeclaration;
 		this.variable = new VariableImpl(codeModel, name);
 		this.expression = null;
 	}
 
-	public VariableDeclarationImpl(JSCodeModel codeModel,
-			JSVariableDeclaration parentVariableDeclaration, String name,
+	public VariableDeclarationImpl(JSCodeModel codeModel, String name,
 			JSAssignmentExpression expression) {
-		Validate.notNull(parentVariableDeclaration);
 		Validate.notNull(name);
 		Validate.notNull(expression);
-		this.parentVariableDeclaration = parentVariableDeclaration;
 		this.variable = new VariableImpl(codeModel, name);
 		this.expression = expression;
 	}
 
+	/* TODO
 	public JSVariableDeclaration getParentVariableDeclaration() {
 		return parentVariableDeclaration;
 	}
+	*/
 
-	@Override
-	public JSVariableDeclaration comma(String name) {
-		return getParentVariableDeclaration().comma(name);
-	}
-
-	@Override
-	public JSVariableDeclaration comma(String name,
-			JSAssignmentExpression expression) {
-		return getParentVariableDeclaration().comma(name, expression);
-	}
+	/* TODO
+	 * @Override public JSVariableDeclaration comma(String name) { return
+	 * getParentVariableDeclaration().comma(name); }
+	 * 
+	 * @Override public JSVariableDeclaration comma(String name,
+	 * JSAssignmentExpression expression) { return
+	 * getParentVariableDeclaration().comma(name, expression); }
+	 */
 
 	@Override
 	public JSVariable getVariable() {

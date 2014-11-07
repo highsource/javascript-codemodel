@@ -15,10 +15,16 @@ public class LabelledStatementImpl extends StatementGeneratorImpl implements
 	private JSStatement statement;
 
 	public LabelledStatementImpl(JSCodeModel codeModel, String label) {
+		this(codeModel, label, new EmptyStatementImpl(codeModel));
+	}
+
+	public LabelledStatementImpl(JSCodeModel codeModel, String label,
+			JSStatement statement) {
 		super(codeModel);
 		Validate.notNull(label);
+		Validate.notNull(statement);
 		this.label = new LabelImpl(label);
-		this.statement = new EmptyStatementImpl(codeModel);
+		this.statement = statement;
 
 	}
 
