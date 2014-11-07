@@ -10,6 +10,7 @@ import org.hisrc.jscm.codemodel.operator.impl.AdditiveOperator;
 public abstract class AdditiveExpressionImpl extends ShiftExpressionImpl
 		implements JSAdditiveExpression {
 
+	
 	public AdditiveExpressionImpl(JSCodeModel codeModel) {
 		super(codeModel);
 	}
