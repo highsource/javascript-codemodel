@@ -58,8 +58,6 @@ public interface JSStatementGenerator {
 
 	public JSThrowStatement _throw(JSExpression expression);
 
-	public JSTryStatement.Try _try();
-	
 	public JSTryStatement tryCatch(String exception);
 
 	public JSTryStatement tryFinally();
