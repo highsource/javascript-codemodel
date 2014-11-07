@@ -10,6 +10,9 @@ public interface JSForStatement extends JSIterationStatement {
 
 	public JSExpression getUpdate();
 
+	// TODO API added
+	public JSForStatement expr(JSExpression expression);
+	
 	public JSForStatement test(JSExpression expression);
 
 	public JSForStatement update(JSExpression expression);
