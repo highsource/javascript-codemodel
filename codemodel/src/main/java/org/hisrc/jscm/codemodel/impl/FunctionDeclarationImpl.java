@@ -7,6 +7,7 @@ import java.util.List;
 import org.hisrc.jscm.codemodel.JSCodeModel;
 import org.hisrc.jscm.codemodel.JSFunctionBody;
 import org.hisrc.jscm.codemodel.JSFunctionDeclaration;
+import org.hisrc.jscm.codemodel.JSSourceElement;
 import org.hisrc.jscm.codemodel.JSSourceElementVisitor;
 import org.hisrc.jscm.codemodel.expression.JSPrimaryExpression;
 import org.hisrc.jscm.codemodel.expression.JSVariable;
@@ -26,12 +27,25 @@ public class FunctionDeclarationImpl implements JSFunctionDeclaration {
 	private final JSFunctionBody body;
 
 	public FunctionDeclarationImpl(JSCodeModel codeModel, String name) {
+		this(codeModel, name, new String[0], new JSSourceElement[0]);
+	}
+
+	public FunctionDeclarationImpl(JSCodeModel codeModel, String name,
+			String[] parameterNames, JSSourceElement[] sourceElements) {
 		Validate.notNull(codeModel);
 		Validate.notNull(name);
+		Validate.noNullElements(parameterNames);
+		Validate.noNullElements(sourceElements);
 		this.codeModel = codeModel;
 		this.name = name;
 		this.functionExpression = new VariableImpl(codeModel, name);
 		this.body = new FunctionBodyImpl(codeModel);
+		for (String parameterName : parameterNames) {
+			parameter(parameterName);
+		}
+		for (JSSourceElement sourceElement : sourceElements) {
+			getBody().addSourceElement(sourceElement);
+		}
 	}
 
 	public JSCodeModel getCodeModel() {
@@ -41,7 +55,7 @@ public class FunctionDeclarationImpl implements JSFunctionDeclaration {
 	public String getName() {
 		return name;
 	}
-	
+
 	public JSPrimaryExpression getFunctionExpression() {
 		return functionExpression;
 	}
@@ -65,5 +79,5 @@ public class FunctionDeclarationImpl implements JSFunctionDeclaration {
 			JSSourceElementVisitor<V, E> visitor) throws E {
 		return visitor.visitFunctionDeclaration(this);
 	}
-	
+
 }

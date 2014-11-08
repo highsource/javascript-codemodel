@@ -1,9 +1,13 @@
 package org.hisrc.jscm.parser;
 
+import org.hisrc.jscm.codemodel.JSFunctionDeclaration;
 import org.hisrc.jscm.codemodel.JSIdentifierName;
+import org.hisrc.jscm.codemodel.JSProgram;
+import org.hisrc.jscm.codemodel.JSSourceElement;
 import org.hisrc.jscm.codemodel.expression.JSArrayLiteral;
 import org.hisrc.jscm.codemodel.expression.JSAssignmentExpression;
 import org.hisrc.jscm.codemodel.expression.JSExpression;
+import org.hisrc.jscm.codemodel.expression.JSFunctionExpression;
 import org.hisrc.jscm.codemodel.expression.JSLeftHandSideExpression;
 import org.hisrc.jscm.codemodel.expression.JSObjectLiteral;
 import org.hisrc.jscm.codemodel.expression.JSThis;
@@ -29,8 +33,6 @@ import org.hisrc.jscm.codemodel.statement.JSLabelledStatement;
 import org.hisrc.jscm.codemodel.statement.JSReturnStatement;
 import org.hisrc.jscm.codemodel.statement.JSStatement;
 import org.hisrc.jscm.codemodel.statement.JSSwitchStatement;
-import org.hisrc.jscm.codemodel.statement.JSSwitchStatement.JSCaseClause;
-import org.hisrc.jscm.codemodel.statement.JSSwitchStatement.JSDefaultClause;
 import org.hisrc.jscm.codemodel.statement.JSThrowStatement;
 import org.hisrc.jscm.codemodel.statement.JSTryStatement;
 import org.hisrc.jscm.codemodel.statement.JSVariableDeclaration;
@@ -68,24 +70,24 @@ public interface JSCodeModelBuilder {
 
 	public JSBlock block(JSStatement... statements);
 
-	public JSVariableStatement variable(
-			JSVariableDeclaration[] variableDeclarations);
+	public JSVariableStatement variableStatement(
+			JSVariableDeclaration[] variableDeclarationList);
 
-	public JSVariableDeclaration variableDeclaration(String name);
+	public JSVariableDeclaration variableDeclaration(String variableName);
 
-	public JSVariableDeclaration variableDeclaration(String name,
-			JSAssignmentExpression expression);
+	public JSVariableDeclaration variableDeclaration(String variableName,
+			JSAssignmentExpression initializer);
 
 	/* JSVariableDeclarationNoIn */
 
-	public JSEmptyStatement empty();
+	public JSEmptyStatement emptyStatement();
 
-	public JSExpressionStatement expression(JSExpression expression);
+	public JSExpressionStatement expressionStatement(JSExpression expression);
 
-	public JSIfStatement ifElse(JSExpression expression, JSStatement _then,
-			JSStatement _else);
+	public JSIfStatement ifThenElseStatement(JSExpression condition, JSStatement thenStatement,
+			JSStatement elseStatement);
 
-	public JSIfStatement _if(JSExpression expression, JSStatement _then);
+	public JSIfStatement ifThenStatement(JSExpression condition, JSStatement thenStatement);
 
 	public JSForStatement _for(
 	/* TODO JSExpressionNoIn */
@@ -112,39 +114,43 @@ public interface JSCodeModelBuilder {
 	public JSWhileStatement _while(JSExpression expression,
 			JSStatement statement);
 
-	public JSContinueStatement _continue();
+	public JSContinueStatement continueStatement();
 
-	/*
-	 * TODO Labels public JSContinueStatement _continue(String identifier);
-	 */
+	public JSContinueStatement continueStatement(String label);
+	
+	public JSBreakStatement breakStatement();
 
-	public JSBreakStatement _break();
+	public JSBreakStatement breakStatement(String label);
 
-	/*
-	 * TODO Labels public JSBreakStatement _break(String identifier);
-	 */
+	public JSReturnStatement returnStatement();
 
-	public JSReturnStatement _return();
+	public JSReturnStatement returnStatement(JSExpression expression);
 
-	public JSReturnStatement _return(JSExpression expression);
+	public JSWithStatement withStatement(JSExpression expression, JSStatement statement);
 
-	public JSWithStatement with(JSExpression expression, JSStatement statement);
+	public JSSwitchStatement switchStatement(JSExpression expression);
 
-	// TODO Switch?
+	public JSLabelledStatement labelledStatement(String label, JSStatement statement);
 
-	public JSSwitchStatement _switch(JSExpression expression);
+	public JSThrowStatement throwStatement(JSExpression expression);
 
-	/* TODO Label? */
-	public JSLabelledStatement label(String name, JSStatement statement);
-
-	public JSThrowStatement _throw(JSExpression expression);
-
-	public JSTryStatement tryCatchFinally(JSBlock _try, String error,
+	public JSTryStatement tryCatchFinallyStatement(JSBlock _try, String error,
 			JSBlock _catch, JSBlock _finally);
 
-	public JSTryStatement tryFinally(JSBlock _try, JSBlock _finally);
+	public JSTryStatement tryFinallyStatement(JSBlock _try, JSBlock _finally);
 
-	public JSTryStatement tryCatch(JSBlock _try, String error, JSBlock _catch);
+	public JSTryStatement tryCatchStatement(JSBlock _try, String error, JSBlock _catch);
 
-	public JSDebuggerStatement debugger();
+	public JSDebuggerStatement debuggerStatement();
+
+	public JSFunctionDeclaration functionDeclaration(String functionName,
+			String[] formalParameterList, JSSourceElement[] functionBody);
+
+	public JSFunctionExpression functionExpression(String functionName,
+			String[] formalParameterList, JSSourceElement[] functionBody);
+
+	public JSFunctionExpression functionExpression(
+			String[] formalParameterList, JSSourceElement[] functionBody);
+
+	public JSProgram program(JSSourceElement... sourceElements);
 }

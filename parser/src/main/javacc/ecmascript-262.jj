@@ -45,6 +45,9 @@ import org.hisrc.jscm.codemodel.operator.*;
 import org.hisrc.jscm.codemodel.statement.*;
 import org.hisrc.jscm.parser.impl.*;
 
+import java.util.List;
+import java.util.LinkedList;
+
 public class EcmaScriptParser {
 
 	private final JSCodeModelBuilder builder = new CodeModelBuilderImpl();
@@ -1939,89 +1942,424 @@ DebuggerStatement */
 	statement = Block(context) { return statement; }
 }
 
-JSBlock Block(JSStatementGenerator context) :
-{
-	JSBlock	block = context.block();
-}
-{
-	BlockContent (block) { return block; }
-}
+/* 12.1 Block */
 
-JSBlock BlockContent(JSBlock block) :
-{}
+/*
+Block :
+	{ StatementList_opt }
+*/
+JSBlock Block() :
+{
+	JSStatement[] statementList;
+}
 {
 	"{"
-	(
-		"}"
-		{ return block; }
-	|	( Statement(block) ) +
-		"}"
-		{ return block; }
-	)
+	statementList = StatementListOpt()
+	"}"
+	{
+		return this.builder.block(statementList);
+	}
 }
-/*
 
-JSVariableStatement VariableStatement(JSStatementGenerator context)
+/*
+StatementList :
+	Statement
+	StatementList Statement
+*/
+JSStatement[] StatementListOpt() :
 {
-	JSVariableStatement variableStatement;
-	String identifier;
-	JSAssignmentExpression assignmentExpression;
+	List<JSStatement> statementList = new LinkedList<JSStatement>();
+	JSStatement statement;
+}
+{
+	(
+		statement = Statement()
+		{
+			statementList.add(statement);
+		}		
+	) *
+	{
+		return statementList.toArray(new JSStatement[statementList.size()]);
+	}
+}
+
+/* 12.2 Variable Statement */
+
+/*
+VariableStatement :
+	var VariableDeclarationList ;
+*/
+
+JSVariableStatement VariableStatement() :
+{
+	JSVariableDeclaration[] variableDeclarationList;
 }
 {
 	"var"
-	(
-		identifier = Identifier()
-		(
-			"=" assignmentExpression = AssignmentExpression()
-		|				
-		)
-	)
-	
+	variableDeclarationList = VariableDeclarationList()
 	";"
-}*/
+	{
+		return this.builder.variableStatement(variableDeclarationList);
+	}
+}
+
+/*
+VariableDeclarationList :
+	VariableDeclaration
+	VariableDeclarationList , VariableDeclaration
+*/
+JSVariableDeclaration[] VariableDeclarationList() :
+{
+	List<JSVariableDeclaration> variableDeclarationList = new LinkedList<JSVariableDeclaration>();
+	JSVariableDeclaration variableDeclaration;
+}
+{
+	(
+		variableDeclaration = VariableDeclaration()
+		{
+			variableDeclarationList.add(variableDeclaration);
+		}
+	) +
+	{
+		return variableDeclarationList.toArray(new JSVariableDeclaration[variableDeclarationList.size()]);
+	}
+}
+
+/* TODO */
+/*
+VariableDeclarationListNoIn :
+	VariableDeclarationNoIn
+	VariableDeclarationListNoIn , VariableDeclarationNoIn
+*/
+
+/*
+VariableDeclaration :
+	Identifier Initialiser_opt
+*/
+JSVariableDeclaration VariableDeclaration() :
+{
+	String variableName;
+	JSAssignmentExpression initializer;
+}
+{
+	variableName = Identifier()
+	(
+		initializer = Initializer()
+		{
+			return this.builder.variableDeclaration(variableName, initializer);
+		}
+	) ?
+	{
+			return this.builder.variableDeclaration(variableName);
+	}
+}
+
+/* TODO */
+/*
+VariableDeclarationNoIn :
+	Identifier InitialiserNoIn_opt
+*/
+
+/*
+Initialiser :
+	= AssignmentExpression
+*/
+JSAssignmentExpression Initializer() :
+{
+	JSAssignmentExpression initializer;
+}
+{
+	"="
+	initializer = AssignmentExpression()
+	{
+		return initializer;
+	}
+}
+
+/* TODO */
+/*
+InitialiserNoIn :
+	= AssignmentExpressionNoIn
+*/
+
+/* 12.3 Empty Statement */
+
+/*
+EmptyStatement :
+	;
+*/
+JSEmptyStatement EmptyStatement() :
+{}
+{
+	";"
+	{
+		return this.builder.emptyStatement();
+	}
+}
+
+/* 12.4 Expression Statement */
+
+/*
+ExpressionStatement :
+	[lookahead not_in {{, function}] Expression ;
+*/
+JSExpressionStatement ExpressionStatement() :
+{
+	JSExpression expression;
+}
+{
+	/* TODO [lookahead not_in {{, function}] */
+	expression = Expression()
+	";"
+	{
+		return this.builder.expressionStatement(expression);
+	}
+}
+
+/* 12.5 The if Statement */
+
+/*
+IfStatement :
+	if ( Expression ) Statement else Statement
+	if ( Expression ) Statement
+*/
+JSIfStatement IfStatement() :
+{
+	JSExpression condition;
+	JSStatement thenStatement;
+	JSStatement elseStatement;
+}
+{
+	"if"
+	"("
+	condition = Expression()
+	")"
+	thenStatement = Statement()
+	(
+		"else"
+		elseStatement = Statement()
+		{
+			return this.builder.ifThenElseStatement(condition, thenStatement, elseStatement);
+		}
+	) ?
+	{
+		return this.builder.ifThenStatement(condition, thenStatement);
+	}
+}
+
+
+
+
+
+
+
+
+
+
+/* 12.7 The continue Statement */
+
+/*
+ContinueStatement :
+	continue ;
+	continue [no LineTerminator here] Identifier;
+*/
+
+JSContinueStatement ContinueStatement() :
+{
+	String label;
+}
+{
+	"continue"
+	(
+		/* TODO [no LineTerminator here] */
+		label = Identifier()
+		{
+			return this.builder.continueStatement(label);
+		}
+	)?
+	";"
+	{
+		return this.builder.continueStatement();
+	}
+}
+
+/* 12.8 The break Statement */
+
+/*
+BreakStatement :
+	break ;
+	break [no LineTerminator here] Identifier ;
+*/
+JSBreakStatement BreakStatement() :
+{
+	String label;
+}
+{
+	"break"
+	(
+		/* TODO [no LineTerminator here] */
+		label = Identifier()
+		{
+			return this.builder.breakStatement(label);
+		}
+	)?
+	";"
+	{
+		return this.builder.breakStatement();
+	}
+}
+
+
+/* 12.9 The return Statement */
+
+/*
+ReturnStatement :
+	return ;
+	return [no LineTerminator here] Expression ;
+*/
+JSReturnStatement ReturnStatement() :
+{
+	JSExpression expression;
+}
+{
+	"return"
+	(
+		/* TODO [no LineTerminator here] */
+		expression = Expression()
+		{
+			return this.builder.returnStatement(expression);
+		}
+	)?
+	";"
+	{
+		return this.builder.returnStatement();
+	}
+}
+
+/* 12.10 The with Statement */
+
+/*
+WithStatement :
+	with ( Expression ) Statement
+*/
+JSWithStatement WithStatement() :
+{
+	JSExpression expression;
+	JSStatement statement;
+}
+{
+	"with"
+	"("
+	expression = Expression()
+	")"
+	statement = Statement()
+	{
+		return this.builder.withStatement(expression, statement);
+	}
+}
+
+
+
+
+
+
+
+
+
+
+
+
+/* 12.12 Labelled Statements */
+
+/*
+LabelledStatement :
+	Identifier : Statement
+*/
+
+JSLabelledStatement LabelledStatement() :
+{
+	String label;
+	JSStatement statement;
+}
+{
+	label = Identifier()
+	":"
+	statement = Statement()
+	{
+		return this.builder.labelledStatement(label, statement);
+	}
+}
+
+/* 12.13 The throw Statement */
+
+/*
+ThrowStatement :
+	throw [no LineTerminator here] Expression ;
+*/
+JSThrowStatement ThrowStatement() :
+{
+	JSExpression expression;
+}
+{
+	"throw"
+	/* TODO [no LineTerminator here] */
+	expression = Expression()
+	{
+		return this.builder.throwStatement(expression);
+	}
+}
+
 
 /* 12.14 The try Statement */
+
 /*
 TryStatement :
 	try Block Catch
 	try Block Finally
 	try Block Catch Finally
+
 Catch :
 	catch ( Identifier ) Block
+
 Finally :
-	finally Block */
-	
-JSTryStatement TryStatement(JSStatementGenerator context) :
+	finally Block
+*/
+JSTryStatement TryStatement() :
 {
-	JSTryStatement.Try _try;
-	String identifier;
-	JSTryStatement.TryCatch _tryCatch;
-	JSTryStatement.TryCatchFinally _tryCatchFinally;
-	JSTryStatement.TryFinally _tryFinally;
+	JSBlock tryBlock; 
+	String errorName;
+	JSBlock catchBlock;
+	JSBlock finallyBlock;
 }
 {
 	"try"
-	{ _try = context._try(); }
-	BlockContent(_try.getBody())
+	tryBlock = Block()
 	(
-		"catch" "(" identifier = Identifier() ")"
-		{ _tryCatch = _try._catch(identifier); }
-		BlockContent(_tryCatch.getCatch())
+		"catch"
+		"("
+			errorName = Identifier()
+		")"
+		catchBlock = Block()
 		(
 			"finally"
-			{ _tryCatchFinally = _tryCatch._finally(); }
-			BlockContent(_tryCatchFinally.getFinally())
-			{ return _tryCatchFinally; }
-		)?
-		{ return _tryCatch; }
+			finallyBlock = Block()
+			{
+				return this.builder.tryCatchFinallyStatement(tryBlock, errorName, catchBlock, finallyBlock);
+			}
+		) ?
+		{
+			return this.builder.tryCatchStatement(tryBlock, errorName, catchBlock); 
+		}
 	|	"finally"
-		{ _tryFinally = _try._finally(); }
-		BlockContent(_tryFinally.getFinally())
-		{ return _tryFinally; }
+		finallyBlock = Block()
+		{
+			return this.builder.tryFinallyStatement(tryBlock, finallyBlock);
+		}
 	)
 }
 
 /* 12.15 The debugger statement */
+
 /*
 DebuggerStatement :
 	debugger ;
@@ -2029,23 +2367,167 @@ DebuggerStatement :
 JSDebuggerStatement DebuggerStatement() :
 {}
 {
-	"debugger" ";" { return this.builder.debugger(); }
+	"debugger"
+	";"
+	{
+		return this.builder.debuggerStatement();
+	}
 }
-
-
-
-
-
-
-
-
 
 /* 13 Function Definition */
+
+/*
+FunctionDeclaration :
+	function Identifier ( FormalParameterListopt ) { FunctionBody }
+*/
+JSFunctionDeclaration FunctionDeclaration() :
+{
+	String functionName;
+	String[] formalParameterList;
+	JSSourceElement[] functionBody;
+}
+{
+	"function"
+	functionName = Identifier()
+	"("
+	formalParameterList = FormalParameterListOpt()
+	")"
+	"{"
+	functionBody = FunctionBody()
+	"}"
+	{
+		return this.builder.functionDeclaration(functionName, formalParameterList, functionBody);
+	}
+}	
+
+/*	
+FunctionExpression :
+	function Identifier_opt ( FormalParameterList_opt ) { FunctionBody }
+*/
 JSFunctionExpression FunctionExpression() :
 {
+	String functionName;
+	String[] formalParameterList;
+	JSSourceElement[] functionBody;
 }
 {
-	/* TODO */
-	"function" "(" ")" "{" "}" { return null; }
+	"function"
+	(
+		functionName = Identifier()
+		"("
+		formalParameterList = FormalParameterListOpt()
+		")"
+		"{"
+		functionBody = FunctionBody()
+		"}"
+		{
+			return this.builder.functionExpression(functionName, formalParameterList, functionBody);
+		}
+	|	"("
+		formalParameterList = FormalParameterListOpt()
+		")"
+		"{"
+		functionBody = FunctionBody()
+		"}"
+		{
+			return this.builder.functionExpression(formalParameterList, functionBody);
+		}
+	)
 }
 
+/*
+FormalParameterList :
+	Identifier
+	FormalParameterList , Identifier
+*/
+String[] FormalParameterListOpt() :
+{
+	List<String> formalParameterList = new LinkedList<String>();
+	String identifier;
+}
+{
+	(
+		identifier = Identifier()
+		{
+			formalParameterList.add(identifier);
+		}
+	) *
+	{
+		return formalParameterList.toArray(new String[formalParameterList.size()]);
+	}
+}
+
+/*
+FunctionBody :
+	SourceElements_opt
+*/
+JSSourceElement[] FunctionBody() :
+{
+	JSSourceElement[] functionBody;
+}
+{
+	functionBody = SourceElementsOpt()
+	{
+		return functionBody;
+	}
+}
+
+/* 14 Program */
+
+/*
+Program :
+  SourceElements_opt
+*/ 
+JSProgram Program() :
+{
+	JSSourceElement[] sourceElements;
+}
+{
+	sourceElements = SourceElementsOpt()
+	<EOF>
+	{
+		return this.builder.program(sourceElements);
+	}
+}
+
+/*
+SourceElements :
+	SourceElement
+	SourceElements SourceElement
+*/
+JSSourceElement[] SourceElementsOpt() :
+{
+	List<JSSourceElement> sourceElements = new LinkedList<JSSourceElement>();
+	JSSourceElement sourceElement;
+}
+{
+	(
+		sourceElement = SourceElement()
+		{
+			sourceElements.add(sourceElement);
+		}
+	) *
+	{
+		return sourceElements.toArray(new JSSourceElement[sourceElements.size()]);
+	}
+}
+
+/*
+SourceElement :
+	Statement
+	FunctionDeclaration
+*/
+JSSourceElement SourceElement() :
+{
+	JSSourceElement sourceElement;
+}
+{
+	sourceElement = Statement()
+	{
+		return sourceElement;
+	}
+|	sourceElement = FunctionDeclaration()
+	{
+		return sourceElement;
+	}
+}

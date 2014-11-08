@@ -6,14 +6,15 @@ import java.util.List;
 
 import org.hisrc.jscm.codemodel.JSCodeModel;
 import org.hisrc.jscm.codemodel.JSFunctionBody;
+import org.hisrc.jscm.codemodel.JSSourceElement;
 import org.hisrc.jscm.codemodel.expression.JSExpressionVisitor;
 import org.hisrc.jscm.codemodel.expression.JSFunctionExpression;
 import org.hisrc.jscm.codemodel.expression.JSVariable;
 import org.hisrc.jscm.codemodel.impl.FunctionBodyImpl;
 import org.hisrc.jscm.codemodel.lang.Validate;
 
-public abstract class FunctionExpressionImpl extends MemberExpressionImpl implements
-		JSFunctionExpression {
+public abstract class FunctionExpressionImpl extends MemberExpressionImpl
+		implements JSFunctionExpression {
 
 	public FunctionExpressionImpl(JSCodeModel codeModel) {
 		super(codeModel);
@@ -31,16 +32,31 @@ public abstract class FunctionExpressionImpl extends MemberExpressionImpl implem
 		private final JSFunctionBody body;
 
 		public FunctionImpl(JSCodeModel codeModel) {
-			super(codeModel);
-			this.name = null;
-			this.body = new FunctionBodyImpl(codeModel);
+			this(codeModel, null, new String[0], new JSSourceElement[0]);
 		}
 
 		public FunctionImpl(JSCodeModel codeModel, String name) {
+			this(codeModel, name, new String[0], new JSSourceElement[0]);
+		}
+
+		public FunctionImpl(JSCodeModel codeModel,
+				String[] formalParameterList, JSSourceElement[] sourceElements) {
+			this(codeModel, null, formalParameterList, sourceElements);
+		}
+
+		public FunctionImpl(JSCodeModel codeModel, String name,
+				String[] formalParameterList, JSSourceElement[] sourceElements) {
 			super(codeModel);
-			Validate.notNull(name);
+			Validate.noNullElements(formalParameterList);
+			Validate.noNullElements(sourceElements);
 			this.name = name;
+			for (String parameterName : formalParameterList) {
+				this.parameter(parameterName);
+			}
 			this.body = new FunctionBodyImpl(codeModel);
+			for (JSSourceElement sourceElement : sourceElements) {
+				this.body.addSourceElement(sourceElement);
+			}
 		}
 
 		public String getName() {

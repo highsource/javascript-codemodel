@@ -3,15 +3,22 @@ package org.hisrc.jscm.parser.impl;
 import java.math.BigInteger;
 
 import org.hisrc.jscm.codemodel.JSCodeModel;
+import org.hisrc.jscm.codemodel.JSFunctionDeclaration;
 import org.hisrc.jscm.codemodel.JSIdentifierName;
+import org.hisrc.jscm.codemodel.JSProgram;
+import org.hisrc.jscm.codemodel.JSSourceElement;
 import org.hisrc.jscm.codemodel.expression.JSArrayLiteral;
 import org.hisrc.jscm.codemodel.expression.JSAssignmentExpression;
 import org.hisrc.jscm.codemodel.expression.JSExpression;
+import org.hisrc.jscm.codemodel.expression.JSFunctionExpression;
 import org.hisrc.jscm.codemodel.expression.JSLeftHandSideExpression;
 import org.hisrc.jscm.codemodel.expression.JSObjectLiteral;
 import org.hisrc.jscm.codemodel.expression.JSThis;
+import org.hisrc.jscm.codemodel.expression.impl.FunctionExpressionImpl;
 import org.hisrc.jscm.codemodel.impl.CodeModelImpl;
+import org.hisrc.jscm.codemodel.impl.FunctionDeclarationImpl;
 import org.hisrc.jscm.codemodel.impl.IdentifierNameImpl;
+import org.hisrc.jscm.codemodel.impl.ProgramImpl;
 import org.hisrc.jscm.codemodel.literal.JSBooleanLiteral;
 import org.hisrc.jscm.codemodel.literal.JSDecimalIntegerLiteral;
 import org.hisrc.jscm.codemodel.literal.JSDecimalLiteral;
@@ -40,7 +47,6 @@ import org.hisrc.jscm.codemodel.statement.JSVariableDeclaration;
 import org.hisrc.jscm.codemodel.statement.JSVariableStatement;
 import org.hisrc.jscm.codemodel.statement.JSWhileStatement;
 import org.hisrc.jscm.codemodel.statement.JSWithStatement;
-import org.hisrc.jscm.codemodel.statement.JSSwitchStatement.JSCaseClause;
 import org.hisrc.jscm.codemodel.statement.impl.BlockImpl;
 import org.hisrc.jscm.codemodel.statement.impl.BreakStatementImpl;
 import org.hisrc.jscm.codemodel.statement.impl.ContinueStatementImpl;
@@ -138,19 +144,19 @@ public class CodeModelBuilderImpl implements JSCodeModelBuilder {
 		// TODO Incorrect
 		return new IdentifierNameImpl(token.image);
 	}
-	
+
 	@Override
 	public String identifier(Token token) throws ParseException {
 		// TODO Incorrect
 		return token.image;
 	}
-	
+
 	@Override
 	public JSBlock block(JSStatement... statements) {
 		return new BlockImpl(getCodeModel(), statements);
 	}
 
-	public JSVariableStatement variable(
+	public JSVariableStatement variableStatement(
 			JSVariableDeclaration[] variableDeclarations) {
 		return new VariableStatementImpl(getCodeModel(), variableDeclarations);
 	}
@@ -166,23 +172,23 @@ public class CodeModelBuilderImpl implements JSCodeModelBuilder {
 	}
 
 	@Override
-	public JSEmptyStatement empty() {
+	public JSEmptyStatement emptyStatement() {
 		return new EmptyStatementImpl(getCodeModel());
 	}
 
 	@Override
-	public JSExpressionStatement expression(JSExpression expression) {
+	public JSExpressionStatement expressionStatement(JSExpression expression) {
 		return new ExpressionStatementImpl(getCodeModel(), expression);
 	}
 
 	@Override
-	public JSIfStatement ifElse(JSExpression expression, JSStatement _then,
+	public JSIfStatement ifThenElseStatement(JSExpression expression, JSStatement _then,
 			JSStatement _else) {
 		return new IfStatementImpl(getCodeModel(), expression, _then, _else);
 	}
 
 	@Override
-	public JSIfStatement _if(JSExpression expression, JSStatement _then) {
+	public JSIfStatement ifThenStatement(JSExpression expression, JSStatement _then) {
 		return new IfStatementImpl(getCodeModel(), expression, _then);
 	}
 
@@ -231,65 +237,91 @@ public class CodeModelBuilderImpl implements JSCodeModelBuilder {
 	}
 
 	@Override
-	public JSContinueStatement _continue() {
+	public JSContinueStatement continueStatement() {
 		return new ContinueStatementImpl(getCodeModel());
 	}
 
 	@Override
-	public JSBreakStatement _break() {
+	public JSBreakStatement breakStatement() {
 		return new BreakStatementImpl(getCodeModel());
 	}
 
 	@Override
-	public JSReturnStatement _return() {
+	public JSReturnStatement returnStatement() {
 		return new ReturnStatementImpl(getCodeModel());
 	}
 
 	@Override
-	public JSReturnStatement _return(JSExpression expression) {
+	public JSReturnStatement returnStatement(JSExpression expression) {
 		return new ReturnStatementImpl(getCodeModel(), expression);
 	}
 
 	@Override
-	public JSWithStatement with(JSExpression expression, JSStatement statement) {
+	public JSWithStatement withStatement(JSExpression expression, JSStatement statement) {
 		return new WithStatementImpl(getCodeModel(), expression, statement);
 	}
-	
+
 	@Override
-	public JSSwitchStatement _switch(JSExpression expression) {
+	public JSSwitchStatement switchStatement(JSExpression expression) {
 		return new SwitchStatementImpl(getCodeModel(), expression);
 	}
 
 	@Override
-	public JSLabelledStatement label(String name, JSStatement statement) {
+	public JSLabelledStatement labelledStatement(String name, JSStatement statement) {
 		// TODO Labels
 		return new LabelledStatementImpl(getCodeModel(), name, statement);
 	}
 
 	@Override
-	public JSThrowStatement _throw(JSExpression expression) {
+	public JSThrowStatement throwStatement(JSExpression expression) {
 		return new ThrowStatementImpl(getCodeModel(), expression);
 	}
 
 	@Override
-	public JSTryStatement tryCatch(JSBlock _try, String error, JSBlock _catch) {
-		return new TryStatementImpl(getCodeModel(), _try, error, _catch, null);
+	public JSTryStatement tryCatchStatement(JSBlock tryBlock, String errorName, JSBlock catchBlock) {
+		return new TryStatementImpl(getCodeModel(), tryBlock, errorName, catchBlock, null);
 	}
 
 	@Override
-	public JSTryStatement tryCatchFinally(JSBlock _try, String error,
-			JSBlock _catch, JSBlock _finally) {
-		return new TryStatementImpl(getCodeModel(), _try, error, _catch,
-				_finally);
+	public JSTryStatement tryCatchFinallyStatement(JSBlock tryBlock, String errorName,
+			JSBlock catchBlock, JSBlock finallyBlock) {
+		return new TryStatementImpl(getCodeModel(), tryBlock, errorName, catchBlock,
+				finallyBlock);
 	}
 
 	@Override
-	public JSTryStatement tryFinally(JSBlock _try, JSBlock _finally) {
-		return new TryStatementImpl(getCodeModel(), _try, null, null, _finally);
+	public JSTryStatement tryFinallyStatement(JSBlock tryBlock, JSBlock finallyBlock) {
+		return new TryStatementImpl(getCodeModel(), tryBlock, null, null, finallyBlock);
 	}
 
 	@Override
-	public JSDebuggerStatement debugger() {
+	public JSDebuggerStatement debuggerStatement() {
 		return new DebuggerStatementImpl(getCodeModel());
+	}
+
+	@Override
+	public JSFunctionDeclaration functionDeclaration(String functionName,
+			String[] formalParameterList, JSSourceElement[] functionBody) {
+		return new FunctionDeclarationImpl(getCodeModel(), functionName,
+				formalParameterList, functionBody);
+	}
+
+	@Override
+	public JSFunctionExpression functionExpression(String functionName,
+			String[] formalParameterList, JSSourceElement[] functionBody) {
+		return new FunctionExpressionImpl.FunctionImpl(getCodeModel(),
+				functionName, formalParameterList, functionBody);
+	}
+
+	@Override
+	public JSFunctionExpression functionExpression(
+			String[] formalParameterList, JSSourceElement[] functionBody) {
+		return new FunctionExpressionImpl.FunctionImpl(getCodeModel(),
+				formalParameterList, functionBody);
+	}
+
+	@Override
+	public JSProgram program(JSSourceElement... sourceElements) {
+		return new ProgramImpl(getCodeModel(), sourceElements);
 	}
 }

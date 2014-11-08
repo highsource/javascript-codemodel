@@ -20,7 +20,15 @@ public class ProgramImpl extends StatementGeneratorImpl implements JSProgram {
 			.unmodifiableList(sourceElements);
 
 	public ProgramImpl(JSCodeModel codeModel) {
+		this(codeModel, new JSSourceElement[0]);
+	}
+
+	public ProgramImpl(JSCodeModel codeModel, JSSourceElement[] sourceElements) {
 		super(codeModel);
+		Validate.noNullElements(sourceElements);
+		for (JSSourceElement sourceElement : sourceElements) {
+			addSourceElement(sourceElement);
+		}
 	}
 
 	@Override
