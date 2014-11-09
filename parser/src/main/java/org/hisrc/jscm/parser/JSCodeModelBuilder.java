@@ -89,7 +89,7 @@ public interface JSCodeModelBuilder {
 
 	public JSIfStatement ifThenStatement(JSExpression condition, JSStatement thenStatement);
 
-	public JSForStatement _for(
+	public JSForStatement forStatement(
 	/* TODO JSExpressionNoIn */
 	JSExpression expression, JSExpression test, JSExpression update,
 			JSStatement statement);
@@ -108,10 +108,10 @@ public interface JSCodeModelBuilder {
 	JSVariableDeclaration variableDeclaration, JSExpression expression,
 			JSStatement statement);
 
-	public JSDoWhileStatement doWhile(JSStatement statement,
+	public JSDoWhileStatement doWhileStatement(JSStatement statement,
 			JSExpression expression);
 
-	public JSWhileStatement _while(JSExpression expression,
+	public JSWhileStatement whileStatement(JSExpression expression,
 			JSStatement statement);
 
 	public JSContinueStatement continueStatement();

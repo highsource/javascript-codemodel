@@ -193,19 +193,19 @@ public class CodeModelBuilderImpl implements JSCodeModelBuilder {
 	}
 
 	@Override
-	public JSDoWhileStatement doWhile(JSStatement statement,
+	public JSDoWhileStatement doWhileStatement(JSStatement statement,
 			JSExpression expression) {
 		return new DoWhileStatementImpl(getCodeModel(), statement, expression);
 	}
 
 	@Override
-	public JSWhileStatement _while(JSExpression expression,
+	public JSWhileStatement whileStatement(JSExpression expression,
 			JSStatement statement) {
 		return new WhileStatementImpl(getCodeModel(), expression, statement);
 	}
 
 	@Override
-	public JSForStatement _for(JSExpression expression, JSExpression test,
+	public JSForStatement forStatement(JSExpression expression, JSExpression test,
 			JSExpression update, JSStatement statement) {
 		return new ForStatementImpl(getCodeModel(), expression, test, update,
 				statement);

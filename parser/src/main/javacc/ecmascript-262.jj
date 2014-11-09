@@ -2147,13 +2147,93 @@ JSIfStatement IfStatement() :
 	}
 }
 
+/* 12.6 Iteration Statements */
 
+/*
+IterationStatement :
+	do Statement while ( Expression );
+	while ( Expression ) Statement
+	for (ExpressionNoIn_opt; Expression_opt ; Expression_opt ) Statement
+	for ( var VariableDeclarationListNoIn; Expression_opt ; Expression_opt ) Statement
+	for ( LeftHandSideExpression in Expression ) Statement
+	for ( var VariableDeclarationNoIn in Expression ) Statement
+*/
 
+/* 12.6.1 The do-while Statement */
 
+/*
+do Statement while ( Expression );
+*/
+JSDoWhileStatement DoWhileStatement() :
+{
+	JSStatement statement;
+	JSExpression expression;
+}
+{
+	"do"
+	statement = Statement()
+	"while"
+	"("
+	expression = Expression()
+	")"
+	";"
+	{
+		return this.builder.doWhileStatement(statement, expression);
+	}
+}
 
+/* 12.6.2 The while Statement */
 
+/*
+while ( Expression ) Statement
+*/
 
+JSWhileStatement WhileStatement() :
+{
+	JSExpression expression;
+	JSStatement statement;
+}
+{
+	"while"
+	"("
+	expression = Expression()
+	")"
+	statement = Statement()
+	{
+		return this.builder.whileStatement(expression, statement);
+	}
+}
 
+/* 12.6.3 The for Statement */
+
+/* for (ExpressionNoIn_opt ; Expression_opt ; Expression_opt) Statement */
+JSForStatement ForStatement() :
+{
+	JSExpression expression = null;
+	JSExpression test = null;
+	JSExpression update = null;
+	JSStatement statement;
+}
+{
+	"for"
+	"("
+		(
+			expression = /* TODO ExpressionNotIn */ Expression()
+		) ?
+	";"
+		(
+			test = Expression()
+		) ?
+	";"
+		(
+			update = Expression()
+		) ?
+	")"
+	statement = Statement()
+	{
+		return this.builder.forStatement(expression, test, update, statement);
+	}
+}
 
 
 /* 12.7 The continue Statement */
