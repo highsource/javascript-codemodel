@@ -94,16 +94,16 @@ public interface JSCodeModelBuilder {
 	JSExpression expression, JSExpression test, JSExpression update,
 			JSStatement statement);
 
-	public JSForVarStatement forVar(
+	public JSForVarStatement forVarStatement(
 	/* TODO JSVariableDeclarationNoIn */
 	JSVariableDeclaration[] variableDeclarations, JSExpression test,
 			JSExpression update, JSStatement statement);
 
-	public JSForInStatement forIn(
+	public JSForInStatement forInStatement(
 			JSLeftHandSideExpression leftHandSideExpression,
 			JSExpression expression, JSStatement statement);
 
-	public JSForVarInStatement forVarIn(
+	public JSForVarInStatement forVarInStatement(
 	/* TODO JSVariableDeclarationNoIn */
 	JSVariableDeclaration variableDeclaration, JSExpression expression,
 			JSStatement statement);

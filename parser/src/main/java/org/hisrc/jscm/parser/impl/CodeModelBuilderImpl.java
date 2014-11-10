@@ -212,7 +212,7 @@ public class CodeModelBuilderImpl implements JSCodeModelBuilder {
 	}
 
 	@Override
-	public JSForVarStatement forVar(
+	public JSForVarStatement forVarStatement(
 			JSVariableDeclaration[] variableDeclarations, JSExpression test,
 			JSExpression update, JSStatement statement) {
 		return new ForVarStatementImpl(getCodeModel(), variableDeclarations,
@@ -220,7 +220,7 @@ public class CodeModelBuilderImpl implements JSCodeModelBuilder {
 	}
 
 	@Override
-	public JSForInStatement forIn(
+	public JSForInStatement forInStatement(
 			JSLeftHandSideExpression leftHandSideExpression,
 			JSExpression expression, JSStatement statement) {
 		return new ForInStatementImpl(getCodeModel(), leftHandSideExpression,
@@ -228,7 +228,7 @@ public class CodeModelBuilderImpl implements JSCodeModelBuilder {
 	}
 
 	@Override
-	public JSForVarInStatement forVarIn(
+	public JSForVarInStatement forVarInStatement(
 	/* TODO VariableDeclarationNoIn */
 	JSVariableDeclaration variableDeclaration, JSExpression expression,
 			JSStatement statement) {
