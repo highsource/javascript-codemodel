@@ -2283,6 +2283,23 @@ JSAssignmentExpression AssignmentExpression() :
 	JSConditionalExpression expression;
 }
 {
+	LOOKAHEAD
+	(
+		LeftHandSideExpression()
+		(
+			"*="
+		|	"/="
+		|	"%="
+		|	"+="
+		|	"-="
+		|	"<<="
+		|	">>="
+		|	">>>="
+		|	"&="
+		|	"^="
+		|	"|="
+		)
+	)
 	expression0 = LeftHandSideExpression()
 	(
 		"="
@@ -2366,6 +2383,23 @@ JSAssignmentExpression AssignmentExpressionNoIn() :
 	JSConditionalExpression expression;
 }
 {
+	LOOKAHEAD
+	(
+		LeftHandSideExpression()
+		(
+			"*="
+		|	"/="
+		|	"%="
+		|	"+="
+		|	"-="
+		|	"<<="
+		|	">>="
+		|	">>>="
+		|	"&="
+		|	"^="
+		|	"|="
+		)
+	)
 	expression0 = LeftHandSideExpression()
 	(
 		"="
@@ -2436,7 +2470,13 @@ JSAssignmentExpression AssignmentExpressionNoIn() :
 }
 
 
-/* Section 11.14: Comma Operator */
+/* 11.14 Comma Operator ( , ) */
+
+/*
+Expression :
+	AssignmentExpression
+	Expression , AssignmentExpression
+*/
 
 JSExpression Expression() :
 {
@@ -2444,17 +2484,43 @@ JSExpression Expression() :
 	JSAssignmentExpression expression1;
 }
 {
-	expression0 = AssignmentExpression() (
-		"," expression1 = AssignmentExpression() { expression0 = expression0.comma(expression1); }
-	)* { return expression0; }
+	expression0 = AssignmentExpression()
+	(
+		","
+		expression1 = AssignmentExpression()
+		{
+			expression0 = expression0.comma(expression1);
+		}
+	)*
+	{
+		return expression0;
+	}
 }
 
-
-
-
-
-
-
+/*
+ExpressionNoIn :
+	AssignmentExpressionNoIn
+	ExpressionNoIn , AssignmentExpressionNoIn
+*/
+/* TODO ExpressionNoIn */
+JSExpression ExpressionNoIn() :
+{
+	JSExpression expression0;
+	JSAssignmentExpression expression1;
+}
+{
+	expression0 = AssignmentExpressionNoIn()
+	(
+		","
+		expression1 = AssignmentExpressionNoIn()
+		{
+			expression0 = expression0.comma(expression1);
+		}
+	)*
+	{
+		return expression0;
+	}
+}
 
 /* 12 Statements */
 JSStatement Statement(JSStatementGenerator context) :
@@ -2565,12 +2631,28 @@ JSVariableDeclaration[] VariableDeclarationList() :
 	}
 }
 
-/* TODO */
 /*
 VariableDeclarationListNoIn :
 	VariableDeclarationNoIn
 	VariableDeclarationListNoIn , VariableDeclarationNoIn
 */
+/* VariableDeclarationNoIn */
+JSVariableDeclaration[] VariableDeclarationListNoIn() :
+{
+	List<JSVariableDeclaration> variableDeclarationList = new LinkedList<JSVariableDeclaration>();
+	JSVariableDeclaration variableDeclaration;
+}
+{
+	(
+		variableDeclaration = VariableDeclarationNoIn()
+		{
+			variableDeclarationList.add(variableDeclaration);
+		}
+	) +
+	{
+		return variableDeclarationList.toArray(new JSVariableDeclaration[variableDeclarationList.size()]);
+	}
+}
 
 /*
 VariableDeclaration :
@@ -2594,11 +2676,28 @@ JSVariableDeclaration VariableDeclaration() :
 	}
 }
 
-/* TODO */
 /*
 VariableDeclarationNoIn :
 	Identifier InitialiserNoIn_opt
 */
+/* TODO VariableDeclarationNoIn */
+JSVariableDeclaration VariableDeclarationNoIn() :
+{
+	String variableName;
+	JSAssignmentExpression initializer;
+}
+{
+	variableName = Identifier()
+	(
+		initializer = InitializerNoIn()
+		{
+			return this.builder.variableDeclaration(variableName, initializer);
+		}
+	) ?
+	{
+			return this.builder.variableDeclaration(variableName);
+	}
+}
 
 /*
 Initialiser :
@@ -2616,11 +2715,22 @@ JSAssignmentExpression Initializer() :
 	}
 }
 
-/* TODO */
 /*
 InitialiserNoIn :
 	= AssignmentExpressionNoIn
 */
+/* TODO InitializerNoNi*/
+JSAssignmentExpression InitializerNoIn() :
+{
+	JSAssignmentExpression initializer;
+}
+{
+	"="
+	initializer = AssignmentExpressionNoIn()
+	{
+		return initializer;
+	}
+}
 
 /* 12.3 Empty Statement */
 
@@ -2758,7 +2868,7 @@ JSForStatement ForStatement() :
 	"for"
 	"("
 		(
-			expression = /* TODO ExpressionNotIn */ Expression()
+			expression = ExpressionNoIn()
 		) ?
 	";"
 		(
@@ -2787,7 +2897,7 @@ JSForVarStatement ForVarStatement() :
 	"for"
 	"("
 	"var"
-	variableDeclarationList = /* TODO VariableDeclarationListNoIn */ VariableDeclarationList()
+	variableDeclarationList = VariableDeclarationListNoIn()
 	";"
 	(
 		test = Expression()
@@ -2837,7 +2947,7 @@ JSForVarInStatement ForVarInStatement() :
 	"for"
 	"("
 	"var"
-	variableDeclaration = / * TODO VariableDeclarationNoIn * / VariableDeclaration()
+	variableDeclaration = VariableDeclarationNoIn()
 	"in"
 	expression = Expression()
 	")"
