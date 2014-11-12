@@ -6,11 +6,14 @@ import org.hisrc.jscm.codemodel.JSProgram;
 import org.hisrc.jscm.codemodel.JSSourceElement;
 import org.hisrc.jscm.codemodel.expression.JSArrayLiteral;
 import org.hisrc.jscm.codemodel.expression.JSAssignmentExpression;
+import org.hisrc.jscm.codemodel.expression.JSElision;
 import org.hisrc.jscm.codemodel.expression.JSExpression;
 import org.hisrc.jscm.codemodel.expression.JSFunctionExpression;
+import org.hisrc.jscm.codemodel.expression.JSIdentifierReference;
 import org.hisrc.jscm.codemodel.expression.JSLeftHandSideExpression;
 import org.hisrc.jscm.codemodel.expression.JSObjectLiteral;
 import org.hisrc.jscm.codemodel.expression.JSThis;
+import org.hisrc.jscm.codemodel.expression.JSVariable;
 import org.hisrc.jscm.codemodel.literal.JSBooleanLiteral;
 import org.hisrc.jscm.codemodel.literal.JSDecimalIntegerLiteral;
 import org.hisrc.jscm.codemodel.literal.JSDecimalLiteral;
@@ -43,8 +46,12 @@ import org.hisrc.jscm.codemodel.statement.JSWithStatement;
 public interface JSCodeModelBuilder {
 
 	public JSThis _this();
-
+	
+	public JSIdentifierReference identifierReference(String name);
+	
 	public JSArrayLiteral arrayLiteral();
+	
+	public JSElision elision();
 
 	public JSObjectLiteral objectLiteral();
 

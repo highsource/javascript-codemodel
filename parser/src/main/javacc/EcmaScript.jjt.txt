@@ -1575,17 +1575,23 @@ TOKEN:
 	void ArrayLiteral() #ArrayLiteral : 
 	{}
 	{
-		"[" (
-				LOOKAHEAD(2) ( Elision() )? "]" 
-						| LOOKAHEAD(ElementList() Elision()) ElementList() Elision() "]" 
-						| ( ElementList() )? "]" 
+		"["
+		(
+			LOOKAHEAD(2)
+			( Elision() )?
+			"]" 
+		|	LOOKAHEAD(ElementList() Elision())
+			ElementList() Elision() "]" 
+		| ( ElementList() )? "]" 
 		)
 	}		 
 
 	void ElementList() #void :
 	{}
 	{
-		( Elision() )? AssignmentExpression() ( LOOKAHEAD(Elision()	AssignmentExpression()) Elision()  AssignmentExpression())*
+		( Elision() )? AssignmentExpression()
+		( LOOKAHEAD(Elision()	AssignmentExpression())
+		Elision()  AssignmentExpression())*
 	}
 
 	void Elision() #void :

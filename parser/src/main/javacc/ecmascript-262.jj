@@ -47,6 +47,7 @@ import org.hisrc.jscm.parser.impl.*;
 
 import java.util.List;
 import java.util.LinkedList;
+import java.util.Arrays;
 
 public class EcmaScriptParser {
 
@@ -1456,55 +1457,159 @@ TOKEN:
 
 /* Section 11.1: Primary Expressions */
 
+/*
+PrimaryExpression :
+	this
+	Identifier
+	Literal
+	ArrayLiteral
+	ObjectLiteral
+	( Expression )
+*/
 JSPrimaryExpression PrimaryExpression() :
 {
 	JSObjectLiteral objectLiteral;
 	JSExpression expression;
 	JSArrayLiteral arrayLiteral;
 	JSLiteral literal;
+	String identifier;
 }
 {
-		LOOKAHEAD(<THIS>) <THIS> { return this.builder._this(); }
-		| LOOKAHEAD("{") objectLiteral = ObjectLiteral() { return objectLiteral; }
-		| LOOKAHEAD("(") ( "(" expression = Expression() ")" ) { return expression.brackets(); } 
-/*	TODO	| LOOKAHEAD(Identifier()) Identifier()*/
-		| LOOKAHEAD("[") arrayLiteral = ArrayLiteral() { return arrayLiteral; }
-		| LOOKAHEAD(2) literal = Literal() { return literal; } 
+	"this"
+	{
+		return this.builder._this();
+	}
+|	/*LOOKAHEAD("{")*/
+	objectLiteral = ObjectLiteral()
+	{
+		return objectLiteral;
+	}
+|	/*LOOKAHEAD("(")*/
+	"("
+	expression = Expression()
+	")"
+	{
+		return expression.brackets();
+	} 
+|	identifier = Identifier()
+	{
+		return this.builder.identifierReference(identifier);
+	}
+|	/*LOOKAHEAD("[")*/
+	arrayLiteral = ArrayLiteral()
+	{
+		return arrayLiteral;
+	}
+|	/*LOOKAHEAD(2)*/
+	literal = Literal()
+	{
+		return literal;
+	} 
 }
 
 /* 11.1.4 Array Initialiser */
+
+/*
+ArrayLiteral :
+	[ Elision_opt ]
+	[ ElementList ]
+	[ ElementList , Elision_opt ]
+*/
+
 JSArrayLiteral ArrayLiteral() : 
 {
-	JSArrayLiteral arrayLiteral = this.builder.arrayLiteral();
+	List<JSArrayElement> elementList = new LinkedList<JSArrayElement>();
+	JSArrayElement[] elements;
 }
 {
-	"[" (
-		LOOKAHEAD(2) ( Elision(arrayLiteral) )? "]" 
-	|	LOOKAHEAD(ElementList() Elision()) ElementList(arrayLiteral) Elision(arrayLiteral) "]" 
-	|	( ElementList(arrayLiteral) )? "]" 
+	"["
+	(
+		"]"
+	|	LOOKAHEAD(Elision())
+		elements = Elision()
+		{
+			elementList.addAll(Arrays.asList(elements));
+		}
+		"]" 
+	|	elements = ElementList()
+		{
+			elementList.addAll(Arrays.asList(elements));
+		}
+		(
+			"]"
+		|
+			","
+			(
+				elements = Elision()
+				{
+					elementList.addAll(Arrays.asList(elements));
+				}
+			)
+			"]"
+		)
 	)
-	{ return arrayLiteral; }
-}		 
+	{
+		elements =  elementList.toArray(new JSArrayElement[elementList.size()]);
+		return this.builder.arrayLiteral(elements);
+	}
+}
 
-void ElementList(JSArrayLiteral arrayLiteral) :
+/*
+ElementList :
+	Elision_opt AssignmentExpression
+	ElementList , Elision_opt AssignmentExpression
+*/
+JSArrayElement[] ElementList() :
 {
+	List<JSArrayElement> elementList = new LinkedList<JSArrayElement>();
+	JSArrayElement[] elements;
 	JSAssignmentExpression expression;
 }
 {
-		( Elision(arrayLiteral) )?
-		expression = AssignmentExpression() { arrayLiteral.append(expression); }
-		(
-			LOOKAHEAD(Elision() AssignmentExpression())
-			Elision(arrayLiteral) expression = AssignmentExpression() { arrayLiteral.append(expression); }
-		)*
+	(
+		elements = Elision()
+		{
+			elementList.addAll(Arrays.asList(elements));
+		}
+	) ?
+	expression = AssignmentExpression()
+	{
+		elementList.add(expression);
+	}
+	(	LOOKAHEAD(Elision()	AssignmentExpression())
+		elements = Elision()
+		{
+			elementList.addAll(Arrays.asList(elements));
+		}
+		expression = AssignmentExpression()
+		{
+			elementList.add(expression);
+		}
+	) *
+	{
+		return elementList.toArray(new JSArrayElement[elementList.size()]);
+	}
 }
 
-void Elision(JSArrayLiteral arrayLiteral) :
-{}
+/*
+Elision :
+	,
+	Elision ,
+*/
+JSElision[] Elision() :
+{
+	List<JSElision> elementList = new LinkedList<JSElision>();
+}
 {
 	(
-		"," { arrayLiteral.elision(); }
-	)+
+		","
+		{
+			elementList.add(this.builder.elision());
+		}
+	) +
+	{
+		return elementList.toArray(new JSElision[elementList.size()]);
+	}
 }
 
 /* 11.1.5 Object Initialiser */
@@ -1555,7 +1660,7 @@ JSMemberExpression MemberExpression() :
 { 
 	(
 		( 
-			/*LOOKAHEAD("function")*/
+			/* LOOKAHEAD("function")*/
 			memberExpression = FunctionExpression()
 		|	memberExpression = PrimaryExpression()
 		)
@@ -1689,7 +1794,10 @@ JSIdentifierName IdentifierName() :
 	Token t;
 }
 {
-	t = <IDENTIFIER_NAME> { return this.builder.identifierName(t); }
+	t = <IDENTIFIER_NAME>
+	{
+		return this.builder.identifierName(t);
+	}
 }
 
 
@@ -1699,13 +1807,23 @@ JSPostfixExpression PostfixExpression() :
 	JSLeftHandSideExpression expression;
 }
 {
-	expression = LeftHandSideExpression() (
-	 	LOOKAHEAD( "++", {getToken(0).beginLine == getToken(1).beginLine})
-	 	"++" { return expression.postIncr(); }
+	expression = LeftHandSideExpression()
+	(
+	 	/*LOOKAHEAD( "++", {getToken(0).beginLine == getToken(1).beginLine})*/
+	 	"++"
+	 	{
+	 		return expression.postIncr();
+	 	}
 	|
-		LOOKAHEAD( "--", {getToken(0).beginLine == getToken(1).beginLine})	
-		"--" { return expression.postDecr(); }
-	) ? { return expression; }
+		/*LOOKAHEAD( "--", {getToken(0).beginLine == getToken(1).beginLine})*/	
+		"--"
+		{
+			return expression.postDecr();
+		}
+	) ?
+	{
+		return expression;
+	}
 }
 
 /* 11.4 Unary Operators */
@@ -1717,10 +1835,10 @@ JSUnaryExpression UnaryExpression() :
 	"delete" expression = UnaryExpression() { return expression.delete(); }
 |	"void" expression = UnaryExpression() { return expression._void(); }
 |	"typeof" expression = UnaryExpression() { return expression.typeof(); }
-|	"++" expression = UnaryExpression() { return expression.preIncr(); }
-|	"--" expression = UnaryExpression() { return expression.preDecr(); }
-|	"+" expression = UnaryExpression() { return expression.positive(); }
-|	"-" expression = UnaryExpression() { return expression.negative(); }
+/* TODO |	"++" expression = UnaryExpression() { return expression.preIncr(); }
+|	"--" expression = UnaryExpression() { return expression.preDecr(); } */
+/* TODO |	"+" expression = UnaryExpression() { return expression.positive(); }
+|	"-" expression = UnaryExpression() { return expression.negative(); }*/
 |	"~" expression = UnaryExpression() { return expression.complement(); }
 |	"!" expression = UnaryExpression() { return expression.not(); }
 |	expression = PostfixExpression() { return expression; }
@@ -1734,10 +1852,25 @@ JSMultiplicativeExpression MultiplicativeExpression() :
 }
 {
 	expression0 = UnaryExpression() (
-		"*" expression1 = UnaryExpression() { expression0 = expression0.mul(expression1); }
-	|	"/" expression1 = UnaryExpression() { expression0 = expression0.div(expression1); }
-	|	"%" expression1 = UnaryExpression() { expression0 = expression0.mod(expression1); }
-	) * { return expression0; }
+		"*"
+		expression1 = UnaryExpression()
+		{
+			expression0 = expression0.mul(expression1);
+		}
+	|	"/"
+		expression1 = UnaryExpression()
+		{
+			expression0 = expression0.div(expression1);
+		}
+	|	"%"
+		expression1 = UnaryExpression()
+		{
+			expression0 = expression0.mod(expression1);
+		}
+	) *
+	{
+		return expression0;
+	}
 }
 
 /* 11.6 Additive Operators */
@@ -1747,10 +1880,22 @@ JSAdditiveExpression AdditiveExpression() :
 	JSMultiplicativeExpression expression1;
 }
 {
-	expression0 = MultiplicativeExpression() (
-		"+" expression1 = MultiplicativeExpression() { expression0 = expression0.plus(expression1); }
-	|	"-" expression1 = MultiplicativeExpression() { expression0 = expression0.minus(expression1); }
-	) * { return expression0; }
+	expression0 = MultiplicativeExpression()
+	(
+		"+"
+		expression1 = MultiplicativeExpression()
+		{
+			expression0 = expression0.plus(expression1);
+		}
+	|	"-"
+		expression1 = MultiplicativeExpression()
+		{
+			expression0 = expression0.minus(expression1);
+		}
+	) *
+	{
+		return expression0;
+	}
 }
 
 /* 11.7 Bitwise Shift Operators */
@@ -2523,29 +2668,53 @@ JSExpression ExpressionNoIn() :
 }
 
 /* 12 Statements */
-JSStatement Statement(JSStatementGenerator context) :
+
+/*
+Syntax
+	Statement :
+	Block
+	VariableStatement
+	EmptyStatement
+	ExpressionStatement
+	IfStatement
+	IterationStatement
+	ContinueStatement
+	BreakStatement
+	ReturnStatement
+	WithStatement
+	LabelledStatement
+	SwitchStatement
+	ThrowStatement
+	TryStatement
+	DebuggerStatement
+*/
+
+JSStatement Statement() :
 {
 	JSStatement statement;
 }
 {
-/* Statement :
-Block
-VariableStatement
-EmptyStatement
-ExpressionStatement
-IfStatement
-IterationStatement
-ContinueStatement
-BreakStatement
-ReturnStatement
-WithStatement
-LabelledStatement
-SwitchStatement
-ThrowStatement
-TryStatement
-DebuggerStatement */
-
-	statement = Block(context) { return statement; }
+	LOOKAHEAD("{")
+	statement = Block()
+|	statement = VariableStatement()
+|	statement = EmptyStatement()
+|	LOOKAHEAD (<IDENTIFIER_NAME> ":")
+	statement = LabelledStatement()
+|	statement = ExpressionStatement()
+/* TODO |	LOOKAHEAD("if" "(")	
+	statement = IfStatement() */
+/* TODO | statement = IterationStatement()*/
+|	statement = ContinueStatement()
+|	statement = BreakStatement()
+|	statement = ReturnStatement()
+|	statement = WithStatement()
+/* TODO |	statement = SwitchStatement()*/
+|	statement = ThrowStatement()
+|	statement = TryStatement()
+|	statement = DebuggerStatement()
+	{
+		return statement;
+	}
 }
 
 /* 12.1 Block */
@@ -3327,8 +3496,8 @@ JSSourceElement SourceElement() :
 	{
 		return sourceElement;
 	}
-|	sourceElement = FunctionDeclaration()
+/* TODO |	sourceElement = FunctionDeclaration()
 	{
 		return sourceElement;
-	}
+	}*/
 }

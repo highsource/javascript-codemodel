@@ -27,6 +27,7 @@ import org.hisrc.jscm.codemodel.expression.JSExpression.Comma;
 import org.hisrc.jscm.codemodel.expression.JSExpressionVisitor;
 import org.hisrc.jscm.codemodel.expression.JSFunctionExpression.Function;
 import org.hisrc.jscm.codemodel.expression.JSGlobalVariable;
+import org.hisrc.jscm.codemodel.expression.JSIdentifierReference;
 import org.hisrc.jscm.codemodel.expression.JSInvocationExpression;
 import org.hisrc.jscm.codemodel.expression.JSLogicalANDExpression.And;
 import org.hisrc.jscm.codemodel.expression.JSLogicalORExpression.Or;
@@ -64,17 +65,23 @@ public class ExpressionWriter implements
 	}
 
 	@Override
-	public CodeWriter visitVariable(JSVariable value) throws IOException {
+	public CodeWriter visitIdentifierReference(JSIdentifierReference value) throws IOException {
 		f.identifier(value.getName());
 		return f;
 	}
 
-	@Override
-	public CodeWriter visitGlobalVariable(JSGlobalVariable value)
-			throws IOException {
-		f.identifier(value.getName());
-		return f;
-	}
+//	@Override
+//	public CodeWriter visitVariable(JSVariable value) throws IOException {
+//		f.identifier(value.getName());
+//		return f;
+//	}
+
+//	@Override
+//	public CodeWriter visitGlobalVariable(JSGlobalVariable value)
+//			throws IOException {
+//		f.identifier(value.getName());
+//		return f;
+//	}
 
 	@Override
 	public CodeWriter visitLiteral(JSLiteral value) throws IOException {

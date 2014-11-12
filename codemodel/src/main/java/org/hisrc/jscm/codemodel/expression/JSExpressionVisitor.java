@@ -7,9 +7,11 @@ public interface JSExpressionVisitor<V, E extends Exception> {
 	// 11.1
 	public V visitThis(JSThis value) throws E;
 
-	public V visitVariable(JSVariable value) throws E;
+	// public V visitVariable(JSVariable value) throws E;
 
-	public V visitGlobalVariable(JSGlobalVariable value) throws E;
+	// public V visitGlobalVariable(JSGlobalVariable value) throws E;
+
+	public V visitIdentifierReference(JSIdentifierReference value) throws E;
 
 	public V visitLiteral(JSLiteral value) throws E;
 

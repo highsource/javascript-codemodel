@@ -2,6 +2,7 @@ package org.hisrc.jscm.codemodel.expression.impl;
 
 import org.hisrc.jscm.codemodel.expression.JSAdditiveExpression.Additive;
 import org.hisrc.jscm.codemodel.expression.JSArrayLiteral;
+import org.hisrc.jscm.codemodel.expression.JSIdentifierReference;
 import org.hisrc.jscm.codemodel.expression.JSAssignmentExpression.Assignment;
 import org.hisrc.jscm.codemodel.expression.JSBitwiseANDExpression.Band;
 import org.hisrc.jscm.codemodel.expression.JSBitwiseORExpression.Bor;
@@ -46,13 +47,18 @@ public class DefaultExpressionVisitor<V, E extends Exception> implements
 		return visitExpression(value);
 	}
 
-	@Override
-	public V visitVariable(JSVariable value) throws E {
-		return visitExpression(value);
-	}
+//	@Override
+//	public V visitVariable(JSVariable value) throws E {
+//		return visitExpression(value);
+//	}
 
+//	@Override
+//	public V visitGlobalVariable(JSGlobalVariable value) throws E {
+//		return visitExpression(value);
+//	}
+	
 	@Override
-	public V visitGlobalVariable(JSGlobalVariable value) throws E {
+	public V visitIdentifierReference(JSIdentifierReference value) throws E {
 		return visitExpression(value);
 	}
 
