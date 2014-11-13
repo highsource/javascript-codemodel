@@ -1,6 +1,7 @@
 package org.hisrc.jscm.codemodel.expression.impl;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -20,7 +21,13 @@ public class ObjectLiteralImpl extends PrimaryExpressionImpl implements
 			.unmodifiableList(propertyAssignments);
 
 	public ObjectLiteralImpl(JSCodeModel codeModel) {
+		this(codeModel, new JSPropertyAssignment[0]);
+	}
+	
+	public ObjectLiteralImpl(JSCodeModel codeModel, JSPropertyAssignment[] propertyAssignments) {
 		super(codeModel);
+		Validate.noNullElements(propertyAssignments);
+		this.propertyAssignments.addAll(Arrays.asList(propertyAssignments));
 	}
 
 	@Override

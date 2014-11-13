@@ -20,7 +20,13 @@ public class ArrayLiteralImpl extends PrimaryExpressionImpl implements
 			.unmodifiableList(elements);
 
 	public ArrayLiteralImpl(JSCodeModel codeModel) {
+		this(codeModel, new JSArrayElement[0]);
+	}
+
+	public ArrayLiteralImpl(JSCodeModel codeModel, JSArrayElement[] elementList) {
 		super(codeModel);
+		Validate.noNullElements(elementList);
+		this.elements.addAll(Arrays.asList(elementList));
 	}
 
 	@Override

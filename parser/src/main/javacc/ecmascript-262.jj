@@ -40,6 +40,7 @@ package org.hisrc.jscm.parser;
 
 import org.hisrc.jscm.codemodel.*;
 import org.hisrc.jscm.codemodel.expression.*;
+import org.hisrc.jscm.codemodel.expression.JSObjectLiteral.JSPropertyAssignment;
 import org.hisrc.jscm.codemodel.literal.*;
 import org.hisrc.jscm.codemodel.operator.*;
 import org.hisrc.jscm.codemodel.statement.*;
@@ -394,6 +395,17 @@ TOKEN:
 	< DECIMAL_DIGIT: ["0"-"9"] >
 }
 
+JSDecimalLiteral DecimalLiteral() :
+{
+	Token t;
+}
+{
+	t = <DECIMAL_LITERAL>
+	{
+		return this.builder.decimalLiteral(t);
+	}
+}
+
 /* Section 7.8: Literals */
 /*
 
@@ -490,6 +502,16 @@ TOKEN:
 	< HEX_ESCAPE_SEQUENCE: "x" <HEX_DIGIT> <HEX_DIGIT> >
 }
 
+JSStringLiteral StringLiteral() :
+{
+	Token t;
+}
+{
+	t = <STRING_LITERAL>
+	{
+		return this.builder.stringLiteral(t);
+	}
+}
 /*
 TOKEN:
 {
@@ -511,6 +533,22 @@ String Identifier() :
 	t = <IDENTIFIER_NAME>
 	{
 		return this.builder.identifier(t);
+	}
+}
+
+/*
+IdentifierName ::
+	IdentifierStart
+	IdentifierName IdentifierPart
+*/
+JSIdentifierName IdentifierName() :
+{
+	Token t;
+}
+{
+	t = <IDENTIFIER_NAME>
+	{
+		return this.builder.identifierName(t);
 	}
 }
 
@@ -1514,142 +1552,152 @@ ArrayLiteral :
 	[ Elision_opt ]
 	[ ElementList ]
 	[ ElementList , Elision_opt ]
+
+ElementList :
+	Elision_opt AssignmentExpression
+	ElementList , Elision_opt AssignmentExpression
+
+Elision :
+	,
+	Elision ,
 */
 
 JSArrayLiteral ArrayLiteral() : 
 {
 	List<JSArrayElement> elementList = new LinkedList<JSArrayElement>();
 	JSArrayElement[] elements;
+	JSAssignmentExpression expression;
+	boolean lastElementWasAssignmentExpression = false;
 }
 {
 	"["
 	(
-		"]"
-	|	LOOKAHEAD(Elision())
-		elements = Elision()
-		{
-			elementList.addAll(Arrays.asList(elements));
-		}
-		"]" 
-	|	elements = ElementList()
-		{
-			elementList.addAll(Arrays.asList(elements));
-		}
 		(
-			"]"
-		|
+			expression = AssignmentExpression()
+			{
+				elementList.add(expression);
+				lastElementWasAssignmentExpression = true;
+			}
+		) ?
+		(
 			","
-			(
-				elements = Elision()
+			{
+				if (!lastElementWasAssignmentExpression)
 				{
-					elementList.addAll(Arrays.asList(elements));
+					elementList.add(this.builder.elision());
 				}
-			)
-			"]"
-		)
+			}
+			(
+				expression = AssignmentExpression()
+				{
+					elementList.add(expression);
+					lastElementWasAssignmentExpression = true;
+				}
+			) ?
+		) *
 	)
+	"]"
 	{
 		elements =  elementList.toArray(new JSArrayElement[elementList.size()]);
 		return this.builder.arrayLiteral(elements);
 	}
 }
 
-/*
-ElementList :
-	Elision_opt AssignmentExpression
-	ElementList , Elision_opt AssignmentExpression
-*/
-JSArrayElement[] ElementList() :
-{
-	List<JSArrayElement> elementList = new LinkedList<JSArrayElement>();
-	JSArrayElement[] elements;
-	JSAssignmentExpression expression;
-}
-{
-	(
-		elements = Elision()
-		{
-			elementList.addAll(Arrays.asList(elements));
-		}
-	) ?
-	expression = AssignmentExpression()
-	{
-		elementList.add(expression);
-	}
-	(	LOOKAHEAD(Elision()	AssignmentExpression())
-		elements = Elision()
-		{
-			elementList.addAll(Arrays.asList(elements));
-		}
-		expression = AssignmentExpression()
-		{
-			elementList.add(expression);
-		}
-	) *
-	{
-		return elementList.toArray(new JSArrayElement[elementList.size()]);
-	}
-}
-
-/*
-Elision :
-	,
-	Elision ,
-*/
-JSElision[] Elision() :
-{
-	List<JSElision> elementList = new LinkedList<JSElision>();
-}
-{
-	(
-		","
-		{
-			elementList.add(this.builder.elision());
-		}
-	) +
-	{
-		return elementList.toArray(new JSElision[elementList.size()]);
-	}
-}
-
 /* 11.1.5 Object Initialiser */
+
+/*
+ObjectLiteral :
+	{ }
+	{ PropertyNameAndValueList }
+	{ PropertyNameAndValueList , }
+	
+PropertyNameAndValueList :
+	PropertyAssignment
+	PropertyNameAndValueList , PropertyAssignment
+*/
 JSObjectLiteral ObjectLiteral() :
 {
-	JSObjectLiteral objectLiteral = this.builder.objectLiteral();
+	List<JSPropertyAssignment> propertyNameAndValueList = new LinkedList<JSPropertyAssignment>();
+	JSPropertyAssignment propertyAssignment;
 }
 {
-	"{" ( PropertyNameAndValueList(objectLiteral) )? "}" { return objectLiteral; }
+	"{"
+		(
+			propertyAssignment = PropertyAssignment()
+			{
+				propertyNameAndValueList.add(propertyAssignment);
+			}
+			(
+				/* TODO this can be improved. */
+				LOOKAHEAD("," PropertyAssignment())
+				","
+				propertyAssignment = PropertyAssignment()
+				{
+					propertyNameAndValueList.add(propertyAssignment);
+				}
+			) *
+			(
+				","
+			) ?
+		) ?
+	"}"
+	{
+		JSPropertyAssignment[] propertyAssignments = propertyNameAndValueList.toArray(new JSPropertyAssignment[propertyNameAndValueList.size()]);
+		return this.builder.objectLiteral(propertyAssignments);
+	}
 }
 
-JSObjectLiteral PropertyNameAndValueList(JSObjectLiteral objectLiteral) :
-{}
-{
-	PropertyAssignment(objectLiteral) ( LOOKAHEAD( "," PropertyAssignment(objectLiteral)) "," PropertyAssignment(objectLiteral) | "," )* { return objectLiteral; } 
-}
+/*
+PropertyAssignment :
+	PropertyName : AssignmentExpression
+	get PropertyName ( ) { FunctionBody }
+	set PropertyName ( PropertySetParameterList ) { FunctionBody }
+*/
 
-JSObjectLiteral PropertyAssignment(JSObjectLiteral objectLiteral) : 
+/* TODO
+	get PropertyName ( ) { FunctionBody }
+	set PropertyName ( PropertySetParameterList ) { FunctionBody }
+*/
+JSPropertyAssignment PropertyAssignment() : 
 {
-	JSPropertyName name;
+	JSPropertyName key;
 	JSAssignmentExpression expression; 
 }
 {
-	name = PropertyName() ":" expression = AssignmentExpression() { return objectLiteral.append(name, expression); }
-	/* TODO
-	get PropertyName ( ) { FunctionBody }
-	set PropertyName ( PropertySetParameterList ) { FunctionBody }*/
+	key = PropertyName()
+	":"
+	expression = AssignmentExpression()
+	{
+		return this.builder.propertyAssignment(key, expression);
+	}
 }
 
+/*
+PropertyName :
+	IdentifierName
+	StringLiteral
+	NumericLiteral
+*/
 JSPropertyName PropertyName() :
-{ Token t;}
 {
-	t = <IDENTIFIER_NAME> { return this.builder.identifierName(t); }
-|	t = <STRING_LITERAL> { return this.builder.stringLiteral(t); }
-|	t = <DECIMAL_LITERAL> { return this.builder.decimalLiteral(t); }
+	JSPropertyName propertyName;
+}
+{
+	propertyName = IdentifierName()
+	{
+		return propertyName;
+	}
+|	propertyName = StringLiteral()
+	{
+		return propertyName;
+	}
+|	propertyName = DecimalLiteral()
+	{
+		return propertyName;
+	}
 }
 
-/* TODO PropertySetParameterList :
-Identifier */
-
+/* TODO */
 
 /* 11.2 Left-Hand-Side Expressions */
 JSMemberExpression MemberExpression() :
@@ -1788,18 +1836,6 @@ JSLeftHandSideExpression LeftHandSideExpression() :
 	expression = CallExpression() { return expression; }
 | 	expression = MemberExpression() { return expression; }
 }
-
-JSIdentifierName IdentifierName() :
-{
-	Token t;
-}
-{
-	t = <IDENTIFIER_NAME>
-	{
-		return this.builder.identifierName(t);
-	}
-}
-
 
 /* 11.3 Postfix Expressions */
 JSPostfixExpression PostfixExpression() :

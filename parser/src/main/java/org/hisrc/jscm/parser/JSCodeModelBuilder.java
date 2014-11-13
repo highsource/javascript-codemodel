@@ -3,7 +3,9 @@ package org.hisrc.jscm.parser;
 import org.hisrc.jscm.codemodel.JSFunctionDeclaration;
 import org.hisrc.jscm.codemodel.JSIdentifierName;
 import org.hisrc.jscm.codemodel.JSProgram;
+import org.hisrc.jscm.codemodel.JSPropertyName;
 import org.hisrc.jscm.codemodel.JSSourceElement;
+import org.hisrc.jscm.codemodel.expression.JSArrayElement;
 import org.hisrc.jscm.codemodel.expression.JSArrayLiteral;
 import org.hisrc.jscm.codemodel.expression.JSAssignmentExpression;
 import org.hisrc.jscm.codemodel.expression.JSElision;
@@ -12,6 +14,7 @@ import org.hisrc.jscm.codemodel.expression.JSFunctionExpression;
 import org.hisrc.jscm.codemodel.expression.JSIdentifierReference;
 import org.hisrc.jscm.codemodel.expression.JSLeftHandSideExpression;
 import org.hisrc.jscm.codemodel.expression.JSObjectLiteral;
+import org.hisrc.jscm.codemodel.expression.JSObjectLiteral.JSPropertyAssignment;
 import org.hisrc.jscm.codemodel.expression.JSThis;
 import org.hisrc.jscm.codemodel.expression.JSVariable;
 import org.hisrc.jscm.codemodel.literal.JSBooleanLiteral;
@@ -46,14 +49,17 @@ import org.hisrc.jscm.codemodel.statement.JSWithStatement;
 public interface JSCodeModelBuilder {
 
 	public JSThis _this();
-	
+
 	public JSIdentifierReference identifierReference(String name);
-	
-	public JSArrayLiteral arrayLiteral();
-	
+
+	public JSArrayLiteral arrayLiteral(JSArrayElement[] elementList);
+
 	public JSElision elision();
 
-	public JSObjectLiteral objectLiteral();
+	public JSObjectLiteral objectLiteral(JSPropertyAssignment[] propertyAssignments);
+
+	public JSPropertyAssignment propertyAssignment(JSPropertyName key,
+			JSAssignmentExpression value);
 
 	public JSNullLiteral nullLiteral(Token token) throws ParseException;
 
@@ -91,10 +97,11 @@ public interface JSCodeModelBuilder {
 
 	public JSExpressionStatement expressionStatement(JSExpression expression);
 
-	public JSIfStatement ifThenElseStatement(JSExpression condition, JSStatement thenStatement,
-			JSStatement elseStatement);
+	public JSIfStatement ifThenElseStatement(JSExpression condition,
+			JSStatement thenStatement, JSStatement elseStatement);
 
-	public JSIfStatement ifThenStatement(JSExpression condition, JSStatement thenStatement);
+	public JSIfStatement ifThenStatement(JSExpression condition,
+			JSStatement thenStatement);
 
 	public JSForStatement forStatement(
 	/* TODO JSExpressionNoIn */
@@ -124,7 +131,7 @@ public interface JSCodeModelBuilder {
 	public JSContinueStatement continueStatement();
 
 	public JSContinueStatement continueStatement(String label);
-	
+
 	public JSBreakStatement breakStatement();
 
 	public JSBreakStatement breakStatement(String label);
@@ -133,11 +140,13 @@ public interface JSCodeModelBuilder {
 
 	public JSReturnStatement returnStatement(JSExpression expression);
 
-	public JSWithStatement withStatement(JSExpression expression, JSStatement statement);
+	public JSWithStatement withStatement(JSExpression expression,
+			JSStatement statement);
 
 	public JSSwitchStatement switchStatement(JSExpression expression);
 
-	public JSLabelledStatement labelledStatement(String label, JSStatement statement);
+	public JSLabelledStatement labelledStatement(String label,
+			JSStatement statement);
 
 	public JSThrowStatement throwStatement(JSExpression expression);
 
@@ -146,7 +155,8 @@ public interface JSCodeModelBuilder {
 
 	public JSTryStatement tryFinallyStatement(JSBlock _try, JSBlock _finally);
 
-	public JSTryStatement tryCatchStatement(JSBlock _try, String error, JSBlock _catch);
+	public JSTryStatement tryCatchStatement(JSBlock _try, String error,
+			JSBlock _catch);
 
 	public JSDebuggerStatement debuggerStatement();
 

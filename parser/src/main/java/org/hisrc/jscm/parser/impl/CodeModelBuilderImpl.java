@@ -6,15 +6,23 @@ import org.hisrc.jscm.codemodel.JSCodeModel;
 import org.hisrc.jscm.codemodel.JSFunctionDeclaration;
 import org.hisrc.jscm.codemodel.JSIdentifierName;
 import org.hisrc.jscm.codemodel.JSProgram;
+import org.hisrc.jscm.codemodel.JSPropertyName;
 import org.hisrc.jscm.codemodel.JSSourceElement;
+import org.hisrc.jscm.codemodel.expression.JSArrayElement;
 import org.hisrc.jscm.codemodel.expression.JSArrayLiteral;
 import org.hisrc.jscm.codemodel.expression.JSAssignmentExpression;
+import org.hisrc.jscm.codemodel.expression.JSElision;
 import org.hisrc.jscm.codemodel.expression.JSExpression;
 import org.hisrc.jscm.codemodel.expression.JSFunctionExpression;
 import org.hisrc.jscm.codemodel.expression.JSLeftHandSideExpression;
 import org.hisrc.jscm.codemodel.expression.JSObjectLiteral;
+import org.hisrc.jscm.codemodel.expression.JSObjectLiteral.JSPropertyAssignment;
 import org.hisrc.jscm.codemodel.expression.JSThis;
+import org.hisrc.jscm.codemodel.expression.impl.ArrayLiteralImpl;
+import org.hisrc.jscm.codemodel.expression.impl.ElisionImpl;
 import org.hisrc.jscm.codemodel.expression.impl.FunctionExpressionImpl;
+import org.hisrc.jscm.codemodel.expression.impl.ObjectLiteralImpl;
+import org.hisrc.jscm.codemodel.expression.impl.ObjectLiteralImpl.PropertyAssignmentImpl;
 import org.hisrc.jscm.codemodel.impl.CodeModelImpl;
 import org.hisrc.jscm.codemodel.impl.FunctionDeclarationImpl;
 import org.hisrc.jscm.codemodel.impl.IdentifierNameImpl;
@@ -94,13 +102,24 @@ public class CodeModelBuilderImpl implements JSCodeModelBuilder {
 	}
 
 	@Override
-	public JSArrayLiteral arrayLiteral() {
-		return getCodeModel().array();
+	public JSArrayLiteral arrayLiteral(JSArrayElement[] elementList) {
+		return new ArrayLiteralImpl(getCodeModel(), elementList);
+	}
+	
+	@Override
+	public JSElision elision() {
+		return new ElisionImpl(getCodeModel());
 	}
 
 	@Override
-	public JSObjectLiteral objectLiteral() {
-		return getCodeModel().object();
+	public JSObjectLiteral objectLiteral(JSPropertyAssignment[] propertyAssignments) {
+		return new ObjectLiteralImpl(getCodeModel(), propertyAssignments);
+	}
+	
+	@Override
+	public JSPropertyAssignment propertyAssignment(JSPropertyName key,
+			JSAssignmentExpression value) {
+		return new PropertyAssignmentImpl(key, value);
 	}
 
 	@Override

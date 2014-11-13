@@ -4,6 +4,7 @@ import java.math.BigDecimal;
 import java.math.BigInteger;
 
 import org.hisrc.jscm.codemodel.expression.JSArrayLiteral;
+import org.hisrc.jscm.codemodel.expression.JSElision;
 import org.hisrc.jscm.codemodel.expression.JSFunctionExpression;
 import org.hisrc.jscm.codemodel.expression.JSGlobalVariable;
 import org.hisrc.jscm.codemodel.expression.JSIdentifierReference;
@@ -38,7 +39,7 @@ public interface JSCodeModel {
 	JSStringLiteral string(String value);
 
 	JSArrayLiteral array();
-
+	
 	JSObjectLiteral object();
 
 	JSGlobalVariable globalVariable(String name);
