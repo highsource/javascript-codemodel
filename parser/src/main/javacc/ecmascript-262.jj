@@ -1653,11 +1653,6 @@ PropertyAssignment :
 	get PropertyName ( ) { FunctionBody }
 	set PropertyName ( PropertySetParameterList ) { FunctionBody }
 */
-
-/* TODO
-	get PropertyName ( ) { FunctionBody }
-	set PropertyName ( PropertySetParameterList ) { FunctionBody }
-*/
 JSPropertyAssignment PropertyAssignment() : 
 {
 	JSPropertyName key;
@@ -1670,6 +1665,10 @@ JSPropertyAssignment PropertyAssignment() :
 	{
 		return this.builder.propertyAssignment(key, expression);
 	}
+/* TODO
+	get PropertyName ( ) { FunctionBody }
+	set PropertyName ( PropertySetParameterList ) { FunctionBody }
+*/
 }
 
 /*
@@ -1700,144 +1699,212 @@ JSPropertyName PropertyName() :
 /* TODO */
 
 /* 11.2 Left-Hand-Side Expressions */
+
+/*
+MemberExpression :
+	PrimaryExpression
+	FunctionExpression
+	MemberExpression [ Expression ]
+	MemberExpression . IdentifierName
+	new MemberExpression Arguments
+*/
 JSMemberExpression MemberExpression() :
 {
 	JSMemberExpression memberExpression;
+	JSExpression element;
+	JSIdentifierName identifierName;
 	JSAssignmentExpression[] arguments;
 }
-{ 
+{
 	(
-		( 
-			/* LOOKAHEAD("function")*/
-			memberExpression = FunctionExpression()
-		|	memberExpression = PrimaryExpression()
+		memberExpression = PrimaryExpression()
+	|	memberExpression = FunctionExpression()
+	)
+	(
+		LOOKAHEAD("[" | ".")
+		(
+			"["
+			element = Expression()
+			"]"
+			{
+				memberExpression = memberExpression.element(element);
+			}
+		|	"."
+			identifierName = IdentifierName()
+			{
+				memberExpression = memberExpression.property(identifierName);
+			}
 		)
-		(LOOKAHEAD(2) memberExpression = MemberExpressionPropertyAccessor(memberExpression))*
-	) { return memberExpression; }
-|	"new" memberExpression = MemberExpression() 
-	memberExpression = NewMemberExpressionArguments(memberExpression)
-	{ return memberExpression; }
+	) *
+	{
+		return memberExpression;
+	}
+|	memberExpression = NewMemberExpressionArguments()
+	{
+		return memberExpression;
+	}
 }
 
-JSMemberExpression MemberExpressionPropertyAccessor(JSMemberExpression memberExpression) :
-{
-	JSExpression expression;
-	JSIdentifierName identifierName;
-}
-{
-	"[" expression = Expression() "]" { return memberExpression.element(expression); }
-|	"."	identifierName = IdentifierName() { return memberExpression.property(identifierName); }
-}
-
-JSNewExpression NewExpression() :
-{
-	JSNewExpression expression;
-}
-{
-	LOOKAHEAD(NewExpression() "(")
-	expression = MemberExpression() { return expression; }
-|	"new" expression = NewExpression() { return expression._new(); }
-}
-
-JSCallExpression CallExpression() : 
+/*
+new MemberExpression Arguments
+*/
+JSMemberExpression NewMemberExpressionArguments() :
 {
 	JSMemberExpression memberExpression;
+	JSAssignmentExpression[] arguments;
+}
+{
+	"new"
+	memberExpression = MemberExpression()
+	arguments = Arguments()
+	{
+		return memberExpression.instantiate().args(arguments);
+	}
+}
+
+/*
+NewExpression :
+	MemberExpression
+	new NewExpression
+=>
+NewExpression : (new)* MemberExpression
+*/
+JSNewExpression NewExpression() :
+{
+	JSMemberExpression memberExpression;
+	JSNewExpression newExpression;
+}
+{
+	LOOKAHEAD(MemberExpression())
+	memberExpression = MemberExpression()
+	{
+		return memberExpression;
+	}
+|	"new"
+	newExpression = NewExpression()
+	{
+		return newExpression._new(); 
+	}
+}
+
+/*
+CallExpression :
+	MemberExpression Arguments
+	CallExpression Arguments
+	CallExpression [ Expression ]
+	CallExpression . IdentifierName
+=>	
+CallExpression : MemberExpression Arguments ( Arguments | [ Expression ] | . IdentifierName) *
+*/
+JSCallExpression CallExpression() :
+{
 	JSCallExpression callExpression;
-	JSAssignmentExpression[] arguments;	
+	JSMemberExpression memberExpression;
+	JSAssignmentExpression[] arguments;
+	JSExpression element;
+	JSIdentifierName identifierName;
 }
 {
 	memberExpression = MemberExpression()
-	callExpression = MemberExpressionArguments(memberExpression)
-	( LOOKAHEAD(2) callExpression = CallExpressionPart(callExpression) )*
-	{ return callExpression; }
+	arguments = Arguments()
+	{
+		callExpression = memberExpression.invoke().args(arguments);
+	}
+	(
+		LOOKAHEAD("(" | "[" | ".")
+		(
+			arguments = Arguments()
+			{
+				callExpression =  callExpression.invoke().args(arguments);
+			}
+		|	"["
+			element = Expression()
+			"]"
+			{
+				callExpression = callExpression.element(element);
+			}
+		|	"."
+			identifierName = IdentifierName()
+			{
+				callExpression = callExpression.property(identifierName);
+			}
+		)
+	) *
+	{
+		return callExpression;
+	}
 }
 
-JSCallExpression CallExpressionPart(JSCallExpression callExpression) :
-{
-	JSExpression expression;
-	JSIdentifierName identifierName;
-	JSAssignmentExpression[] arguments;
-}
-{
-	callExpression = CallExpressionArguments(callExpression) { return callExpression; }
-|	"[" expression = Expression() "]" { return callExpression.element(expression); }
-|	"."	identifierName = IdentifierName() { return callExpression.property(identifierName); }
-}
+/*
+Arguments :
+	( )
+	( ArgumentList )
 
-JSMemberExpression NewMemberExpressionArguments(JSMemberExpression memberExpression) :
+ArgumentList :
+	AssignmentExpression
+	ArgumentList , AssignmentExpression
+*/
+JSAssignmentExpression[] Arguments() :
 {
-	JSMemberExpression.MemberNew memberNew;
-	JSAssignmentExpression argument;
+	JSAssignmentExpression expression;
+	List<JSAssignmentExpression> argumentList = new LinkedList<JSAssignmentExpression>();
 }
 {
 	"("
-	(
-		")"
-		{ memberNew = memberExpression.instantiate(); return memberNew; }
-	|	argument = AssignmentExpression()
-		{ memberNew = memberExpression.instantiate().args(argument); }
 		(
-			"," argument = AssignmentExpression()
-			{ memberNew = memberNew.args(argument); }
-		) *
-		")"
-		{ return memberNew; }
-	)
+			expression = AssignmentExpression()
+			{
+				argumentList.add(expression);
+			}
+			(
+				","
+				expression = AssignmentExpression()
+				{
+					argumentList.add(expression);
+				}
+			) *				
+		) ?
+	")"
+	{
+		return argumentList.toArray(new JSAssignmentExpression[argumentList.size()]);
+	}
 }
 
-JSCallExpression MemberExpressionArguments(JSMemberExpression memberExpression) :
-{
-	JSCallExpression.MemberCall memberCall;
-	JSAssignmentExpression argument;
-}
-{
-	"("
-	(
-		")"
-		{ memberCall = memberExpression.invoke(); return memberCall; }
-	|	argument = AssignmentExpression()
-		{ memberCall = memberExpression.invoke().args(argument); }
-		(
-			"," argument = AssignmentExpression()
-			{ memberCall = memberCall.args(argument); }
-		) *
-		")"
-		{ return memberCall; }
-	)
-}
-
-JSCallExpression CallExpressionArguments(JSCallExpression callExpression) :
-{
-	JSCallExpression.CallArgs callArgs;
-	JSAssignmentExpression argument;
-}
-{
-	"("
-	(
-		")"
-		{ callArgs = callExpression.invoke(); return callArgs; }
-	|	argument = AssignmentExpression()
-		{ callArgs = callExpression.invoke().args(argument); }
-		(
-			"," argument = AssignmentExpression()
-			{ callArgs = callArgs.args(argument); }
-		) *
-		")"
-		{ return callArgs; }
-	)
-}
+/*
+LeftHandSideExpression :
+	NewExpression
+	CallExpression
+*/
 
 JSLeftHandSideExpression LeftHandSideExpression() :
 {
-	JSLeftHandSideExpression expression;
+	JSNewExpression newExpression;
+	JSCallExpression callExpression;
 }
 {
+	// CallExpression starts with MemberExpression and MUST have
+	// trailing Arguments. This can be used to distinguish
+	// CallExpression and NewExpression here. If there is no "(" after
+	// MemberExpression, this is not a CallExpression.
 	LOOKAHEAD(MemberExpression() "(")
-	expression = CallExpression() { return expression; }
-| 	expression = MemberExpression() { return expression; }
+	callExpression = CallExpression()
+	{
+		return callExpression;
+	}
+|	newExpression = NewExpression()
+	{
+		return newExpression;
+	}
 }
 
 /* 11.3 Postfix Expressions */
+
+/*
+PostfixExpression :
+	LeftHandSideExpression
+	LeftHandSideExpression [no LineTerminator here] ++
+	LeftHandSideExpression [no LineTerminator here] --
+*/
 JSPostfixExpression PostfixExpression() :
 {
 	JSLeftHandSideExpression expression;
@@ -1850,8 +1917,7 @@ JSPostfixExpression PostfixExpression() :
 	 	{
 	 		return expression.postIncr();
 	 	}
-	|
-		/*LOOKAHEAD( "--", {getToken(0).beginLine == getToken(1).beginLine})*/	
+	|	/*LOOKAHEAD( "--", {getToken(0).beginLine == getToken(1).beginLine})*/	
 		"--"
 		{
 			return expression.postDecr();
@@ -1863,31 +1929,96 @@ JSPostfixExpression PostfixExpression() :
 }
 
 /* 11.4 Unary Operators */
+
+/*
+UnaryExpression :
+	PostfixExpression
+	delete UnaryExpression
+	void UnaryExpression
+	typeof UnaryExpression
+	++ UnaryExpression
+	-- UnaryExpression
+	+ UnaryExpression
+	- UnaryExpression
+	~ UnaryExpression
+	! UnaryExpression
+*/
+
 JSUnaryExpression UnaryExpression() :
 {
 	JSUnaryExpression expression;
 }
 {
-	"delete" expression = UnaryExpression() { return expression.delete(); }
-|	"void" expression = UnaryExpression() { return expression._void(); }
-|	"typeof" expression = UnaryExpression() { return expression.typeof(); }
-/* TODO |	"++" expression = UnaryExpression() { return expression.preIncr(); }
-|	"--" expression = UnaryExpression() { return expression.preDecr(); } */
-/* TODO |	"+" expression = UnaryExpression() { return expression.positive(); }
-|	"-" expression = UnaryExpression() { return expression.negative(); }*/
-|	"~" expression = UnaryExpression() { return expression.complement(); }
-|	"!" expression = UnaryExpression() { return expression.not(); }
-|	expression = PostfixExpression() { return expression; }
+	"delete"
+	expression = UnaryExpression()
+	{
+		return expression.delete();
+	}
+|	"void"
+	expression = UnaryExpression()
+	{
+		return expression._void();
+	}
+|	"typeof"
+	expression = UnaryExpression()
+	{
+		return expression.typeof();
+	}
+/* TODO
+|	"++"
+	expression = UnaryExpression()
+	{
+		return expression.preIncr();
+	}
+|	"--"
+	expression = UnaryExpression()
+	{
+		return expression.preDecr();
+	} */
+/* TODO
+|	"+"
+	expression = UnaryExpression()
+	{
+		return expression.positive();
+	}
+|	"-"
+	expression = UnaryExpression()
+	{
+		return expression.negative();
+	}*/
+|	"~"
+	expression = UnaryExpression()
+	{
+		return expression.complement();
+	}
+|	"!"
+	expression = UnaryExpression()
+	{
+		return expression.not();
+	}
+|	expression = PostfixExpression()
+	{
+		return expression;
+	}
 }
 
 /* 11.5 Multiplicative Operators */
+
+/*
+MultiplicativeExpression :
+	UnaryExpression
+	MultiplicativeExpression * UnaryExpression
+	MultiplicativeExpression / UnaryExpression
+	MultiplicativeExpression % UnaryExpression
+*/
 JSMultiplicativeExpression MultiplicativeExpression() :
 {
 	JSMultiplicativeExpression expression0;
 	JSUnaryExpression expression1;
 }
 {
-	expression0 = UnaryExpression() (
+	expression0 = UnaryExpression()
+	(
 		"*"
 		expression1 = UnaryExpression()
 		{
@@ -1910,6 +2041,13 @@ JSMultiplicativeExpression MultiplicativeExpression() :
 }
 
 /* 11.6 Additive Operators */
+
+/*
+AdditiveExpression :
+	MultiplicativeExpression
+	AdditiveExpression + MultiplicativeExpression
+	AdditiveExpression - MultiplicativeExpression
+*/
 JSAdditiveExpression AdditiveExpression() :
 {
 	JSAdditiveExpression expression0;
@@ -1935,17 +2073,41 @@ JSAdditiveExpression AdditiveExpression() :
 }
 
 /* 11.7 Bitwise Shift Operators */
+
+/*
+ShiftExpression :
+	AdditiveExpression
+	ShiftExpression << AdditiveExpression
+	ShiftExpression >> AdditiveExpression
+	ShiftExpression >>> AdditiveExpression
+*/
 JSShiftExpression ShiftExpression() :
 {
 	JSShiftExpression expression0;
 	JSAdditiveExpression expression1;
 }
 {
-	expression0 = AdditiveExpression() (
-		"<<" expression1 = AdditiveExpression() { expression0 = expression0.shl(expression1); }
-	|	">>" expression1 = AdditiveExpression() { expression0 = expression0.shr(expression1); }
-	|	">>>" expression1 = AdditiveExpression() { expression0 = expression0.shrz(expression1); }
-	) * { return expression0; }
+	expression0 = AdditiveExpression()
+	(
+		"<<"
+		expression1 = AdditiveExpression()
+		{
+			expression0 = expression0.shl(expression1);
+		}
+	|	">>"
+		expression1 = AdditiveExpression()
+		{
+			expression0 = expression0.shr(expression1);
+		}
+	|	">>>"
+		expression1 = AdditiveExpression()
+		{
+			expression0 = expression0.shrz(expression1);
+		}
+	) *
+	{
+		return expression0;
+	}
 }
 
 /* 11.8 Relational Operators */
@@ -2254,7 +2416,8 @@ JSBitwiseORExpression BitwiseORExpression() :
 {
 	expression0 = BitwiseXORExpression()
 	(
-		"|" expression1 = BitwiseXORExpression()
+		"|"
+		expression1 = BitwiseXORExpression()
 		{
 			expression0 = expression0.bor(expression1);
 		}
@@ -2278,7 +2441,8 @@ JSBitwiseORExpression BitwiseORExpressionNoIn() :
 {
 	expression0 = BitwiseXORExpressionNoIn()
 	(
-		"|" expression1 = BitwiseXORExpressionNoIn()
+		"|"
+		expression1 = BitwiseXORExpressionNoIn()
 		{
 			expression0 = expression0.bor(expression1);
 		}
@@ -2468,7 +2632,8 @@ JSAssignmentExpression AssignmentExpression() :
 	(
 		LeftHandSideExpression()
 		(
-			"*="
+			"="
+		|	"*="
 		|	"/="
 		|	"%="
 		|	"+="
@@ -2568,7 +2733,8 @@ JSAssignmentExpression AssignmentExpressionNoIn() :
 	(
 		LeftHandSideExpression()
 		(
-			"*="
+			"="
+		|	"*="
 		|	"/="
 		|	"%="
 		|	"+="
@@ -2739,7 +2905,7 @@ JSStatement Statement() :
 |	statement = ExpressionStatement()
 /* TODO |	LOOKAHEAD("if" "(")	
 	statement = IfStatement() */
-/* TODO | statement = IterationStatement()*/
+| statement = IterationStatement()
 |	statement = ContinueStatement()
 |	statement = BreakStatement()
 |	statement = ReturnStatement()
@@ -2825,12 +2991,14 @@ JSVariableDeclaration[] VariableDeclarationList() :
 	JSVariableDeclaration variableDeclaration;
 }
 {
+	variableDeclaration = VariableDeclaration()
 	(
+		","
 		variableDeclaration = VariableDeclaration()
 		{
 			variableDeclarationList.add(variableDeclaration);
 		}
-	) +
+	) *
 	{
 		return variableDeclarationList.toArray(new JSVariableDeclaration[variableDeclarationList.size()]);
 	}
@@ -2848,12 +3016,14 @@ JSVariableDeclaration[] VariableDeclarationListNoIn() :
 	JSVariableDeclaration variableDeclaration;
 }
 {
+	variableDeclaration = VariableDeclarationNoIn()
 	(
+		","
 		variableDeclaration = VariableDeclarationNoIn()
 		{
 			variableDeclarationList.add(variableDeclaration);
 		}
-	) +
+	) *
 	{
 		return variableDeclarationList.toArray(new JSVariableDeclaration[variableDeclarationList.size()]);
 	}
@@ -2865,19 +3035,19 @@ VariableDeclaration :
 */
 JSVariableDeclaration VariableDeclaration() :
 {
-	String variableName;
+	String identifier;
 	JSAssignmentExpression initializer;
 }
 {
-	variableName = Identifier()
+	identifier = Identifier()
 	(
 		initializer = Initializer()
 		{
-			return this.builder.variableDeclaration(variableName, initializer);
+			return this.builder.variableDeclaration(identifier, initializer);
 		}
 	) ?
 	{
-			return this.builder.variableDeclaration(variableName);
+		return this.builder.variableDeclaration(identifier);
 	}
 }
 
@@ -2888,19 +3058,19 @@ VariableDeclarationNoIn :
 /* TODO VariableDeclarationNoIn */
 JSVariableDeclaration VariableDeclarationNoIn() :
 {
-	String variableName;
+	String identifier;
 	JSAssignmentExpression initializer;
 }
 {
-	variableName = Identifier()
+	identifier = Identifier()
 	(
 		initializer = InitializerNoIn()
 		{
-			return this.builder.variableDeclaration(variableName, initializer);
+			return this.builder.variableDeclaration(identifier, initializer);
 		}
 	) ?
 	{
-			return this.builder.variableDeclaration(variableName);
+		return this.builder.variableDeclaration(identifier);
 	}
 }
 
@@ -2924,7 +3094,7 @@ JSAssignmentExpression Initializer() :
 InitialiserNoIn :
 	= AssignmentExpressionNoIn
 */
-/* TODO InitializerNoNi*/
+/* TODO JSAssignmentExpressionNoIn */
 JSAssignmentExpression InitializerNoIn() :
 {
 	JSAssignmentExpression initializer;
@@ -3008,11 +3178,92 @@ JSIfStatement IfStatement() :
 IterationStatement :
 	do Statement while ( Expression );
 	while ( Expression ) Statement
-	for (ExpressionNoIn_opt; Expression_opt ; Expression_opt ) Statement
+	for ( ExpressionNoIn_opt; Expression_opt ; Expression_opt ) Statement
 	for ( var VariableDeclarationListNoIn; Expression_opt ; Expression_opt ) Statement
 	for ( LeftHandSideExpression in Expression ) Statement
 	for ( var VariableDeclarationNoIn in Expression ) Statement
 */
+JSIterationStatement IterationStatement() :
+{
+	JSIterationStatement iterationStatement;
+}
+{
+	iterationStatement = DoWhileStatement()
+	{
+		return iterationStatement;
+	}
+|	iterationStatement = WhileStatement()
+	{
+		return iterationStatement;
+	}
+|	iterationStatement = ForIterationStatement()
+	{
+		return iterationStatement;
+	}
+}
+
+/*
+for ( ExpressionNoIn_opt; Expression_opt ; Expression_opt ) Statement
+for ( var VariableDeclarationListNoIn; Expression_opt ; Expression_opt ) Statement
+for ( LeftHandSideExpression in Expression ) Statement
+for ( var VariableDeclarationNoIn in Expression ) Statement
+*/
+JSIterationStatement ForIterationStatement() :
+{
+	JSIterationStatement iterationStatement;
+}
+{
+	LOOKAHEAD("for" "(" "var")
+	iterationStatement = ForVarOrForVarInIterationStatement()
+	{
+		return iterationStatement;
+	}
+|	iterationStatement = ForOrForInIterationStatement()
+	{
+		return iterationStatement;
+	}
+}
+
+/*
+for ( var VariableDeclarationListNoIn; Expression_opt ; Expression_opt ) Statement
+for ( var VariableDeclarationNoIn in Expression ) Statement
+*/
+JSIterationStatement ForVarOrForVarInIterationStatement() :
+{
+	JSIterationStatement iterationStatement;
+}
+{
+	LOOKAHEAD("for" "(" "var" VariableDeclarationNoIn() "in")
+	iterationStatement = ForVarInStatement()
+	{
+		return iterationStatement;
+	}
+|	iterationStatement = ForVarStatement()
+	{
+		return iterationStatement;
+	}
+
+}
+
+/*
+for ( ExpressionNoIn_opt; Expression_opt ; Expression_opt ) Statement
+for ( LeftHandSideExpression in Expression ) Statement
+*/
+JSIterationStatement ForOrForInIterationStatement() :
+{
+	JSIterationStatement iterationStatement;
+}
+{
+	LOOKAHEAD("for" "(" VariableDeclarationNoIn() "in")
+	iterationStatement = ForInStatement()
+	{
+		return iterationStatement;
+	}
+|	iterationStatement = ForStatement()
+	{
+		return iterationStatement;
+	}
+}
 
 /* 12.6.1 The do-while Statement */
 
@@ -3141,7 +3392,6 @@ JSForInStatement ForInStatement() :
 }
 
 /* for ( var VariableDeclarationNoIn in Expression ) Statement */
-/* TODO
 JSForVarInStatement ForVarInStatement() :
 {
 	JSVariableDeclaration variableDeclaration;
@@ -3161,7 +3411,7 @@ JSForVarInStatement ForVarInStatement() :
 		return this.builder.forVarInStatement(variableDeclaration, expression, statement);
 	} 
 }
-*/
+
 /* 12.7 The continue Statement */
 
 /*
@@ -3179,14 +3429,15 @@ JSContinueStatement ContinueStatement() :
 	(
 		/* TODO [no LineTerminator here] */
 		label = Identifier()
+		";"
 		{
 			return this.builder.continueStatement(label);
 		}
-	)?
-	";"
-	{
-		return this.builder.continueStatement();
-	}
+	|	";"
+		{
+			return this.builder.continueStatement();
+		}
+	)
 }
 
 /* 12.8 The break Statement */
@@ -3205,14 +3456,15 @@ JSBreakStatement BreakStatement() :
 	(
 		/* TODO [no LineTerminator here] */
 		label = Identifier()
+		";"
 		{
 			return this.builder.breakStatement(label);
 		}
-	)?
-	";"
-	{
-		return this.builder.breakStatement();
-	}
+	|	";"
+		{
+			return this.builder.breakStatement();
+		}
+	)
 }
 
 
@@ -3232,14 +3484,15 @@ JSReturnStatement ReturnStatement() :
 	(
 		/* TODO [no LineTerminator here] */
 		expression = Expression()
+		";"
 		{
 			return this.builder.returnStatement(expression);
 		}
-	)?
-	";"
-	{
-		return this.builder.returnStatement();
-	}
+	|	";"
+		{
+			return this.builder.returnStatement();
+		}
+	)
 }
 
 /* 12.10 The with Statement */
@@ -3264,13 +3517,103 @@ JSWithStatement WithStatement() :
 	}
 }
 
+/* 12.11 The switch Statement */
+
+/*
+SwitchStatement :
+	switch ( Expression ) CaseBlock
+
+CaseBlock :
+	{ CaseClauses_opt }
+	{ CaseClauses_opt DefaultClause CaseClauses_opt }
+
+*/
+JSSwitchStatement SwitchStatement() :
+{
+	JSExpression expression;
+	JSCaseClauses[] firstCaseClauses;
+	JSDefaultClause defaultClause;
+	JSCaseClauses secondCaseClauses;
+}
+{
+	"switch"
+	"("
+	expression = Expression()
+	")"
+	"{"
+	firstCaseClauses = CaseClausesOpt()
+	(
+		"}"
+		{
+			return this.builder.switchStatement(expression, firstCaseClauses);
+		}
+	|	defaultClause = DefaultClause()
+		secondCaseClauses = CaseClausesOpt()
+		"}"
+		{
+			return this.builder.switchStatement(expression, firstCaseClauses, defaultCaseClause, secondCaseClauses);
+		}
+	)
+}
+
+/*
+CaseClauses :
+	CaseClause
+	CaseClauses CaseClause
+*/
+JSCaseClause[] CaseClausesOpt() :
+{
+	List<JSCaseClause> caseClauses = new LinkedList<JSCaseClause>();
+	JSCaseClause caseClause;
+}
+{
+	(
+		caseClause = CaseClause()
+		{
+			caseClauses.add(caseClause);
+		}
+	) *
+	{
+		return caseClauses.toArray(new JSCaseClause[caseClauses.size()]);
+	}
+}
 
 
+/*
+CaseClause :
+	case Expression : StatementList_opt
+*/
+JSCaseClause CaseClause() :
+{
+	JSExpression expression;
+	JSStatement[] statementListOpt;
+}
+{
+	"case"
+	expression = Expression()
+	":"
+	statementListOpt = StatementListOpt()
+	{
+		return this.builder.caseClause(expression, statementListOpt);
+	}
+}
 
-
-
-
-
+/*
+DefaultClause :
+	default : StatementList_opt
+*/
+JSDefaultClause DefaultClause() :
+{
+	JSStatement[] statementListOpt;
+}
+{
+	"default"
+	":"
+	statementList = StatementListOpt()
+	{
+		return this.builder.defaultCase(statementList);
+	}
+}
 
 
 
