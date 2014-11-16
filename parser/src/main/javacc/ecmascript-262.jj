@@ -44,6 +44,8 @@ import org.hisrc.jscm.codemodel.expression.JSObjectLiteral.JSPropertyAssignment;
 import org.hisrc.jscm.codemodel.literal.*;
 import org.hisrc.jscm.codemodel.operator.*;
 import org.hisrc.jscm.codemodel.statement.*;
+import org.hisrc.jscm.codemodel.statement.JSSwitchStatement.JSCaseClause;
+import org.hisrc.jscm.codemodel.statement.JSSwitchStatement.JSDefaultClause;
 import org.hisrc.jscm.parser.impl.*;
 
 import java.util.List;
@@ -2896,24 +2898,25 @@ JSStatement Statement() :
 	JSStatement statement;
 }
 {
-	LOOKAHEAD("{")
-	statement = Block()
-|	statement = VariableStatement()
-|	statement = EmptyStatement()
-|	LOOKAHEAD (<IDENTIFIER_NAME> ":")
-	statement = LabelledStatement()
-|	statement = ExpressionStatement()
-/* TODO |	LOOKAHEAD("if" "(")	
-	statement = IfStatement() */
-| statement = IterationStatement()
-|	statement = ContinueStatement()
-|	statement = BreakStatement()
-|	statement = ReturnStatement()
-|	statement = WithStatement()
-|	statement = SwitchStatement()
-|	statement = ThrowStatement()
-|	statement = TryStatement()
-|	statement = DebuggerStatement()
+	(
+		LOOKAHEAD("{")
+		statement = Block()
+	|	statement = VariableStatement()
+	|	statement = EmptyStatement()
+	|	LOOKAHEAD (<IDENTIFIER_NAME> ":")
+		statement = LabelledStatement()
+	|	statement = ExpressionStatement()
+	|	statement = IfStatement()
+	|	statement = IterationStatement()
+	|	statement = ContinueStatement()
+	|	statement = BreakStatement()
+	|	statement = ReturnStatement()
+	|	statement = WithStatement()
+	|	statement = SwitchStatement()
+	|	statement = ThrowStatement()
+	|	statement = TryStatement()
+	|	statement = DebuggerStatement()
+	)
 	{
 		return statement;
 	}
@@ -3161,6 +3164,7 @@ JSIfStatement IfStatement() :
 	")"
 	thenStatement = Statement()
 	(
+		LOOKAHEAD("else")
 		"else"
 		elseStatement = Statement()
 		{
@@ -3531,9 +3535,9 @@ CaseBlock :
 JSSwitchStatement SwitchStatement() :
 {
 	JSExpression expression;
-	JSCaseClauses[] firstCaseClauses;
+	JSCaseClause[] firstCaseClauses;
 	JSDefaultClause defaultClause;
-	JSCaseClauses secondCaseClauses;
+	JSCaseClause[] secondCaseClauses;
 }
 {
 	"switch"
@@ -3551,7 +3555,7 @@ JSSwitchStatement SwitchStatement() :
 		secondCaseClauses = CaseClausesOpt()
 		"}"
 		{
-			return this.builder.switchStatement(expression, firstCaseClauses, defaultCaseClause, secondCaseClauses);
+			return this.builder.switchStatement(expression, firstCaseClauses, defaultClause, secondCaseClauses);
 		}
 	)
 }
@@ -3604,19 +3608,16 @@ DefaultClause :
 */
 JSDefaultClause DefaultClause() :
 {
-	JSStatement[] statementListOpt;
+	JSStatement[] statementList;
 }
 {
 	"default"
 	":"
 	statementList = StatementListOpt()
 	{
-		return this.builder.defaultCase(statementList);
+		return this.builder.defaultClause(statementList);
 	}
 }
-
-
-
 
 /* 12.12 Labelled Statements */
 
@@ -3624,7 +3625,6 @@ JSDefaultClause DefaultClause() :
 LabelledStatement :
 	Identifier : Statement
 */
-
 JSLabelledStatement LabelledStatement() :
 {
 	String label;
@@ -3727,7 +3727,7 @@ JSDebuggerStatement DebuggerStatement() :
 
 /*
 FunctionDeclaration :
-	function Identifier ( FormalParameterListopt ) { FunctionBody }
+	function Identifier ( FormalParameterList_opt ) { FunctionBody }
 */
 JSFunctionDeclaration FunctionDeclaration() :
 {
@@ -3800,7 +3800,14 @@ String[] FormalParameterListOpt() :
 		{
 			formalParameterList.add(identifier);
 		}
-	) *
+		(
+			","
+			identifier = Identifier()
+			{
+				formalParameterList.add(identifier);
+			}
+		) *
+	)?
 	{
 		return formalParameterList.toArray(new String[formalParameterList.size()]);
 	}
@@ -3871,12 +3878,13 @@ JSSourceElement SourceElement() :
 	JSSourceElement sourceElement;
 }
 {
-	sourceElement = Statement()
+	LOOKAHEAD("function" <IDENTIFIER_NAME> "(")
+	sourceElement = FunctionDeclaration()
 	{
 		return sourceElement;
 	}
-/* TODO |	sourceElement = FunctionDeclaration()
+|	sourceElement = Statement()
 	{
 		return sourceElement;
-	}*/
+	}
 }

@@ -14,6 +14,7 @@ public interface JSMemberExpression extends JSNewExpression {
 
 	public JSMemberExpression.MemberProperty property(String propertyName);
 
+	// TODO Not correct
 	public JSMemberExpression.MemberProperty p(JSPropertyName propertyName);
 
 	public JSMemberExpression.MemberProperty property(

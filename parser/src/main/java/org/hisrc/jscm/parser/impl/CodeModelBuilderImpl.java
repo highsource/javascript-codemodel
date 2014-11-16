@@ -49,6 +49,8 @@ import org.hisrc.jscm.codemodel.statement.JSLabelledStatement;
 import org.hisrc.jscm.codemodel.statement.JSReturnStatement;
 import org.hisrc.jscm.codemodel.statement.JSStatement;
 import org.hisrc.jscm.codemodel.statement.JSSwitchStatement;
+import org.hisrc.jscm.codemodel.statement.JSSwitchStatement.JSCaseClause;
+import org.hisrc.jscm.codemodel.statement.JSSwitchStatement.JSDefaultClause;
 import org.hisrc.jscm.codemodel.statement.JSThrowStatement;
 import org.hisrc.jscm.codemodel.statement.JSTryStatement;
 import org.hisrc.jscm.codemodel.statement.JSVariableDeclaration;
@@ -70,6 +72,8 @@ import org.hisrc.jscm.codemodel.statement.impl.IfStatementImpl;
 import org.hisrc.jscm.codemodel.statement.impl.LabelledStatementImpl;
 import org.hisrc.jscm.codemodel.statement.impl.ReturnStatementImpl;
 import org.hisrc.jscm.codemodel.statement.impl.SwitchStatementImpl;
+import org.hisrc.jscm.codemodel.statement.impl.SwitchStatementImpl.CaseClauseImpl;
+import org.hisrc.jscm.codemodel.statement.impl.SwitchStatementImpl.DefaultClauseImpl;
 import org.hisrc.jscm.codemodel.statement.impl.ThrowStatementImpl;
 import org.hisrc.jscm.codemodel.statement.impl.TryStatementImpl;
 import org.hisrc.jscm.codemodel.statement.impl.VariableDeclarationImpl;
@@ -105,17 +109,18 @@ public class CodeModelBuilderImpl implements JSCodeModelBuilder {
 	public JSArrayLiteral arrayLiteral(JSArrayElement[] elementList) {
 		return new ArrayLiteralImpl(getCodeModel(), elementList);
 	}
-	
+
 	@Override
 	public JSElision elision() {
 		return new ElisionImpl(getCodeModel());
 	}
 
 	@Override
-	public JSObjectLiteral objectLiteral(JSPropertyAssignment[] propertyAssignments) {
+	public JSObjectLiteral objectLiteral(
+			JSPropertyAssignment[] propertyAssignments) {
 		return new ObjectLiteralImpl(getCodeModel(), propertyAssignments);
 	}
-	
+
 	@Override
 	public JSPropertyAssignment propertyAssignment(JSPropertyName key,
 			JSAssignmentExpression value) {
@@ -201,13 +206,14 @@ public class CodeModelBuilderImpl implements JSCodeModelBuilder {
 	}
 
 	@Override
-	public JSIfStatement ifThenElseStatement(JSExpression expression, JSStatement _then,
-			JSStatement _else) {
+	public JSIfStatement ifThenElseStatement(JSExpression expression,
+			JSStatement _then, JSStatement _else) {
 		return new IfStatementImpl(getCodeModel(), expression, _then, _else);
 	}
 
 	@Override
-	public JSIfStatement ifThenStatement(JSExpression expression, JSStatement _then) {
+	public JSIfStatement ifThenStatement(JSExpression expression,
+			JSStatement _then) {
 		return new IfStatementImpl(getCodeModel(), expression, _then);
 	}
 
@@ -224,8 +230,8 @@ public class CodeModelBuilderImpl implements JSCodeModelBuilder {
 	}
 
 	@Override
-	public JSForStatement forStatement(JSExpression expression, JSExpression test,
-			JSExpression update, JSStatement statement) {
+	public JSForStatement forStatement(JSExpression expression,
+			JSExpression test, JSExpression update, JSStatement statement) {
 		return new ForStatementImpl(getCodeModel(), expression, test, update,
 				statement);
 	}
@@ -276,17 +282,39 @@ public class CodeModelBuilderImpl implements JSCodeModelBuilder {
 	}
 
 	@Override
-	public JSWithStatement withStatement(JSExpression expression, JSStatement statement) {
+	public JSWithStatement withStatement(JSExpression expression,
+			JSStatement statement) {
 		return new WithStatementImpl(getCodeModel(), expression, statement);
 	}
 
 	@Override
-	public JSSwitchStatement switchStatement(JSExpression expression) {
-		return new SwitchStatementImpl(getCodeModel(), expression);
+	public JSSwitchStatement switchStatement(JSExpression expression,
+			JSCaseClause[] caseClauses) {
+		return new SwitchStatementImpl(getCodeModel(), expression, caseClauses);
 	}
 
 	@Override
-	public JSLabelledStatement labelledStatement(String name, JSStatement statement) {
+	public JSSwitchStatement switchStatement(JSExpression expression,
+			JSCaseClause[] firstCaseClauses, JSDefaultClause defaultClause,
+			JSCaseClause[] secondCaseClauses) {
+		return new SwitchStatementImpl(getCodeModel(), expression,
+				firstCaseClauses, defaultClause, secondCaseClauses);
+	}
+
+	@Override
+	public JSCaseClause caseClause(JSExpression expression,
+			JSStatement[] statementList) {
+		return new CaseClauseImpl(getCodeModel(), expression, statementList);
+	}
+
+	@Override
+	public JSDefaultClause defaultClause(JSStatement[] statementList) {
+		return new DefaultClauseImpl(getCodeModel(), statementList);
+	}
+
+	@Override
+	public JSLabelledStatement labelledStatement(String name,
+			JSStatement statement) {
 		// TODO Labels
 		return new LabelledStatementImpl(getCodeModel(), name, statement);
 	}
@@ -297,20 +325,24 @@ public class CodeModelBuilderImpl implements JSCodeModelBuilder {
 	}
 
 	@Override
-	public JSTryStatement tryCatchStatement(JSBlock tryBlock, String errorName, JSBlock catchBlock) {
-		return new TryStatementImpl(getCodeModel(), tryBlock, errorName, catchBlock, null);
+	public JSTryStatement tryCatchStatement(JSBlock tryBlock, String errorName,
+			JSBlock catchBlock) {
+		return new TryStatementImpl(getCodeModel(), tryBlock, errorName,
+				catchBlock, null);
 	}
 
 	@Override
-	public JSTryStatement tryCatchFinallyStatement(JSBlock tryBlock, String errorName,
-			JSBlock catchBlock, JSBlock finallyBlock) {
-		return new TryStatementImpl(getCodeModel(), tryBlock, errorName, catchBlock,
+	public JSTryStatement tryCatchFinallyStatement(JSBlock tryBlock,
+			String errorName, JSBlock catchBlock, JSBlock finallyBlock) {
+		return new TryStatementImpl(getCodeModel(), tryBlock, errorName,
+				catchBlock, finallyBlock);
+	}
+
+	@Override
+	public JSTryStatement tryFinallyStatement(JSBlock tryBlock,
+			JSBlock finallyBlock) {
+		return new TryStatementImpl(getCodeModel(), tryBlock, null, null,
 				finallyBlock);
-	}
-
-	@Override
-	public JSTryStatement tryFinallyStatement(JSBlock tryBlock, JSBlock finallyBlock) {
-		return new TryStatementImpl(getCodeModel(), tryBlock, null, null, finallyBlock);
 	}
 
 	@Override

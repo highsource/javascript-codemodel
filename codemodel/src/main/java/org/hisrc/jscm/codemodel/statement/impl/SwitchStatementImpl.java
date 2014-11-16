@@ -34,6 +34,30 @@ public class SwitchStatementImpl extends StatementImpl implements
 		Validate.notNull(expression);
 		this.expression = expression;
 	}
+	
+	public SwitchStatementImpl(JSCodeModel codeModel, JSExpression expression,
+			JSCaseClause[] caseClauses) {
+		super(codeModel);
+		Validate.notNull(expression);
+		Validate.noNullElements(caseClauses);
+		this.expression = expression;
+		this.firstCaseClauses.addAll(Arrays.asList(caseClauses));
+	}
+
+	public SwitchStatementImpl(JSCodeModel codeModel, JSExpression expression,
+			JSCaseClause[] firstCaseClauses,
+			JSDefaultClause defaultClause,
+			JSCaseClause[] secondCaseClauses) {
+		super(codeModel);
+		Validate.notNull(expression);
+		Validate.noNullElements(firstCaseClauses);
+		Validate.notNull(defaultClause);
+		Validate.noNullElements(secondCaseClauses);
+		this.expression = expression;
+		this.firstCaseClauses.addAll(Arrays.asList(firstCaseClauses));
+		this.defaultClause = defaultClause;
+		this.secondCaseClauses.addAll(Arrays.asList(secondCaseClauses));
+	}
 
 	@Override
 	public JSCaseClause _case(JSExpression expression) {
@@ -96,7 +120,12 @@ public class SwitchStatementImpl extends StatementImpl implements
 				.unmodifiableList(statements);
 
 		public DefaultClauseImpl(JSCodeModel codeModel) {
+			this(codeModel, new JSStatement[0]);
+		}
+
+		public DefaultClauseImpl(JSCodeModel codeModel, JSStatement[] statements) {
 			super(codeModel);
+			this.statements.addAll(Arrays.asList(statements));
 		}
 
 		@Override

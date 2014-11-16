@@ -16,7 +16,6 @@ import org.hisrc.jscm.codemodel.expression.JSLeftHandSideExpression;
 import org.hisrc.jscm.codemodel.expression.JSObjectLiteral;
 import org.hisrc.jscm.codemodel.expression.JSObjectLiteral.JSPropertyAssignment;
 import org.hisrc.jscm.codemodel.expression.JSThis;
-import org.hisrc.jscm.codemodel.expression.JSVariable;
 import org.hisrc.jscm.codemodel.literal.JSBooleanLiteral;
 import org.hisrc.jscm.codemodel.literal.JSDecimalIntegerLiteral;
 import org.hisrc.jscm.codemodel.literal.JSDecimalLiteral;
@@ -39,6 +38,8 @@ import org.hisrc.jscm.codemodel.statement.JSLabelledStatement;
 import org.hisrc.jscm.codemodel.statement.JSReturnStatement;
 import org.hisrc.jscm.codemodel.statement.JSStatement;
 import org.hisrc.jscm.codemodel.statement.JSSwitchStatement;
+import org.hisrc.jscm.codemodel.statement.JSSwitchStatement.JSCaseClause;
+import org.hisrc.jscm.codemodel.statement.JSSwitchStatement.JSDefaultClause;
 import org.hisrc.jscm.codemodel.statement.JSThrowStatement;
 import org.hisrc.jscm.codemodel.statement.JSTryStatement;
 import org.hisrc.jscm.codemodel.statement.JSVariableDeclaration;
@@ -56,7 +57,8 @@ public interface JSCodeModelBuilder {
 
 	public JSElision elision();
 
-	public JSObjectLiteral objectLiteral(JSPropertyAssignment[] propertyAssignments);
+	public JSObjectLiteral objectLiteral(
+			JSPropertyAssignment[] propertyAssignments);
 
 	public JSPropertyAssignment propertyAssignment(JSPropertyName key,
 			JSAssignmentExpression value);
@@ -143,7 +145,17 @@ public interface JSCodeModelBuilder {
 	public JSWithStatement withStatement(JSExpression expression,
 			JSStatement statement);
 
-	public JSSwitchStatement switchStatement(JSExpression expression);
+	public JSSwitchStatement switchStatement(JSExpression expression,
+			JSCaseClause[] caseClauses);
+
+	public JSSwitchStatement switchStatement(JSExpression expression,
+			JSCaseClause[] firstCaseClauses, JSDefaultClause defaultClause,
+			JSCaseClause[] secondCaseClauses);
+
+	public JSCaseClause caseClause(JSExpression expression,
+			JSStatement[] statementList);
+
+	public JSDefaultClause defaultClause(JSStatement[] statementList);
 
 	public JSLabelledStatement labelledStatement(String label,
 			JSStatement statement);
