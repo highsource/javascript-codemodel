@@ -2910,7 +2910,7 @@ JSStatement Statement() :
 |	statement = BreakStatement()
 |	statement = ReturnStatement()
 |	statement = WithStatement()
-/* TODO |	statement = SwitchStatement()*/
+|	statement = SwitchStatement()
 |	statement = ThrowStatement()
 |	statement = TryStatement()
 |	statement = DebuggerStatement()
