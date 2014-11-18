@@ -2,14 +2,15 @@ package org.hisrc.jscm.codemodel.expression.impl;
 
 import org.hisrc.jscm.codemodel.JSCodeModel;
 import org.hisrc.jscm.codemodel.expression.JSExpressionVisitor;
-import org.hisrc.jscm.codemodel.expression.JSVariable;
+import org.hisrc.jscm.codemodel.expression.JSIdentifierReference;
 import org.hisrc.jscm.codemodel.lang.Validate;
 
-public class VariableImpl extends PrimaryExpressionImpl implements JSVariable {
+public class IdentifierReferenceImpl extends PrimaryExpressionImpl implements
+		JSIdentifierReference {
 
 	private final String name;
 
-	public VariableImpl(JSCodeModel codeModel, String name) {
+	public IdentifierReferenceImpl(JSCodeModel codeModel, String name) {
 		super(codeModel);
 		this.name = name;
 		Validate.notNull(name);

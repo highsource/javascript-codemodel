@@ -8,7 +8,5 @@ public interface JSSourceElements extends JSStatementGenerator {
 
 	public JSFunctionDeclaration functionDeclaration(String name);
 	
-	public <S extends JSSourceElement> S addSourceElement(S sourceElement);
-	
 	public List<JSSourceElement> getSourceElements();
 }

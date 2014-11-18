@@ -34,6 +34,7 @@ import org.hisrc.jscm.codemodel.statement.JSForStatement;
 import org.hisrc.jscm.codemodel.statement.JSForVarInStatement;
 import org.hisrc.jscm.codemodel.statement.JSForVarStatement;
 import org.hisrc.jscm.codemodel.statement.JSIfStatement;
+import org.hisrc.jscm.codemodel.statement.JSLabelReference;
 import org.hisrc.jscm.codemodel.statement.JSLabelledStatement;
 import org.hisrc.jscm.codemodel.statement.JSReturnStatement;
 import org.hisrc.jscm.codemodel.statement.JSStatement;
@@ -130,13 +131,15 @@ public interface JSCodeModelBuilder {
 	public JSWhileStatement whileStatement(JSExpression expression,
 			JSStatement statement);
 
+	public JSLabelReference labelReference(String label);
+
 	public JSContinueStatement continueStatement();
 
-	public JSContinueStatement continueStatement(String label);
+	public JSContinueStatement continueStatement(JSLabelReference label);
 
 	public JSBreakStatement breakStatement();
 
-	public JSBreakStatement breakStatement(String label);
+	public JSBreakStatement breakStatement(JSLabelReference label);
 
 	public JSReturnStatement returnStatement();
 
@@ -182,4 +185,5 @@ public interface JSCodeModelBuilder {
 			String[] formalParameterList, JSSourceElement[] functionBody);
 
 	public JSProgram program(JSSourceElement... sourceElements);
+
 }

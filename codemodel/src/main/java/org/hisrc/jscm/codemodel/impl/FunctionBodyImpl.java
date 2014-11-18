@@ -1,6 +1,7 @@
 package org.hisrc.jscm.codemodel.impl;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -20,7 +21,14 @@ public class FunctionBodyImpl extends StatementGeneratorImpl implements
 			.unmodifiableList(sourceElements);
 
 	public FunctionBodyImpl(JSCodeModel codeModel) {
+		this(codeModel, new JSSourceElement[0]);
+	}
+
+	public FunctionBodyImpl(JSCodeModel codeModel,
+			JSSourceElement[] sourceElements) {
 		super(codeModel);
+		Validate.noNullElements(sourceElements);
+		this.sourceElements.addAll(Arrays.asList(sourceElements));
 	}
 
 	protected <S extends JSStatement> S add(S statement) {

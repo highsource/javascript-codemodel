@@ -3871,6 +3871,17 @@ JSForVarInStatement ForVarInStatement() :
 /* 12.7 The continue Statement */
 /* ========================================================================== */
 
+JSLabelReference LabelReference() :
+{
+	String label;
+}
+{
+	label = Identifier()
+	{
+		return this.builder.labelReference(label);
+	}
+}
+
 /*
 ContinueStatement :
 	continue ;
@@ -3879,13 +3890,13 @@ ContinueStatement :
 
 JSContinueStatement ContinueStatement() :
 {
-	String label;
+	JSLabelReference label;
 }
 {
 	"continue"
 	(
 		/* TODO [no LineTerminator here] */
-		label = Identifier()
+		label = LabelReference()
 		";"
 		{
 			return this.builder.continueStatement(label);
@@ -3907,13 +3918,13 @@ BreakStatement :
 */
 JSBreakStatement BreakStatement() :
 {
-	String label;
+	JSLabelReference label;
 }
 {
 	"break"
 	(
 		/* TODO [no LineTerminator here] */
-		label = Identifier()
+		label = LabelReference()
 		";"
 		{
 			return this.builder.breakStatement(label);

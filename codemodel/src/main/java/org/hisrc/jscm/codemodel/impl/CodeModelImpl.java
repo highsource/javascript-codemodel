@@ -2,20 +2,19 @@ package org.hisrc.jscm.codemodel.impl;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
 
 import org.hisrc.jscm.codemodel.JSCodeModel;
 import org.hisrc.jscm.codemodel.JSProgram;
 import org.hisrc.jscm.codemodel.expression.JSArrayLiteral;
 import org.hisrc.jscm.codemodel.expression.JSFunctionExpression.Function;
 import org.hisrc.jscm.codemodel.expression.JSGlobalVariable;
+import org.hisrc.jscm.codemodel.expression.JSIdentifierReference;
 import org.hisrc.jscm.codemodel.expression.JSObjectLiteral;
 import org.hisrc.jscm.codemodel.expression.JSThis;
 import org.hisrc.jscm.codemodel.expression.impl.ArrayLiteralImpl;
 import org.hisrc.jscm.codemodel.expression.impl.FunctionExpressionImpl;
 import org.hisrc.jscm.codemodel.expression.impl.GlobalVariableImpl;
+import org.hisrc.jscm.codemodel.expression.impl.IdentifierReferenceImpl;
 import org.hisrc.jscm.codemodel.expression.impl.ObjectLiteralImpl;
 import org.hisrc.jscm.codemodel.expression.impl.ThisImpl;
 import org.hisrc.jscm.codemodel.lang.Validate;
@@ -44,20 +43,14 @@ public class CodeModelImpl implements JSCodeModel {
 		return new ThisImpl(this);
 	}
 
-	private final Map<String, JSGlobalVariable> globalVariables = Collections
-			.synchronizedMap(new HashMap<String, JSGlobalVariable>());
+	@Override
+	public JSIdentifierReference identifierReference(String name) {
+		return new IdentifierReferenceImpl(this, name);
+	}
 
 	@Override
 	public JSGlobalVariable globalVariable(String name) {
-		Validate.notNull(name);
-
-		JSGlobalVariable globalVariable = globalVariables.get(name);
-		if (globalVariable == null) {
-			globalVariable = new GlobalVariableImpl(this, name);
-			globalVariables.put(name, globalVariable);
-		}
-
-		return globalVariable;
+		return new GlobalVariableImpl(this, name);
 	}
 
 	@Override
@@ -69,7 +62,7 @@ public class CodeModelImpl implements JSCodeModel {
 	public JSDecimalIntegerLiteral integer(long value) {
 		return new DecimalIntegerLiteralImpl(this, BigInteger.valueOf(value));
 	}
-	
+
 	@Override
 	public JSDecimalIntegerLiteral integer(BigInteger value) {
 		return new DecimalIntegerLiteralImpl(this, value);
@@ -87,7 +80,7 @@ public class CodeModelImpl implements JSCodeModel {
 		Validate.notNull(value);
 		return new DecimalNonIntegerLiteralImpl(this, value);
 	}
-	
+
 	@Override
 	public JSHexIntegerLiteral hexInteger(BigInteger value) {
 		Validate.notNull(value);

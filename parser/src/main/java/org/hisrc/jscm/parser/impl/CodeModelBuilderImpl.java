@@ -14,6 +14,7 @@ import org.hisrc.jscm.codemodel.expression.JSAssignmentExpression;
 import org.hisrc.jscm.codemodel.expression.JSElision;
 import org.hisrc.jscm.codemodel.expression.JSExpression;
 import org.hisrc.jscm.codemodel.expression.JSFunctionExpression;
+import org.hisrc.jscm.codemodel.expression.JSIdentifierReference;
 import org.hisrc.jscm.codemodel.expression.JSLeftHandSideExpression;
 import org.hisrc.jscm.codemodel.expression.JSObjectLiteral;
 import org.hisrc.jscm.codemodel.expression.JSObjectLiteral.JSPropertyAssignment;
@@ -45,6 +46,7 @@ import org.hisrc.jscm.codemodel.statement.JSForStatement;
 import org.hisrc.jscm.codemodel.statement.JSForVarInStatement;
 import org.hisrc.jscm.codemodel.statement.JSForVarStatement;
 import org.hisrc.jscm.codemodel.statement.JSIfStatement;
+import org.hisrc.jscm.codemodel.statement.JSLabelReference;
 import org.hisrc.jscm.codemodel.statement.JSLabelledStatement;
 import org.hisrc.jscm.codemodel.statement.JSReturnStatement;
 import org.hisrc.jscm.codemodel.statement.JSStatement;
@@ -69,6 +71,7 @@ import org.hisrc.jscm.codemodel.statement.impl.ForStatementImpl;
 import org.hisrc.jscm.codemodel.statement.impl.ForVarInStatementImpl;
 import org.hisrc.jscm.codemodel.statement.impl.ForVarStatementImpl;
 import org.hisrc.jscm.codemodel.statement.impl.IfStatementImpl;
+import org.hisrc.jscm.codemodel.statement.impl.LabelReferenceImpl;
 import org.hisrc.jscm.codemodel.statement.impl.LabelledStatementImpl;
 import org.hisrc.jscm.codemodel.statement.impl.ReturnStatementImpl;
 import org.hisrc.jscm.codemodel.statement.impl.SwitchStatementImpl;
@@ -103,6 +106,11 @@ public class CodeModelBuilderImpl implements JSCodeModelBuilder {
 	@Override
 	public JSThis _this() {
 		return getCodeModel()._this();
+	}
+	
+	@Override
+	public JSIdentifierReference identifierReference(String name) {
+		return getCodeModel().identifierReference(name);
 	}
 
 	@Override
@@ -262,13 +270,28 @@ public class CodeModelBuilderImpl implements JSCodeModelBuilder {
 	}
 
 	@Override
+	public JSLabelReference labelReference(String label) {
+		return new LabelReferenceImpl(getCodeModel(), label);
+	}
+
+	@Override
 	public JSContinueStatement continueStatement() {
 		return new ContinueStatementImpl(getCodeModel());
 	}
 
 	@Override
+	public JSContinueStatement continueStatement(JSLabelReference label) {
+		return new ContinueStatementImpl(getCodeModel(), label);
+	}
+
+	@Override
 	public JSBreakStatement breakStatement() {
 		return new BreakStatementImpl(getCodeModel());
+	}
+
+	@Override
+	public JSBreakStatement breakStatement(JSLabelReference label) {
+		return new BreakStatementImpl(getCodeModel(), label);
 	}
 
 	@Override

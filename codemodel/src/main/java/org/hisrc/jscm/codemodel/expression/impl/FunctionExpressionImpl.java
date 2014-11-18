@@ -45,18 +45,15 @@ public abstract class FunctionExpressionImpl extends MemberExpressionImpl
 		}
 
 		public FunctionImpl(JSCodeModel codeModel, String name,
-				String[] formalParameterList, JSSourceElement[] sourceElements) {
+				String[] parameterNames, JSSourceElement[] sourceElements) {
 			super(codeModel);
-			Validate.noNullElements(formalParameterList);
+			Validate.noNullElements(parameterNames);
 			Validate.noNullElements(sourceElements);
 			this.name = name;
-			for (String parameterName : formalParameterList) {
+			for (String parameterName : parameterNames) {
 				this.parameter(parameterName);
 			}
-			this.body = new FunctionBodyImpl(codeModel);
-			for (JSSourceElement sourceElement : sourceElements) {
-				this.body.addSourceElement(sourceElement);
-			}
+			this.body = new FunctionBodyImpl(codeModel, sourceElements);
 		}
 
 		public String getName() {

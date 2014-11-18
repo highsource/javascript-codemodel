@@ -39,12 +39,9 @@ public class FunctionDeclarationImpl implements JSFunctionDeclaration {
 		this.codeModel = codeModel;
 		this.name = name;
 		this.functionExpression = new VariableImpl(codeModel, name);
-		this.body = new FunctionBodyImpl(codeModel);
+		this.body = new FunctionBodyImpl(codeModel, sourceElements);
 		for (String parameterName : parameterNames) {
-			parameter(parameterName);
-		}
-		for (JSSourceElement sourceElement : sourceElements) {
-			getBody().addSourceElement(sourceElement);
+			this.parameter(parameterName);
 		}
 	}
 

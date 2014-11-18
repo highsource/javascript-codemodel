@@ -1,6 +1,7 @@
 package org.hisrc.jscm.codemodel.impl;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -26,9 +27,7 @@ public class ProgramImpl extends StatementGeneratorImpl implements JSProgram {
 	public ProgramImpl(JSCodeModel codeModel, JSSourceElement[] sourceElements) {
 		super(codeModel);
 		Validate.noNullElements(sourceElements);
-		for (JSSourceElement sourceElement : sourceElements) {
-			addSourceElement(sourceElement);
-		}
+		this.sourceElements.addAll(Arrays.asList(sourceElements));
 	}
 
 	@Override
