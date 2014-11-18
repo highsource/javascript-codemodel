@@ -21,9 +21,9 @@ public class GlobalVariableImpl extends PrimaryExpressionImpl implements
 	}
 
 	@Override
-	public <V, E extends Exception> V acceptExpressionVisitor(JSExpressionVisitor<V, E> visitor)
-			throws E {
-		return visitor.visitGlobalVariable(this);
+	public <V, E extends Exception> V acceptExpressionVisitor(
+			JSExpressionVisitor<V, E> visitor) throws E {
+		return visitor.visitIdentifierReference(this);
 	}
 
 }
