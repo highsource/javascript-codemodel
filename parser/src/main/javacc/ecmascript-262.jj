@@ -79,6 +79,7 @@ TOKEN:
 
 /* 7 Lexical Conventions */
 
+/* http://www.unicode.org/Public/UNIDATA/UnicodeData.txt */
 /*
 InputElementDiv ::
 	WhiteSpace
@@ -87,7 +88,6 @@ InputElementDiv ::
 	Token
 	DivPunctuator
 */
-/* TODO: Why "MORE"? */
 /*
 MORE	:
 {
@@ -135,7 +135,6 @@ WhiteSpace ::
 	<BOM>
 	<USP>
 */
-// TODO What is "#"?
 <DEFAULT, IN_REGEX>
 SPECIAL_TOKEN :
 {
@@ -145,6 +144,8 @@ SPECIAL_TOKEN :
 	|	<FF>
 	|	<SP>
 	|	<NBSP>
+	|	<BOM>
+	|	<USP>
 	>
 |	/* Tab */
 	<#TAB:
@@ -175,14 +176,13 @@ SPECIAL_TOKEN :
 		"\u00A0"
 	>
 |	/* Byte Order Mark */
-	/* TODO Is it correct?
 	<#BOM:
 		"\uFEFF"
 	>
-|*/	/* Other Unicode space seperator */
-	/* TODO Check */
+|	/* Any other Unicode space separator */
 	<#USP: 
-		["\u2000"] 
+		["\u1680"] 
+	|	["\u2000"] 
 	|	["\u2001"] 
 	|	["\u2002"] 
 	|	["\u2003"] 
@@ -193,7 +193,8 @@ SPECIAL_TOKEN :
 	|	["\u2008"] 
 	|	["\u2009"] 
 	|	["\u200A"] 
-	|	["\u200B"]
+	|	["\u202F"] 
+	|	["\u205F"] 
 	|	["\u3000"]
 	>
 }
