@@ -12,11 +12,16 @@ import java.util.Set;
 import org.hisrc.jscm.codemodel.lang.Validate;
 
 public class LTokenFactory {
+	
+	private static final int TOKEN_KIND_EOF = 0;
 
 	private static final String TOKEN_IMAGE_FIELD_NAME = "tokenImage";
 	private final Map<String, Integer> idToKindMap = new HashMap<String, Integer>();
-//	private final Map<Integer, String> kindToImageMap = new HashMap<Integer, String>();
-//	private final Map<String, String> idToImageMap = new HashMap<String, String>();
+	private final Map<Integer, String> kindToIdMap = new HashMap<Integer, String>();
+	// private final Map<Integer, String> kindToImageMap = new HashMap<Integer,
+	// String>();
+	// private final Map<String, String> idToImageMap = new HashMap<String,
+	// String>();
 	private final List<String> lexicalStates;
 	private final Set<String> lexicalStatesSet;
 
@@ -29,7 +34,7 @@ public class LTokenFactory {
 		try {
 			Field tokenImageField = constantsClass
 					.getField(TOKEN_IMAGE_FIELD_NAME);
-			String[] tokenImages = (String[]) tokenImageField.get(null);
+			// String[] tokenImages = (String[]) tokenImageField.get(null);
 			Field[] fields = constantsClass.getFields();
 			for (Field field : fields) {
 				final String fieldName = field.getName();
@@ -39,10 +44,11 @@ public class LTokenFactory {
 				} else {
 					final String id = fieldName;
 					final int kind = field.getInt(null);
-//					final String image = tokenImages[kind];
-//					this.idToImageMap.put(id, image);
+					// final String image = tokenImages[kind];
+					// this.idToImageMap.put(id, image);
 					this.idToKindMap.put(id, kind);
-//					this.kindToImageMap.put(kind, image);
+					this.kindToIdMap.put(kind, id);
+					// this.kindToImageMap.put(kind, image);
 				}
 			}
 		} catch (IllegalArgumentException iaex) {
@@ -54,23 +60,32 @@ public class LTokenFactory {
 		}
 	}
 
-//	public LToken createToken(String id) {
-//		final Integer kind = this.idToKindMap.get(id);
-//		if (kind == null) {
-//			throw new IllegalArgumentException(MessageFormat.format(
-//					"Unknown token id [{0}].", id));
-//		}
-//		final String image = this.kindToImageMap.get(kind);
-//		return new LToken(id, kind, image);
-//	}
-//
+	// public LToken createToken(String id) {
+	// final Integer kind = this.idToKindMap.get(id);
+	// if (kind == null) {
+	// throw new IllegalArgumentException(MessageFormat.format(
+	// "Unknown token id [{0}].", id));
+	// }
+	// final String image = this.kindToImageMap.get(kind);
+	// return new LToken(id, kind, image);
+	// }
+	//
 	public LToken createToken(String id, String image) {
 		final Integer kind = this.idToKindMap.get(id);
 		if (kind == null) {
 			throw new IllegalArgumentException(MessageFormat.format(
 					"Unknown token id [{0}].", id));
 		}
-		return new LToken(id, kind, image);
+		return new LToken(id, kind, (kind == TOKEN_KIND_EOF ? null : image));
+	}
+
+	public LToken createToken(int kind, String image) {
+		final String id = this.kindToIdMap.get(kind);
+		if (id == null) {
+			throw new IllegalArgumentException(MessageFormat.format(
+					"Unknown token kind [{0}].", kind));
+		}
+		return new LToken(id, kind, (kind == TOKEN_KIND_EOF ? null : image));
 	}
 
 }

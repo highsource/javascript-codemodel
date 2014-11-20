@@ -1,6 +1,7 @@
-package org.hisrc.jscm.parser.testing.lexical;
+package org.hisrc.jscm.parser.tests;
 
 import org.hisrc.jscm.parser.EcmaScriptParserConstants;
+import org.hisrc.jscm.parser.testing.lexical.LTokenFactory;
 
 public class EcmaScriptParserTestConstants {
 

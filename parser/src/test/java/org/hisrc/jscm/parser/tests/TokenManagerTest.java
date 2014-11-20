@@ -31,7 +31,7 @@ public class TokenManagerTest {
 		JavaCharStream cs = new JavaCharStream(new StringReader(cmd));
 		EcmaScriptParserTokenManager ltm = new EcmaScriptParserTokenManager(cs);
 		final Token nextToken = ltm.getNextToken();
-		assertEquals(EcmaScriptParserConstants.DOT, nextToken.kind);
+		assertEquals(EcmaScriptParserConstants.IDENTIFIER_NAME, nextToken.kind);
 	}
 
 }

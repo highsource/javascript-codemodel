@@ -122,8 +122,18 @@ MORE:
 }
 */
 
+/* 7.1 Unicode Format-Control Characters */
+/* ========================================================================== */
 
-/* Section 7.2 : White Space */
+/*
+\u200C Zero width non-joiner <ZWNJ> IdentifierPart
+\u200D Zero width joiner <ZWJ> IdentifierPart
+\uFEFF Byte Order Mark <BOM> Whitespace
+*/
+
+
+/* 7.2 White Space */
+/* ========================================================================== */
 
 /*
 WhiteSpace ::
@@ -199,7 +209,8 @@ SPECIAL_TOKEN :
 	>
 }
 
-/* Section 7.3 : Line Terminators */
+/* 7.3 Line Terminators */
+/* ========================================================================== */
 
 /*
 LineTerminator ::
@@ -239,9 +250,10 @@ LineTerminatorSequence ::
 	<PS>
 	<CR> <LF>
 */
-
 /* TODO */
+
 /* 7.4 Comments */
+/* ========================================================================== */
 
 /*
 Comment ::
@@ -251,8 +263,10 @@ Comment ::
 <DEFAULT, IN_REGEX>
 MORE :
 {
-	"//"	:IN_SINGLE_LINE_COMMENT
-|	"/*"	:IN_MULTI_LINE_COMMENT
+	"//"
+		:IN_SINGLE_LINE_COMMENT
+|	"/*"
+		:IN_MULTI_LINE_COMMENT
 }
 
 <IN_MULTI_LINE_COMMENT>
@@ -275,10 +289,15 @@ SingleLineCommentChar ::
 SPECIAL_TOKEN :
 {
 	<SINGLE_LINE_COMMENT:
-		/* TODO LINE_TERMINATOR */
-		(~["\n","\r"])*
-		/* TODO LINE_TERMINATOR */
-		("\n"|"\r"|"\r\n")?
+		(
+			~["\n", "\r", "\u2028", "\u2029"]
+		) *
+		(
+			"\n"
+		|	"\r"
+		|	"\u2028"
+		|	"\u2029"
+		) ?
 	>	:DEFAULT
 }
 

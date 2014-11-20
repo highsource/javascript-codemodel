@@ -10,10 +10,10 @@ import java.util.List;
 import junit.framework.Assert;
 
 import org.apache.commons.io.IOUtils;
-import org.hisrc.jscm.parser.testing.lexical.EcmaScriptParserTestConstants;
 import org.hisrc.jscm.parser.testing.lexical.LTokenCase;
 import org.hisrc.jscm.parser.testing.lexical.LTokenCasesParser;
 import org.hisrc.jscm.parser.testing.lexical.ParseException;
+import org.hisrc.jscm.parser.tests.EcmaScriptParserTestConstants;
 import org.junit.Test;
 
 public class LTokenCasesParserTest {
@@ -44,7 +44,6 @@ public class LTokenCasesParserTest {
 		} finally {
 			IOUtils.closeQuietly(reader);
 			IOUtils.closeQuietly(is);
-
 		}
 	}
 
