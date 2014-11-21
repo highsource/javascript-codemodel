@@ -18,3 +18,15 @@ Comment1 // My Comment //`
 */]`
   * `LBRACKET` `[`
   * `RBRACKET` `]`
+* `[/* //
+*/]`
+  * `LBRACKET` `[`
+  * `RBRACKET` `]`
+* `[// /*
+]`
+  * `LBRACKET` `[`
+  * `RBRACKET` `]`
+* `[// */
+]`
+  * `LBRACKET` `[`
+  * `RBRACKET` `]`

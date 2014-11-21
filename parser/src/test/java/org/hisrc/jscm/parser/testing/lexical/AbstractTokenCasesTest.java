@@ -116,8 +116,8 @@ public abstract class AbstractTokenCasesTest {
 								+ "Remaining expected tokens are:\n{2}",
 						expectedTokensList.size(),
 						index,
-						expectedTokensList.subList(index+1,
-								expectedTokensList.size() - 1)));
+						expectedTokensList.subList(index,
+								expectedTokensList.size())));
 			}
 
 		}
