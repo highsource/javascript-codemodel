@@ -7,6 +7,7 @@ import java.util.List;
 
 import junit.framework.Assert;
 
+import org.apache.commons.lang3.StringEscapeUtils;
 import org.hisrc.jscm.parser.EcmaScriptParserConstants;
 import org.hisrc.jscm.parser.EcmaScriptParserTokenManager;
 import org.hisrc.jscm.parser.JavaCharStream;
@@ -46,7 +47,7 @@ public abstract class AbstractDualTokenTest extends
 				etalons.size(), tokens.size());
 		for (int index = 0; index < tokens.size(); index++) {
 			LToken token = tokens.get(index);
-			String etalon = etalons.get(index);
+			String etalon = StringEscapeUtils.unescapeJava(etalons.get(index));
 			Assert.assertEquals("Token and etalon mismatch at position ["
 					+ index + "].", etalon, token.toString());
 		}
