@@ -12,7 +12,7 @@ import java.util.Set;
 import org.hisrc.jscm.codemodel.lang.Validate;
 
 public class LTokenFactory {
-	
+
 	private static final int TOKEN_KIND_EOF = 0;
 
 	private static final String TOKEN_IMAGE_FIELD_NAME = "tokenImage";
@@ -32,8 +32,8 @@ public class LTokenFactory {
 		this.lexicalStatesSet = new HashSet<String>(this.lexicalStates);
 
 		try {
-			Field tokenImageField = constantsClass
-					.getField(TOKEN_IMAGE_FIELD_NAME);
+			// Field tokenImageField = constantsClass
+			// .getField(TOKEN_IMAGE_FIELD_NAME);
 			// String[] tokenImages = (String[]) tokenImageField.get(null);
 			Field[] fields = constantsClass.getFields();
 			for (Field field : fields) {
@@ -55,8 +55,8 @@ public class LTokenFactory {
 			throw new ExceptionInInitializerError(iaex);
 		} catch (IllegalAccessException iaex) {
 			throw new ExceptionInInitializerError(iaex);
-		} catch (NoSuchFieldException nsfex) {
-			throw new ExceptionInInitializerError(nsfex);
+			// } catch (NoSuchFieldException nsfex) {
+			// throw new ExceptionInInitializerError(nsfex);
 		}
 	}
 

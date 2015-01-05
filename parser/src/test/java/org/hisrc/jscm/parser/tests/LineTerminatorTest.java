@@ -1,7 +1,7 @@
 package org.hisrc.jscm.parser.tests;
 
-import org.hisrc.jscm.parser.testing.lexical.AbstractTokenCasesTest;
+import org.hisrc.jscm.parser.testing.lexical.AbstractDualTokenTest;
 
-public class LineTerminatorTest extends AbstractTokenCasesTest {
+public class LineTerminatorTest extends AbstractDualTokenTest {
 
 }

@@ -123,14 +123,6 @@ MORE:
 */
 
 /* ========================================================================== */
-/* 7.1 Unicode Format-Control Characters */
-/* ========================================================================== */
-/*
-\u200C Zero width non-joiner <ZWNJ> IdentifierPart
-\u200D Zero width joiner <ZWJ> IdentifierPart
-\uFEFF Byte Order Mark <BOM> Whitespace
-*/
-/* ========================================================================== */
 /* 7.2 White Space */
 /* ========================================================================== */
 
@@ -144,52 +136,19 @@ WhiteSpace ::
 	<BOM>
 	<USP>
 */
-<DEFAULT, IN_REGEX>
-SPECIAL_TOKEN :
+<DEFAULT, IN_REGEX, NO_LINE_TERMINATOR_HERE>
+SKIP :
 {
 	<WHITE_SPACE:
-		<TAB>
-	|	<VT>
-	|	<FF>
-	|	<SP>
-	|	<NBSP>
-	|	<BOM>
-	|	<USP>
+		<TAB>	|	<VT>	|	<FF>	|	<SP>	|	<NBSP>	|	<BOM>	|	<USP>
 	>
-|	/* Tab */
-	<#TAB:
-		/* TODO is it correct here? */
-		"\u0009"
-	|	/* TODO is it correct here? */
-		"\t"
-	>
-|	/* Vertical Tab */
-	<#VT:
-		/* TODO is it correct here? */
-		"\u000B"
-	>
-|	/* Form Feed */ 
-	<#FF:
-		/* TODO is it correct here? */
-		"\u000C"
-	|	/* TODO is it correct here? */
-		"\f"
-	>
-|	/* Space */
-	<#SP:
-		"\u0020"
-	|	" "
-	> 
-|	/* No-break space */
-	<#NBSP:
-		"\u00A0"
-	>
-|	/* Byte Order Mark */
-	<#BOM:
-		"\uFEFF"
-	>
-|	/* Any other Unicode space separator */
-	<#USP: 
+|	<#TAB:	"\u0009">
+|	<#VT:	"\u000B">
+|	<#FF:	"\u000C">
+|	<#SP:	"\u0020"> 
+|	<#NBSP:	"\u00A0">
+|	<#BOM:	"\uFEFF">
+|	<#USP: 
 		["\u1680"] 
 	|	["\u2000"] 
 	|	["\u2001"] 
@@ -222,23 +181,36 @@ LineTerminator ::
 SPECIAL_TOKEN :
 {
 	<LINE_TERMINATOR:
-		<LF>
-	|	<CR>
+		<CR>
+		(
+			<LF>
+		) ?
+	|	<LF>
 	|	<LS>
 	|	<PS>
 	>
-|	/* Line Feed */
-	<#LF:
+|	<#LF:
 		"\n"> 
-|	/* Carriage Return */
-	<#CR:
+|	<#CR:
 		"\r"> 
-|	/* Line separator */
-	<#LS:
+|	<#LS:
 		"\u2028"> 
-|	/* Paragraph separator */
-	<#PS:
-		"\u2029"> 
+|	<#PS:
+		"\u2029">
+}
+
+<NO_LINE_TERMINATOR_HERE>
+TOKEN :
+{
+	<NON_SPECIAL_LINE_TERMINATOR:
+		<CR>
+		(
+			<LF>
+		) ?
+	|	<LF>
+	|	<LS>
+	|	<PS>
+	>
 }
 
 /*
@@ -259,20 +231,6 @@ Comment ::
 	MultiLineComment
 	SingleLineComment
 */
-<DEFAULT, IN_REGEX>
-MORE :
-{
-	"//"
-		:IN_SINGLE_LINE_COMMENT
-|	"/*"
-		:IN_MULTI_LINE_COMMENT
-}
-
-<IN_MULTI_LINE_COMMENT>
-SPECIAL_TOKEN :
-{
-	<MULTI_LINE_COMMENT: "*/" > : DEFAULT
-}
 
 /*
 SingleLineComment ::
@@ -284,23 +242,31 @@ SingleLineCommentChars ::
 SingleLineCommentChar ::
 	SourceCharacter but not LineTerminator
 */
-<IN_SINGLE_LINE_COMMENT>
+<DEFAULT, IN_REGEX, NO_LINE_TERMINATOR_HERE>
 SPECIAL_TOKEN :
 {
 	<SINGLE_LINE_COMMENT:
+		"//"
 		(
 			~["\n", "\r", "\u2028", "\u2029"]
 		) *
-		(
-			"\n"
-		|	"\r"
-		|	"\u2028"
-		|	"\u2029"
-		) ?
-	>	:DEFAULT
+	>
 }
 
-<IN_SINGLE_LINE_COMMENT, IN_MULTI_LINE_COMMENT, IN_PATTERN>
+<DEFAULT, IN_REGEX, NO_LINE_TERMINATOR_HERE>
+MORE :
+{
+	"/*"
+		:IN_MULTI_LINE_COMMENT
+}
+
+<IN_MULTI_LINE_COMMENT>
+SPECIAL_TOKEN :
+{
+	<MULTI_LINE_COMMENT: "*/" > : DEFAULT
+}
+
+<IN_MULTI_LINE_COMMENT>
 MORE :
 {
 	<~[]>
@@ -338,12 +304,12 @@ Keyword :: one of
 	default	if	throw
 	delete	in	try
 */
-<DEFAULT, IN_REGEX>
+<DEFAULT, IN_REGEX, NO_LINE_TERMINATOR_HERE>
 TOKEN :
 {
 	<BREAK:
 		"break"
-	>	:DEFAULT
+	>	:NO_LINE_TERMINATOR_HERE
 |	<CASE:
 		"case"
 	>	:DEFAULT
@@ -352,7 +318,7 @@ TOKEN :
 	>	:DEFAULT
 |	<CONTINUE:
 		"continue"
-	>	:DEFAULT
+	>	:NO_LINE_TERMINATOR_HERE
 |	<DEBUGGER:
 		"debugger"
 	>	:DEFAULT
@@ -391,7 +357,7 @@ TOKEN :
 	>	:DEFAULT
 |	<RETURN:
 		"return"
-	> 	:DEFAULT
+	> 	:NO_LINE_TERMINATOR_HERE
 |	<SWITCH:
 		"switch"
 	>	:DEFAULT
@@ -400,7 +366,7 @@ TOKEN :
 	>	:IN_REGEX
 |	<THROW:
 		"throw"
-	>	:DEFAULT
+	>	:NO_LINE_TERMINATOR_HERE
 |	<TRY:
 		"try"
 	>	:DEFAULT
@@ -429,6 +395,7 @@ FutureReservedWord :: one of
 	class	enum	extends	super
 	const	export	import
 */
+<DEFAULT, IN_REGEX, NO_LINE_TERMINATOR_HERE>
 TOKEN :
 {
 	<CLASS:
@@ -475,7 +442,7 @@ Punctuator :: one of
 	>>=	>>>=	&=	|=	^=
 */
 
-<DEFAULT, IN_REGEX>
+<DEFAULT, IN_REGEX, NO_LINE_TERMINATOR_HERE>
 TOKEN :
 {
 	<LBRACE:
@@ -525,10 +492,10 @@ TOKEN :
   	>	:DEFAULT
 |	<SEQ:
 		"==="
-  	>	:DEFAULT /* Strict Equals Operator */
+  	>	:DEFAULT
 |	<SNEQ:
 		"!=="
-	>	:DEFAULT /* Strict Does-not-equal Operator */
+	>	:DEFAULT
 |	<PLUS:
 		"+"
   	>	:DEFAULT
@@ -555,7 +522,7 @@ TOKEN :
   	>	:DEFAULT
 |	<RUNSHIFT:
 		">>>"
-  	>	:DEFAULT /* Unsigned Right Shift Operator */
+  	>	:DEFAULT
 |	<BIT_AND:
 		"&"
   	>	:DEFAULT
@@ -634,7 +601,9 @@ TOKEN :
 	>	:DEFAULT
 }
 
+/* ========================================================================== */
 /* 7.8 Literals */
+/* ========================================================================== */
 
 JSLiteral Literal() :
 {
@@ -661,7 +630,7 @@ JSLiteral Literal() :
 	{
 		return this.builder.nullLiteral(t);
 	}
-/*
+/* TODO
 	| 
 		t = <REGULAR_EXPRESSION_LITERAL>
 		{
@@ -672,14 +641,14 @@ JSLiteral Literal() :
 
 
 
-
+/* ========================================================================== */
 /* 7.8.1 Null Literals */
-
+/* ========================================================================== */
 /*
 NullLiteral ::
 	null
 */
-<DEFAULT, IN_REGEX>
+<DEFAULT, IN_REGEX, NO_LINE_TERMINATOR_HERE>
 TOKEN:
 { 
 	<NULL_LITERAL:
@@ -687,14 +656,15 @@ TOKEN:
 	>	:IN_REGEX
 }
 
+/* ========================================================================== */
 /* 7.8.2 Boolean Literals */
-
+/* ========================================================================== */
 /*
 BooleanLiteral ::
 	true
 	false
 */
-<DEFAULT, IN_REGEX>
+<DEFAULT, IN_REGEX, NO_LINE_TERMINATOR_HERE>
 TOKEN:
 { 
 	<BOOLEAN_LITERAL:
@@ -703,8 +673,9 @@ TOKEN:
 	>	:IN_REGEX
 }
 
+/* ========================================================================== */
 /* 7.8.3 Numeric Literals */
-
+/* ========================================================================== */
 /*
 NumericLiteral ::
 	DecimalLiteral
@@ -725,13 +696,49 @@ JSNumericLiteral NumericLiteral() :
 	}
 }
 
+JSDecimalLiteral DecimalLiteral() :
+{
+	Token t;
+}
+{
+	t = <DECIMAL_LITERAL>
+	{
+		return this.builder.decimalLiteral(t);
+	}
+}
+
 /*
 DecimalLiteral ::
 	DecimalIntegerLiteral . DecimalDigits_opt ExponentPart_opt
 	. DecimalDigits ExponentPart_opt
 	DecimalIntegerLiteral ExponentPart_opt
+
+DecimalIntegerLiteral ::
+	0
+	NonZeroDigit DecimalDigits_opt
+
+DecimalDigits ::
+	DecimalDigit
+	DecimalDigits DecimalDigit
+
+DecimalDigit :: one of
+	0 1 2 3 4 5 6 7 8 9
+
+NonZeroDigit :: one of
+	1 2 3 4 5 6 7 8 9
+
+ExponentPart ::
+	ExponentIndicator SignedInteger
+
+ExponentIndicator :: one of
+	e E
+
+SignedInteger ::
+	DecimalDigits
+	+ DecimalDigits
+	- DecimalDigits
 */
-<DEFAULT, IN_REGEX>
+<DEFAULT, IN_REGEX, NO_LINE_TERMINATOR_HERE>
 TOKEN:
 { 
 	<DECIMAL_LITERAL:
@@ -753,26 +760,30 @@ TOKEN:
 			<EXPONENT_PART>
 		) ? 
 	> 	:IN_REGEX
+|	<#DECIMAL_DIGITS:
+		(
+			<DECIMAL_DIGIT>
+		) +
+	>
+|	<#DECIMAL_DIGIT:
+		["0"-"9"]
+	>
+|	<#NON_ZERO_DIGIT:
+		["1"-"9"]
+	>
+|	<#EXPONENT_PART:
+		(
+			"e"
+		|	"E"
+		)
+		(
+			["+", "-"]
+		) ?
+		<DECIMAL_DIGITS>
+	>
 }
 
-JSDecimalLiteral DecimalLiteral() :
-{
-	Token t;
-}
-{
-	t = <DECIMAL_LITERAL>
-	{
-		return this.builder.decimalLiteral(t);
-	}
-}
-
-
-/*
-DecimalIntegerLiteral ::
-	0
-	NonZeroDigit DecimalDigits_opt
-*/
-<DEFAULT, IN_REGEX>
+<DEFAULT, IN_REGEX, NO_LINE_TERMINATOR_HERE>
 TOKEN:
 {
 	<DECIMAL_INTEGER_LITERAL: 
@@ -785,75 +796,12 @@ TOKEN:
 }
 
 /*
-DecimalDigits ::
-	DecimalDigit
-	DecimalDigits DecimalDigit
-*/
-<DEFAULT, IN_REGEX>
-TOKEN:
-{ 
-	<DECIMAL_DIGITS:
-		(
-			<DECIMAL_DIGIT>
-		) +
-	>	:IN_REGEX
-}
-
-/*
-DecimalDigit :: one of
-	0 1 2 3 4 5 6 7 8 9
-*/
-TOKEN:
-{
-	<DECIMAL_DIGIT:
-		["0"-"9"]
-	>
-}
-
-/*
-NonZeroDigit :: one of
-	1 2 3 4 5 6 7 8 9
-*/
-TOKEN:
-{
-	<NON_ZERO_DIGIT:
-		["1"-"9"]
-	>
-}
-
-/*
-ExponentPart ::
-	ExponentIndicator SignedInteger
-
-ExponentIndicator :: one of
-	e E
-
-SignedInteger ::
-	DecimalDigits
-	+ DecimalDigits
-	- DecimalDigits
-*/
-TOKEN:
-{
-	<EXPONENT_PART:
-		(
-			"e"
-		|	"E"
-		)
-		(
-			["+", "-"]
-		) ?
-		<DECIMAL_DIGITS>
-	>
-}
-
-/*
 HexIntegerLiteral ::
 	0x HexDigit
 	0X HexDigit
 	HexIntegerLiteral HexDigit
 */
-<DEFAULT, IN_REGEX>
+<DEFAULT, IN_REGEX, NO_LINE_TERMINATOR_HERE>
 TOKEN:
 {
 	<HEX_INTEGER_LITERAL:
@@ -865,27 +813,27 @@ TOKEN:
 	>	:IN_REGEX
 }
 
-/*
-HexDigit :: one of
-	0 1 2 3 4 5 6 7 8 9 a b c d e f A B C D E F
-*/
-TOKEN:
-{
-	< HEX_DIGIT: ["0"-"9"] | ["a"-"f"] | ["A"-"F"] >
-}
-
-
+/* ========================================================================== */
 /* 7.8.4 String Literals */
+/* ========================================================================== */
+
+JSStringLiteral StringLiteral() :
+{
+	Token t;
+}
+{
+	t = <STRING_LITERAL>
+	{
+		return this.builder.stringLiteral(t);
+	}
+}
 
 /*
 StringLiteral ::
 	" DoubleStringCharacters_opt "
 	' SingleStringCharacters_opt '
-
-DoubleStringCharacters ::
-	DoubleStringCharacter DoubleStringCharacters_opt
 */
-<DEFAULT, IN_REGEX>
+<DEFAULT, IN_REGEX, NO_LINE_TERMINATOR_HERE>
 TOKEN:
 {
 	<STRING_LITERAL:
@@ -900,94 +848,64 @@ TOKEN:
 		) ?
 		"'"
 	>	:IN_REGEX
-}
-
-JSStringLiteral StringLiteral() :
-{
-	Token t;
-}
-{
-	t = <STRING_LITERAL>
-	{
-		return this.builder.stringLiteral(t);
-	}
-}
-
 /*
 DoubleStringCharacters ::
 	DoubleStringCharacter DoubleStringCharacters_opt
 */
-<DEFAULT, IN_REGEX>
-TOKEN:
-{
-	<#DOUBLE_STRING_CHARACTERS:
+|	<#DOUBLE_STRING_CHARACTERS:
 		(
 			<DOUBLE_STRING_CHARACTER>
 		) *
 	>
-}
-
 /*
 SingleStringCharacters ::
 	SingleStringCharacter SingleStringCharactersopt
 */
-<DEFAULT, IN_REGEX>
-TOKEN:
-{
-	<#SINGLE_STRING_CHARACTERS:
+|	<#SINGLE_STRING_CHARACTERS:
 		(
 			<SINGLE_STRING_CHARACTER>
 		) *
 	>
-}
-
 /*
 DoubleStringCharacter ::
 	SourceCharacter but not one of " or \ or LineTerminator
 	\ EscapeSequence
 	LineContinuation
 */
-<DEFAULT, IN_REGEX>
-TOKEN:
-{
-	<#DOUBLE_STRING_CHARACTER:
-		(
-			/* TODO Check */
-			~["\"", "\\", "\n", "\r", "\u2028", "\u2029"]
-		) * 
-	|	"\\"
-		<ESCAPE_SEQUENCE>
-		/* TODO
-	|	LINE_CONTINUATION */
+|	<#DOUBLE_STRING_CHARACTER:
+		"\\" <ESCAPE_SEQUENCE>
+	|	<LINE_CONTINUATION>
+	|	(
+			~["\"", "\n", "\r", "\u2028", "\u2029", "\\"]
+		)
 	>
-}
-
 /*
 SingleStringCharacter ::
 	SourceCharacter but not one of ' or \ or LineTerminator
 	\ EscapeSequence
 	LineContinuation
 */
-<DEFAULT, IN_REGEX>
-TOKEN:
-{
-	<#SINGLE_STRING_CHARACTER:
-		(
-			~["'", "\\", "\n", "\r", "\u2028", "\u2029"]
+|	<#SINGLE_STRING_CHARACTER:
+		"\\" <ESCAPE_SEQUENCE>
+	|	<LINE_CONTINUATION>
+	|	(
+			~["\'", "\n", "\r", "\u2028", "\u2029", "\\"]
 		)
-	|	"\\"
-		<ESCAPE_SEQUENCE>
-	/* TODO
-	|	LINE_CONTINUATION */
-	> 
-}
-
+	>
 /*
 LineContinuation ::
 	\ LineTerminatorSequence
 */
-/* TODO */
-
+|	<#LINE_CONTINUATION:
+		"\\"
+		(
+			"\r\n"
+		|	"\r"
+		|	"\n"
+		|	"\u2028"
+		|	"\u2029"
+		)
+	>
 /*
 EscapeSequence ::
 	CharacterEscapeSequence
@@ -995,119 +913,166 @@ EscapeSequence ::
 	HexEscapeSequence
 	UnicodeEscapeSequence
 */
-<DEFAULT, IN_REGEX>
-TOKEN:
-{
-	<#ESCAPE_SEQUENCE:
+|	<#ESCAPE_SEQUENCE:
 		<CHARACTER_ESCAPE_SEQUENCE>
 		|	"0" 
 		|	<HEX_ESCAPE_SEQUENCE>
 		|	<UNICODE_ESCAPE_SEQUENCE>
 	>
-}
-
 /*
 CharacterEscapeSequence ::
 	SingleEscapeCharacter
 	NonEscapeCharacter
 */
-<DEFAULT, IN_REGEX>
-TOKEN:
-{
-	<#CHARACTER_ESCAPE_SEQUENCE:
+|	<#CHARACTER_ESCAPE_SEQUENCE:
 		<SINGLE_ESCAPE_CHARACTER>
 	|	<NON_ESCAPE_CHARACTER>
 	>
-}
-
 /*
 SingleEscapeCharacter :: one of
 	' " \ b f n r t v
 */
-<DEFAULT, IN_REGEX>
-TOKEN:
-{
-	<#SINGLE_ESCAPE_CHARACTER:
+|	<#SINGLE_ESCAPE_CHARACTER:
 		["'" , "\"" , "\\" , "b" , "f" , "n" , "r" , "t" , "v"]
 	>
-}
-
 /*
 NonEscapeCharacter ::
 	SourceCharacter but not one of EscapeCharacter or LineTerminator
-*/
-/* TODO Check */
-<DEFAULT, IN_REGEX>
-TOKEN:
-{
-	<#NON_ESCAPE_CHARACTER:
-		~["\n","\r","\u2028","\u2029"]
-	|	~["'" , "\"" , "\\" , "b" , "f" , "n" , "r" , "t" , "v", "x", "u"]
-	|	~["0"-"9"]
-	>
-}
 
-/*
 EscapeCharacter ::
 	SingleEscapeCharacter
 	DecimalDigit
 	x
 	u
 */
-/*
-TOKEN:
-{
-	<ESCAPE_CHARACTER:
-		["'" , "\"" , "\\" , "b" , "f" , "n" , "r" , "t" , "v"]
-	|	["0"-"9"]
-	|	"x"
-	|	"u"
+|	<#NON_ESCAPE_CHARACTER:
+		~["\n","\r","\u2028","\u2029"]
+	|	~["'" , "\"", "\\", "b", "f", "n", "r", "t", "v", "x", "u"]
+	|	~["0"-"9"]
 	>
-}
-*/
-
 /*
 HexEscapeSequence ::
 	x HexDigit HexDigit
 */
-TOKEN:
-{
-	<HEX_ESCAPE_SEQUENCE:
+|	<#HEX_ESCAPE_SEQUENCE:
 		"x"
 		<HEX_DIGIT>
 		<HEX_DIGIT>
 	>
 }
 
+/* ========================================================================== */
+/* 7.8.5 Regular Expression Literals */
+/* ========================================================================== */
+
 /*
-UnicodeEscapeSequence ::
-	u HexDigit HexDigit HexDigit HexDigit
-*/
+If we're in the IN_REGEX lexical state, we should not recognize regular expressions
+anymore.
+*/ 
+<DEFAULT, NO_LINE_TERMINATOR_HERE>
 TOKEN:
 {
-	<UNICODE_ESCAPE_SEQUENCE:
-		"u"
-		<HEX_DIGIT>
-		<HEX_DIGIT>
-		<HEX_DIGIT>
-		<HEX_DIGIT>
+/*
+RegularExpressionLiteral ::
+	/ RegularExpressionBody / RegularExpressionFlags
+*/
+/*
+RegularExpressionFlags ::
+	[empty]
+	RegularExpressionFlags IdentifierPart
+*/
+	<REGULAR_EXPRESSION_LITERAL:
+		"/"
+		<REGULAR_EXPRESSION_BODY>
+		"/"
+		(
+			<IDENTIFIER_PART>
+		) *
+	>
+|
+/*
+RegularExpressionBody ::
+	RegularExpressionFirstChar RegularExpressionChars
+*/
+/*
+RegularExpressionChars ::
+	[empty]
+	RegularExpressionChars RegularExpressionChar
+*/
+	<#REGULAR_EXPRESSION_BODY:
+		<REGULAR_EXPRESSION_FIRST_CHAR>
+		(
+			<REGULAR_EXPRESSION_CHAR>
+		) *
+	>
+|
+/*
+RegularExpressionChar ::
+	RegularExpressionNonTerminator but not one of \ or / or [
+	RegularExpressionBackslashSequence
+	RegularExpressionClass
+*/
+/*
+RegularExpressionNonTerminator ::
+	SourceCharacter but not LineTerminator
+*/
+	<#REGULAR_EXPRESSION_CHAR:
+    	~[ "\r" , "\n" , "\u2028" , "\u2029", "\\", "/", "[" ]
+	|	<REGULAR_EXPRESSION_BACKSLASH_SEQUENCE>
+	|	<REGULAR_EXPRESSION_CLASS>
+	>
+|
+/*
+RegularExpressionFirstChar ::
+	RegularExpressionNonTerminator but not one of * or \ or / or [
+	RegularExpressionBackslashSequence
+	RegularExpressionClass
+*/
+	<#REGULAR_EXPRESSION_FIRST_CHAR: 
+		~[ "\r" , "\n" , "\u2028" , "\u2029", "*", "\\", "/", "[" ]
+	|	<REGULAR_EXPRESSION_BACKSLASH_SEQUENCE>
+	|	<REGULAR_EXPRESSION_CLASS>
+	>
+|
+/*
+RegularExpressionBackslashSequence ::
+	\ RegularExpressionNonTerminator
+*/
+	<#REGULAR_EXPRESSION_BACKSLASH_SEQUENCE:
+		"\\" ~[ "\r" , "\n" , "\u2028" , "\u2029" ]
+	>
+|
+/*
+RegularExpressionClass ::
+	[ RegularExpressionClassChars ]
+*/
+	<#REGULAR_EXPRESSION_CLASS:
+		"["
+		(
+			<REGULAR_EXPRESSION_CLASS_CHAR>
+		) *
+		"]"
+	>
+|
+/*
+RegularExpressionClassChars ::
+	[empty]
+	RegularExpressionClassChars RegularExpressionClassChar
+*/
+/*
+RegularExpressionClassChar ::
+	RegularExpressionNonTerminator but not one of ] or \
+	RegularExpressionBackslashSequence
+*/
+	<#REGULAR_EXPRESSION_CLASS_CHAR:
+		~[ "\r" , "\n" , "\u2028" , "\u2029", "\\", "]" ]
+	|	<REGULAR_EXPRESSION_BACKSLASH_SEQUENCE>
 	>
 }
 
-
-/*
-TOKEN:
-{
-  < ESCAPE_CHARACTER:
-	  ["'" , "\"" , "\\" , "b" , "f" , "n" , "r" , "t" , "v"]
-	| ["0"-"9"]
-	| "x"
-	| "u"
-  >
-}
-*/
-
-/* Section 7.6: Identifiers */
+/* ========================================================================== */
+/* 7.6 Identifier Names and Identifiers */
+/* ========================================================================== */
 
 /*
 Identifier ::
@@ -1129,17 +1094,6 @@ IdentifierName ::
 	IdentifierStart
 	IdentifierName IdentifierPart
 */
-<DEFAULT, IN_REGEX>
-TOKEN:
-{
-	<IDENTIFIER_NAME:
-		<IDENTIFIER_START>
-		(
-			<IDENTIFIER_PART>
-		) *
-	>	:IN_REGEX
-}
-
 JSIdentifierName IdentifierName() :
 {
 	Token t;
@@ -1151,6 +1105,21 @@ JSIdentifierName IdentifierName() :
 	}
 }
 
+<DEFAULT, IN_REGEX, NO_LINE_TERMINATOR_HERE>
+TOKEN:
+{
+/*
+IdentifierName ::
+	IdentifierStart
+	IdentifierName IdentifierPart
+*/
+	<IDENTIFIER_NAME:
+		<IDENTIFIER_START>
+		(
+			<IDENTIFIER_PART>
+		) *
+	>	:IN_REGEX
+|
 /*
 IdentifierStart ::
 	UnicodeLetter
@@ -1158,23 +1127,13 @@ IdentifierStart ::
 	_
 	\ UnicodeEscapeSequence
 */
-<DEFAULT, IN_REGEX>
-TOKEN:
-{
 	<#IDENTIFIER_START:
 		<UNICODE_LETTER>
-	|	<DOLLAR_SIGN>
-	|	<UNDERSCORE>
-	|	<UNICODE_ESCAPE_SEQUENCE>
+	|	"$"
+	|	"_"
+	|	"\\" <UNICODE_ESCAPE_SEQUENCE> /* Was without \ */
 	>
-|	<#DOLLAR_SIGN:
-		"$"
-	>
-|	<#UNDERSCORE:
-		"_"
-	>
-}
-
+|
 /*
 IdentifierPart ::
 	IdentifierStart
@@ -1184,30 +1143,20 @@ IdentifierPart ::
 	<ZWNJ>
 	<ZWJ>
 */
-<DEFAULT, IN_REGEX>
-TOKEN:
-{
 	<#IDENTIFIER_PART: 
 		<IDENTIFIER_START>
 	|	<UNICODE_COMBINING_MARK>
 	|	<UNICODE_DIGIT>
 	|	<UNICODE_CONNECTOR_PUNCTUATION>
-	/*	TODO
 	|	<ZWNJ>
 	|	<ZWJ>
-	*/
 	>
-}
-
 /*
 UnicodeLetter ::
 	any character in the Unicode categories Uppercase letter (Lu), Lowercase letter (Ll), Titlecase letter 
 	(Lt), Modifier letter (Lm), Other letter (Lo), or Letter number (Nl).
 */
-<DEFAULT, IN_REGEX>
-TOKEN:
-{
-	<#UNICODE_LETTER: 
+|	<#UNICODE_LETTER: 
 		["A"-"Z"]
 	|	["a"-"z"]
 	|	["\u0041"-"\u005A"] 
@@ -1472,24 +1421,125 @@ TOKEN:
 	|	["\uFFD2"-"\uFFD7"]
 	|	["\uFFDA"-"\uFFDC"]
 	>
-} 
-
+/*
+UnicodeEscapeSequence ::
+	u HexDigit HexDigit HexDigit HexDigit
+*/
+|	<#UNICODE_ESCAPE_SEQUENCE:
+		"u"
+		<HEX_DIGIT>
+		<HEX_DIGIT>
+		<HEX_DIGIT>
+		<HEX_DIGIT>
+	>
 /*
 UnicodeCombiningMark ::
 	any character in the Unicode categories Non-spacing mark (Mn) or Combining spacing mark (Mc)
 */
-MORE:
-{
-	<UNICODE_COMBINING_MARK:
-		<MN>
-	|	<MC>
-	>
-}
-
-TOKEN:
-{
-	<MC: 
-		["\u0903"]
+/* TODO */
+|	<#UNICODE_COMBINING_MARK:
+		["\u0300"-"\u034E"] 
+	|	["\u0360"-"\u0362"] 
+	|	["\u0483"-"\u0486"] 
+	|	["\u0591"-"\u05A1"]
+	|	["\u05A3"-"\u05B9"] 
+	|	["\u05BB"-"\u05BD"] 
+	|	["\u05BF"]
+	|	["\u05C1"-"\u05C2"]
+	|	["\u05C4"]
+	|	["\u064B"-"\u0655"] 
+	|	["\u0670"]
+	|	["\u06D6"-"\u06DC"]
+	|	["\u06DF"-"\u06E4"] 
+	|	["\u06E7"-"\u06E8"] 
+	|	["\u06EA"-"\u06ED"] 
+	|	["\u0711"]
+	|	["\u0730"-"\u074A"] 
+	|	["\u07A6"-"\u07B0"] 
+	|	["\u0901"-"\u0903"] 
+	|	["\u093C"]
+	|	["\u093E"-"\u094D"] 
+	|	["\u0951"-"\u0954"] 
+	|	["\u0962"-"\u0963"] 
+	|	["\u0981"-"\u0983"]
+	|	["\u09BC"-"\u09C4"] 
+	|	["\u09C7"-"\u09C8"] 
+	|	["\u09CB"-"\u09CD"] 
+	|	["\u09D7"]
+	|	["\u09E2"-"\u09E3"] 
+	|	["\u0A02"]
+	|	["\u0A3C"]
+	|	["\u0A3E"-"\u0A42"]
+	|	["\u0A47"-"\u0A48"] 
+	|	["\u0A4B"-"\u0A4D"] 
+	|	["\u0A70"-"\u0A71"] 
+	|	["\u0A81"-"\u0A83"]
+	|	["\u0ABC"]
+	|	["\u0ABE"-"\u0AC5"] 
+	|	["\u0AC7"-"\u0AC9"] 
+	|	["\u0ACB"-"\u0ACD"]
+	|	["\u0B01"-"\u0B03"] 
+	|	["\u0B3C"]
+	|	["\u0B3E"-"\u0B43"] 
+	|	["\u0B47"-"\u0B48"]
+	|	["\u0B4B"-"\u0B4D"] 
+	|	["\u0B56"-"\u0B57"] 
+	|	["\u0B82"-"\u0B83"] 
+	|	["\u0BBE"-"\u0BC2"]
+	|	["\u0BC6"-"\u0BC8"] 
+	|	["\u0BCA"-"\u0BCD"] 
+	|	["\u0BD7"]
+	|	["\u0C01"-"\u0C03"]
+	|	["\u0C3E"-"\u0C44"] 
+	|	["\u0C46"-"\u0C48"] 
+	|	["\u0C4A"-"\u0C4D"] 
+	|	["\u0C55"-"\u0C56"]
+	|	["\u0C82"-"\u0C83"] 
+	|	["\u0CBE"-"\u0CC4"] 
+	|	["\u0CC6"-"\u0CC8"] 
+	|	["\u0CCA"-"\u0CCD"]
+	|	["\u0CD5"-"\u0CD6"] 
+	|	["\u0D02"-"\u0D03"] 
+	|	["\u0D3E"-"\u0D43"] 
+	|	["\u0D46"-"\u0D48"]
+	|	["\u0D4A"-"\u0D4D"] 
+	|	["\u0D57"]
+	|	["\u0D82"-"\u0D83"] 
+	|	["\u0DCA"]
+	|	["\u0DCF"-"\u0DD4"] 
+	|	["\u0DD6"]
+	|	["\u0DD8"-"\u0DDF"] 
+	|	["\u0DF2"-"\u0DF3"]
+	|	["\u0E31"]
+	|	["\u0E34"-"\u0E3A"] 
+	|	["\u0E47"-"\u0E4E"] 
+	|	["\u0EB1"]
+	|	["\u0EB4"-"\u0EB9"] 
+	|	["\u0EBB"-"\u0EBC"] 
+	|	["\u0EC8"-"\u0ECD"] 
+	|	["\u0F18"-"\u0F19"]
+	|	["\u0F35"]
+	|	["\u0F37"]
+	|	["\u0F39"]
+	|	["\u0F3E"-"\u0F3F"]
+	|	["\u0F71"-"\u0F84"] 
+	|	["\u0F86"-"\u0F87"] 
+	|	["\u0F90"-"\u0F97"] 
+	|	["\u0F99"-"\u0FBC"]
+	|	["\u0FC6"]
+	|	["\u102C"-"\u1032"] 
+	|	["\u1036"-"\u1039"] 
+	|	["\u1056"-"\u1059"]
+	|	["\u17B4"-"\u17D3"] 
+	|	["\u18A9"]
+	|	["\u20D0"-"\u20DC"] 
+	|	["\u20E1"]
+	|	["\u302A"-"\u302F"] 
+	|	["\u3099"-"\u309A"] 
+	|	["\uFB1E"]
+	|	["\uFE20"-"\uFE23"]
+/* TODO */
+	|	["\u0903"]
 	|	["\u093E"]
 	|	["\u093F"]
 	|	["\u0940"]
@@ -1655,118 +1705,11 @@ TOKEN:
 	|	["\u1D17"]
 	|	["\u1D17"] 
 	>
-|
-	<MN: 
-		["\u0300"-"\u034E"] 
-	|	["\u0360"-"\u0362"] 
-	|	["\u0483"-"\u0486"] 
-	|	["\u0591"-"\u05A1"]
-	|	["\u05A3"-"\u05B9"] 
-	|	["\u05BB"-"\u05BD"] 
-	|	["\u05BF"]
-	|	["\u05C1"-"\u05C2"]
-	|	["\u05C4"]
-	|	["\u064B"-"\u0655"] 
-	|	["\u0670"]
-	|	["\u06D6"-"\u06DC"]
-	|	["\u06DF"-"\u06E4"] 
-	|	["\u06E7"-"\u06E8"] 
-	|	["\u06EA"-"\u06ED"] 
-	|	["\u0711"]
-	|	["\u0730"-"\u074A"] 
-	|	["\u07A6"-"\u07B0"] 
-	|	["\u0901"-"\u0903"] 
-	|	["\u093C"]
-	|	["\u093E"-"\u094D"] 
-	|	["\u0951"-"\u0954"] 
-	|	["\u0962"-"\u0963"] 
-	|	["\u0981"-"\u0983"]
-	|	["\u09BC"-"\u09C4"] 
-	|	["\u09C7"-"\u09C8"] 
-	|	["\u09CB"-"\u09CD"] 
-	|	["\u09D7"]
-	|	["\u09E2"-"\u09E3"] 
-	|	["\u0A02"]
-	|	["\u0A3C"]
-	|	["\u0A3E"-"\u0A42"]
-	|	["\u0A47"-"\u0A48"] 
-	|	["\u0A4B"-"\u0A4D"] 
-	|	["\u0A70"-"\u0A71"] 
-	|	["\u0A81"-"\u0A83"]
-	|	["\u0ABC"]
-	|	["\u0ABE"-"\u0AC5"] 
-	|	["\u0AC7"-"\u0AC9"] 
-	|	["\u0ACB"-"\u0ACD"]
-	|	["\u0B01"-"\u0B03"] 
-	|	["\u0B3C"]
-	|	["\u0B3E"-"\u0B43"] 
-	|	["\u0B47"-"\u0B48"]
-	|	["\u0B4B"-"\u0B4D"] 
-	|	["\u0B56"-"\u0B57"] 
-	|	["\u0B82"-"\u0B83"] 
-	|	["\u0BBE"-"\u0BC2"]
-	|	["\u0BC6"-"\u0BC8"] 
-	|	["\u0BCA"-"\u0BCD"] 
-	|	["\u0BD7"]
-	|	["\u0C01"-"\u0C03"]
-	|	["\u0C3E"-"\u0C44"] 
-	|	["\u0C46"-"\u0C48"] 
-	|	["\u0C4A"-"\u0C4D"] 
-	|	["\u0C55"-"\u0C56"]
-	|	["\u0C82"-"\u0C83"] 
-	|	["\u0CBE"-"\u0CC4"] 
-	|	["\u0CC6"-"\u0CC8"] 
-	|	["\u0CCA"-"\u0CCD"]
-	|	["\u0CD5"-"\u0CD6"] 
-	|	["\u0D02"-"\u0D03"] 
-	|	["\u0D3E"-"\u0D43"] 
-	|	["\u0D46"-"\u0D48"]
-	|	["\u0D4A"-"\u0D4D"] 
-	|	["\u0D57"]
-	|	["\u0D82"-"\u0D83"] 
-	|	["\u0DCA"]
-	|	["\u0DCF"-"\u0DD4"] 
-	|	["\u0DD6"]
-	|	["\u0DD8"-"\u0DDF"] 
-	|	["\u0DF2"-"\u0DF3"]
-	|	["\u0E31"]
-	|	["\u0E34"-"\u0E3A"] 
-	|	["\u0E47"-"\u0E4E"] 
-	|	["\u0EB1"]
-	|	["\u0EB4"-"\u0EB9"] 
-	|	["\u0EBB"-"\u0EBC"] 
-	|	["\u0EC8"-"\u0ECD"] 
-	|	["\u0F18"-"\u0F19"]
-	|	["\u0F35"]
-	|	["\u0F37"]
-	|	["\u0F39"]
-	|	["\u0F3E"-"\u0F3F"]
-	|	["\u0F71"-"\u0F84"] 
-	|	["\u0F86"-"\u0F87"] 
-	|	["\u0F90"-"\u0F97"] 
-	|	["\u0F99"-"\u0FBC"]
-	|	["\u0FC6"]
-	|	["\u102C"-"\u1032"] 
-	|	["\u1036"-"\u1039"] 
-	|	["\u1056"-"\u1059"]
-	|	["\u17B4"-"\u17D3"] 
-	|	["\u18A9"]
-	|	["\u20D0"-"\u20DC"] 
-	|	["\u20E1"]
-	|	["\u302A"-"\u302F"] 
-	|	["\u3099"-"\u309A"] 
-	|	["\uFB1E"]
-	|	["\uFE20"-"\uFE23"]
-	>
-}
-
 /*
 UnicodeDigit ::
 	any character in the Unicode category Decimal number (Nd)
 */
-TOKEN:
-{
-	< UNICODE_DIGIT: 
+|	<UNICODE_DIGIT: 
 		["\u0030"-"\u0039"] 
 	|	["\u0660"-"\u0669"] 
 	|	["\u06F0"-"\u06F9"] 
@@ -1788,15 +1731,11 @@ TOKEN:
 	|	["\u1810"-"\u1819"] 
 	|	["\uFF10"-"\uFF19"] 
  	>
-}
-
 /*
 UnicodeConnectorPunctuation ::
 	any character in the Unicode category Connector punctuation (Pc)
 */
-TOKEN:
-{
-	<UNICODE_CONNECTOR_PUNCTUATION: 
+|	<#UNICODE_CONNECTOR_PUNCTUATION: 
 		["\u005F"] 
 	|	["\u203F"-"\u2040"]
 	|	["\u30FB"] 
@@ -1804,122 +1743,74 @@ TOKEN:
 	|	["\uFE4D"-"\uFE4F"]
 	|	["\uFF3F"]
 	|	["\uFF65"]
+	>	 	
+|	<#ZWNJ:
+		"\u200D"
+	> 
+|	<#ZWJ:
+		"\u200C"
 	>
 }
 
-
-/* Regular Expression Literals */
+/* ========================================================================== */
+/* 7.8.3 Numeric Literals */
+/* ========================================================================== */
 
 /*
-RegularExpressionLiteral ::
-	/ RegularExpressionBody / RegularExpressionFlags
-
-RegularExpressionBody ::
-	RegularExpressionFirstChar RegularExpressionChars
-
-RegularExpressionChars ::
-	[empty]
-	RegularExpressionChars RegularExpressionChar
-
-RegularExpressionFirstChar ::
-	RegularExpressionNonTerminator but not one of * or \ or / or [
-	RegularExpressionBackslashSequence
-	RegularExpressionClass
-
-RegularExpressionChar ::
-	RegularExpressionNonTerminator but not one of \ or / or [
-	RegularExpressionBackslashSequence
-	RegularExpressionClass
-
-RegularExpressionBackslashSequence ::
-	\ RegularExpressionNonTerminator
-
-RegularExpressionNonTerminator ::
-	SourceCharacter but not LineTerminator
-
-RegularExpressionClass ::
-	[ RegularExpressionClassChars ]
-
-RegularExpressionClassChars ::
-	[empty]
-	RegularExpressionClassChars RegularExpressionClassChar
-
-RegularExpressionClassChar ::
-	RegularExpressionNonTerminator but not one of ] or \
-	RegularExpressionBackslashSequence
-
-RegularExpressionFlags ::
-	[empty]
-	RegularExpressionFlags IdentifierPart
+HexDigit :: one of
+	0 1 2 3 4 5 6 7 8 9 a b c d e f A B C D E F
 */
-
-/* TODO */
-<DEFAULT>
-TOKEN :
-{
-	<REGULAR_EXPRESSION_LITERAL:
-		"/"
-		(
-			(
-				~["\n","\r","\\","/","*"]
-			)
-		|	<BACKSLASH_SEQUENCE>
-		) 
-		(
-			(
-				~["\n","\r","\\","/"]
-			)
-		|	<BACKSLASH_SEQUENCE>
-		)*
-		"/"
-		(
-			<IDENTIFIER_PART>
-		) *
-	> : IN_REGEX
-|
-	< #BACKSLASH_SEQUENCE:
-		"\\" (~["\n","\r"])
-	>
-}
-
-
-/*
-
-<DEFAULT>
+<DEFAULT, IN_REGEX, NO_LINE_TERMINATOR_HERE>
 TOKEN:
 {
-	< REGULAR_EXPRESSION_LITERAL: 
-		"/" <REGULAR_EXPRESSION_BODY> "/" <REGULAR_EXPRESSION_FLAGS>
-	> : IN_REGEX
-|
-	< #REGULAR_EXPRESSION_BODY: <REGULAR_EXPRESSION_FIRSTCHAR> <REGULAR_EXPRESSION_CHARS> >
-|
-	< #REGULAR_EXPRESSION_CHARS: (<REGULAR_EXPRESSION_CHAR>)* >
-| 
-	< #REGULAR_EXPRESSION_FIRSTCHAR:
-	// ~["*","\\","/"] <NON_TERMINATOR>	
-	<NON_TERMINATOR_FIRSTCHAR>	
-	| <BACKSLASH_SEQUENCE>
-	> 
-| 
-	< #REGULAR_EXPRESSION_CHAR:
-		//~["\\","/"] <NON_TERMINATOR> <NON_TERMINATOR_CHAR> 
-		| <BACKSLASH_SEQUENCE>
+	<HEX_DIGIT:
+		["0"-"9"]
+	|	["a"-"f"]
+	|	["A"-"F"]
 	>
-|
-	< #BACKSLASH_SEQUENCE: "\\" <NON_TERMINATOR> >
-| 
-	< #NON_TERMINATOR_FIRSTCHAR: ~["\n","\r","\u2028","\u2029","*","\\","/"] >  
-|
-	< #NON_TERMINATOR_CHAR: ~["\n","\r","\u2028","\u2029","\\","/"] >	 
-|
-	< #NON_TERMINATOR: ~["\n","\r","\u2028","\u2029"] >  
-|
-	< #REGULAR_EXPRESSION_FLAGS: (<IDENTIFIER_PART>)* >
 }
+/* ========================================================================== */
+/* ========================================================================== */
+/* ========================================================================== */
+/* ========================================================================== */
+/* ========================================================================== */
+/* ========================================================================== */
+/* ========================================================================== */
+/* ========================================================================== */
+/* ========================================================================== */
+/* ========================================================================== */
+/* ========================================================================== */
+/* ========================================================================== */
+/* ========================================================================== */
+/* ========================================================================== */
+/* ========================================================================== */
+/* ========================================================================== */
+/* ========================================================================== */
+/* ========================================================================== */
+/* ========================================================================== */
+/* ========================================================================== */
+/* ========================================================================== */
+/* ========================================================================== */
+/* ========================================================================== */
+/* ========================================================================== */
+/* ========================================================================== */
+/* ========================================================================== */
+/* ========================================================================== */
+/* ========================================================================== */
+/* ========================================================================== */
+/* ========================================================================== */
+/* ========================================================================== */
+/* ========================================================================== */
+/* ========================================================================== */
+/* ========================================================================== */
+/* ========================================================================== */
+/* ========================================================================== */
+/* ========================================================================== */
+/* ========================================================================== */
+/* ========================================================================== */
 
-*/
 
+/* ========================================================================== */
 /* 11 Expressions */
 /* ========================================================================== */
 
@@ -3449,7 +3340,7 @@ JSVariableStatement VariableStatement() :
 {
 	"var"
 	variableDeclarationList = VariableDeclarationList()
-	";"
+	AutomaticSemicolonInsertion()
 	{
 		return this.builder.variableStatement(variableDeclarationList);
 	}
@@ -3612,7 +3503,7 @@ JSExpressionStatement ExpressionStatement() :
 {
 	/* TODO [lookahead not_in {{, function}] */
 	expression = Expression()
-	";"
+	AutomaticSemicolonInsertion()
 	{
 		return this.builder.expressionStatement(expression);
 	}
@@ -3922,16 +3813,21 @@ JSContinueStatement ContinueStatement() :
 {
 	"continue"
 	(
-		/* TODO [no LineTerminator here] */
-		label = LabelReference()
-		";"
-		{
-			return this.builder.continueStatement(label);
-		}
-	|	";"
+		/* [LineTerminator here] */
+		<NON_SPECIAL_LINE_TERMINATOR>
 		{
 			return this.builder.continueStatement();
 		}
+	|	/* [no LineTerminator here] */
+		";"
+		{
+			return this.builder.continueStatement();
+		}
+	|	label = LabelReference()
+		AutomaticSemicolonInsertion()
+		{
+			return this.builder.continueStatement(label);
+		}	
 	)
 }
 
@@ -3950,15 +3846,20 @@ JSBreakStatement BreakStatement() :
 {
 	"break"
 	(
-		/* TODO [no LineTerminator here] */
-		label = LabelReference()
-		";"
-		{
-			return this.builder.breakStatement(label);
-		}
-	|	";"
+		/* [LineTerminator here] */
+		<NON_SPECIAL_LINE_TERMINATOR>
 		{
 			return this.builder.breakStatement();
+		}
+	|	/* [no LineTerminator here] */
+		";"
+		{
+			return this.builder.breakStatement();
+		}
+	|	label = LabelReference()
+		AutomaticSemicolonInsertion()
+		{
+			return this.builder.breakStatement(label);
 		}
 	)
 }
@@ -3978,15 +3879,20 @@ JSReturnStatement ReturnStatement() :
 {
 	"return"
 	(
-		/* TODO [no LineTerminator here] */
-		expression = Expression()
-		";"
-		{
-			return this.builder.returnStatement(expression);
-		}
-	|	";"
+		/* [LineTerminator here] */
+		<NON_SPECIAL_LINE_TERMINATOR>
 		{
 			return this.builder.returnStatement();
+		}
+	|	/* [no LineTerminator here] */
+		";"
+		{
+			return this.builder.returnStatement();
+		}
+	|	expression = Expression()
+		AutomaticSemicolonInsertion()
+		{
+			return this.builder.returnStatement(expression);
 		}
 	)
 }
@@ -4148,6 +4054,7 @@ JSThrowStatement ThrowStatement() :
 	"throw"
 	/* TODO [no LineTerminator here] */
 	expression = Expression()
+	AutomaticSemicolonInsertion()
 	{
 		return this.builder.throwStatement(expression);
 	}
@@ -4385,5 +4292,20 @@ JSSourceElement SourceElement() :
 |	sourceElement = Statement()
 	{
 		return sourceElement;
+	}
+}
+
+JAVACODE
+void AutomaticSemicolonInsertion() {
+	Token token = getToken(1);
+	if (token.kind == SEMICOLON) {
+		token = getNextToken();
+	} else if (token.specialToken != null) {
+		if ((token.specialToken.kind != LINE_TERMINATOR) &&
+			(token.specialToken.kind != SINGLE_LINE_COMMENT)) {
+            throw generateParseException();
+		}
+	} else if ((token.kind != EOF) && (token.kind!=RBRACE)) {
+		throw generateParseException();
 	}
 }
