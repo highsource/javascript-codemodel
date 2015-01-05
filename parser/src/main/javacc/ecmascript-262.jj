@@ -64,11 +64,7 @@ PARSER_END(EcmaScriptParser)
  *****************************************/
 /* 
 
-
-
-/* Section 7 : Lexical Conventions */
-
-
+/* 6 Source Text */
 
 /*
 TOKEN:
@@ -80,6 +76,7 @@ TOKEN:
 /* 7 Lexical Conventions */
 
 /* http://www.unicode.org/Public/UNIDATA/UnicodeData.txt */
+
 /*
 InputElementDiv ::
 	WhiteSpace
@@ -140,7 +137,13 @@ WhiteSpace ::
 SKIP :
 {
 	<WHITE_SPACE:
-		<TAB>	|	<VT>	|	<FF>	|	<SP>	|	<NBSP>	|	<BOM>	|	<USP>
+		<TAB>
+	|	<VT>
+	|	<FF>
+	|	<SP>
+	|	<NBSP>
+	|	<BOM>
+	|	<USP>
 	>
 |	<#TAB:	"\u0009">
 |	<#VT:	"\u000B">
@@ -181,32 +184,22 @@ LineTerminator ::
 SPECIAL_TOKEN :
 {
 	<LINE_TERMINATOR:
-		<CR>
-		(
-			<LF>
-		) ?
+		<CR> ( <LF> ) ?
 	|	<LF>
 	|	<LS>
 	|	<PS>
 	>
-|	<#LF:
-		"\n"> 
-|	<#CR:
-		"\r"> 
-|	<#LS:
-		"\u2028"> 
-|	<#PS:
-		"\u2029">
+|	<#LF:	"\n"> 
+|	<#CR:	"\r"> 
+|	<#LS:	"\u2028"> 
+|	<#PS:	"\u2029">
 }
 
 <NO_LINE_TERMINATOR_HERE>
 TOKEN :
 {
-	<NON_SPECIAL_LINE_TERMINATOR:
-		<CR>
-		(
-			<LF>
-		) ?
+	<LINE_TERMINATOR_TOKEN:
+		<CR> ( <LF> ) ?
 	|	<LF>
 	|	<LS>
 	|	<PS>
@@ -221,7 +214,6 @@ LineTerminatorSequence ::
 	<PS>
 	<CR> <LF>
 */
-/* TODO */
 
 /* ========================================================================== */
 /* 7.4 Comments */
@@ -237,7 +229,7 @@ SingleLineComment ::
 	// SingleLineCommentChars_opt
 
 SingleLineCommentChars ::
-	SingleLineCommentChar SingleLineCommentCharsopt
+	SingleLineCommentChar SingleLineCommentChars_opt
 
 SingleLineCommentChar ::
 	SourceCharacter but not LineTerminator
@@ -245,25 +237,19 @@ SingleLineCommentChar ::
 <DEFAULT, IN_REGEX, NO_LINE_TERMINATOR_HERE>
 SPECIAL_TOKEN :
 {
-	<SINGLE_LINE_COMMENT:
-		"//"
-		(
-			~["\n", "\r", "\u2028", "\u2029"]
-		) *
-	>
+	<SINGLE_LINE_COMMENT:	"//" ( ~["\n", "\r", "\u2028", "\u2029"] ) *>
 }
 
 <DEFAULT, IN_REGEX, NO_LINE_TERMINATOR_HERE>
 MORE :
 {
-	"/*"
-		:IN_MULTI_LINE_COMMENT
+	"/*"	:IN_MULTI_LINE_COMMENT
 }
 
 <IN_MULTI_LINE_COMMENT>
 SPECIAL_TOKEN :
 {
-	<MULTI_LINE_COMMENT: "*/" > : DEFAULT
+	<MULTI_LINE_COMMENT:	"*/">	:DEFAULT
 }
 
 <IN_MULTI_LINE_COMMENT>
@@ -307,84 +293,32 @@ Keyword :: one of
 <DEFAULT, IN_REGEX, NO_LINE_TERMINATOR_HERE>
 TOKEN :
 {
-	<BREAK:
-		"break"
-	>	:NO_LINE_TERMINATOR_HERE
-|	<CASE:
-		"case"
-	>	:DEFAULT
-|	<CATCH:
-		"catch"
-	>	:DEFAULT
-|	<CONTINUE:
-		"continue"
-	>	:NO_LINE_TERMINATOR_HERE
-|	<DEBUGGER:
-		"debugger"
-	>	:DEFAULT
-|	<_DEFAULT:
-		"default"
-	>	:DEFAULT
-|	<DELETE:
-		"delete"
-	>	:DEFAULT
-|	<DO:
-		"do"
-	>	:DEFAULT
-|	<ELSE:
-		"else"
-	>	:DEFAULT
-|	<FINALLY:
-		"finally"
-	>	:DEFAULT
-|	<FOR:
-		"for"
-	>	:DEFAULT
-|	<FUNCTION:
-		"function"
-	>	:DEFAULT
-|	<IF:
-		"if"
-	>	:DEFAULT
-|	<IN:
-		"in"
-	>	:DEFAULT
-|	<INSTANCEOF:
-		"instanceof"
-	>	:DEFAULT
-|	<NEW:
-		"new"
-	>	:DEFAULT
-|	<RETURN:
-		"return"
-	> 	:NO_LINE_TERMINATOR_HERE
-|	<SWITCH:
-		"switch"
-	>	:DEFAULT
-|	<THIS:
-		"this"
-	>	:IN_REGEX
-|	<THROW:
-		"throw"
-	>	:NO_LINE_TERMINATOR_HERE
-|	<TRY:
-		"try"
-	>	:DEFAULT
-|	<TYPEOF:
-		"typeof"
-	>	:DEFAULT
-|	<VAR:
-		"var"
-	>	:DEFAULT
-|	<VOID:
-		"void"
-	>	:DEFAULT
-|	<WHILE:
-		"while"
-	>	:DEFAULT
-|	<WITH:
-		"with"
-	>	:DEFAULT
+	<BREAK:	"break">	:NO_LINE_TERMINATOR_HERE
+|	<CASE:	"case">	:DEFAULT
+|	<CATCH:	"catch">	:DEFAULT
+|	<CONTINUE:	"continue">	:NO_LINE_TERMINATOR_HERE
+|	<DEBUGGER:	"debugger">	:DEFAULT
+|	<_DEFAULT:	"default">	:DEFAULT
+|	<DELETE:	"delete">	:DEFAULT
+|	<DO:	"do">	:DEFAULT
+|	<ELSE:	"else">	:DEFAULT
+|	<FINALLY:	"finally">	:DEFAULT
+|	<FOR:	"for">	:DEFAULT
+|	<FUNCTION:	"function">	:DEFAULT
+|	<IF:	"if">	:DEFAULT
+|	<IN:	"in">	:DEFAULT
+|	<INSTANCEOF:	"instanceof">	:DEFAULT
+|	<NEW:	"new">	:DEFAULT
+|	<RETURN:	"return">	:NO_LINE_TERMINATOR_HERE
+|	<SWITCH:	"switch">	:DEFAULT
+|	<THIS:	"this">	:IN_REGEX
+|	<THROW:	"throw">	:NO_LINE_TERMINATOR_HERE
+|	<TRY:	"try">	:DEFAULT
+|	<TYPEOF:	"typeof">	:DEFAULT
+|	<VAR:	"var">	:DEFAULT
+|	<VOID:	"void">	:DEFAULT
+|	<WHILE:	"while">	:DEFAULT
+|	<WITH:	"with">	:DEFAULT
 }
 
 /* ========================================================================== */
@@ -398,27 +332,13 @@ FutureReservedWord :: one of
 <DEFAULT, IN_REGEX, NO_LINE_TERMINATOR_HERE>
 TOKEN :
 {
-	<CLASS:
-		"class"
-	>	:DEFAULT
-|	<CONST:
-		"const"
-	>	:DEFAULT
-|	<ENUM:
-		"enum"
-	>	:DEFAULT
-|	<EXPORT:
-		"export"
-	>	:DEFAULT
-|	<EXTENDS:
-		"extends"
-	>	:DEFAULT
-|	<IMPORT:
-		"import"
-	>	:DEFAULT
-|	<SUPER:
-		"super"
-	>	:DEFAULT
+	<CLASS:	"class">	:DEFAULT
+|	<CONST:	"const">	:DEFAULT
+|	<ENUM:	"enum">	:DEFAULT
+|	<EXPORT:	"export">	:DEFAULT
+|	<EXTENDS:	"extends">	:DEFAULT
+|	<IMPORT:	"import">	:DEFAULT
+|	<SUPER:	"super">	:DEFAULT
 }
 /* ========================================================================== */
 /*
@@ -441,6 +361,21 @@ Punctuator :: one of
 	=	+=	-=	*=	%=	<<=
 	>>=	>>>=	&=	|=	^=
 */
+/* ========================================================================== */
+/* ========================================================================== */
+/* ========================================================================== */
+/* ========================================================================== */
+/* ========================================================================== */
+/* ========================================================================== */
+/* ========================================================================== */
+/* ============================CONTINUE=FROM=HERE============================ */
+/* ========================================================================== */
+/* ========================================================================== */
+/* ========================================================================== */
+/* ========================================================================== */
+/* ========================================================================== */
+/* ========================================================================== */
+/* ========================================================================== */
 
 <DEFAULT, IN_REGEX, NO_LINE_TERMINATOR_HERE>
 TOKEN :
@@ -3814,7 +3749,7 @@ JSContinueStatement ContinueStatement() :
 	"continue"
 	(
 		/* [LineTerminator here] */
-		<NON_SPECIAL_LINE_TERMINATOR>
+		<LINE_TERMINATOR_TOKEN>
 		{
 			return this.builder.continueStatement();
 		}
@@ -3847,7 +3782,7 @@ JSBreakStatement BreakStatement() :
 	"break"
 	(
 		/* [LineTerminator here] */
-		<NON_SPECIAL_LINE_TERMINATOR>
+		<LINE_TERMINATOR_TOKEN>
 		{
 			return this.builder.breakStatement();
 		}
@@ -3880,7 +3815,7 @@ JSReturnStatement ReturnStatement() :
 	"return"
 	(
 		/* [LineTerminator here] */
-		<NON_SPECIAL_LINE_TERMINATOR>
+		<LINE_TERMINATOR_TOKEN>
 		{
 			return this.builder.returnStatement();
 		}
