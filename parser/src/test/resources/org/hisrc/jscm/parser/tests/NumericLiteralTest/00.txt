@@ -1,0 +1,7 @@
+Token [id=DECIMAL_LITERAL, kind=102, image=1.2e+3]
+Token [id=DECIMAL_LITERAL, kind=102, image=4.5E-6]
+Token [id=DECIMAL_LITERAL, kind=102, image=7.e8]
+Token [id=DECIMAL_LITERAL, kind=102, image=9.]
+Token [id=DECIMAL_LITERAL, kind=102, image=.10E11]
+Token [id=DECIMAL_LITERAL, kind=102, image=.12]
+Token [id=DECIMAL_LITERAL, kind=102, image=13]
