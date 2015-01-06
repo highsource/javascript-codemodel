@@ -1,0 +1,1 @@
+Token [id=NULL_LITERAL, kind=100, image=null]
