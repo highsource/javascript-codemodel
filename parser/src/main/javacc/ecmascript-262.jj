@@ -562,46 +562,32 @@ SignedInteger ::
 TOKEN:
 { 
 	<DECIMAL_LITERAL:
-		<DECIMAL_INTEGER_LITERAL>
-		"."
-		(
-			<DECIMAL_DIGITS>
-		) ?
-		(
-			<EXPONENT_PART>
-		) ?
-	|	"."
-		<DECIMAL_DIGITS>
-		(
-			<EXPONENT_PART>
-		) ?
-	|	<DECIMAL_INTEGER_LITERAL>
-		(
-			<EXPONENT_PART>
-		) ? 
+		<DECIMAL_INTEGER_LITERAL> "." ( <DECIMAL_DIGITS> ) ? ( <EXPONENT_PART> ) ?
+	|	"."	<DECIMAL_DIGITS> ( <EXPONENT_PART> ) ?
+	|	<DECIMAL_INTEGER_LITERAL> (	<EXPONENT_PART> ) ? 
 	> 	:IN_REGEX
-|	<#DECIMAL_DIGITS:
-		(
-			<DECIMAL_DIGIT>
-		) +
-	>
-|	<#DECIMAL_DIGIT:
-		["0"-"9"]
-	>
-|	<#NON_ZERO_DIGIT:
-		["1"-"9"]
-	>
-|	<#EXPONENT_PART:
-		(
-			"e"
-		|	"E"
-		)
-		(
-			["+", "-"]
-		) ?
-		<DECIMAL_DIGITS>
-	>
+|	<#DECIMAL_DIGITS: ( <DECIMAL_DIGIT> ) +>
+|	<#DECIMAL_DIGIT: ["0"-"9"]>
+|	<#NON_ZERO_DIGIT: ["1"-"9"]>
+|	<#EXPONENT_PART: ( "e" | "E" ) ( ["+", "-"] ) ? <DECIMAL_DIGITS>>
+|	<#DECIMAL_INTEGER_LITERAL:  "0" | <NON_ZERO_DIGIT> ( <DECIMAL_DIGITS> ) ? >
 }
+
+/*
+HexIntegerLiteral ::
+	0x HexDigit
+	0X HexDigit
+	HexIntegerLiteral HexDigit
+*/
+<DEFAULT, IN_REGEX, NO_LINE_TERMINATOR_HERE>
+TOKEN:
+{
+	<HEX_INTEGER_LITERAL: "0" ["x", "X"] ( <HEX_DIGIT> ) +>	:IN_REGEX
+}
+
+/* ========================================================================== */
+/* 7.8.4 String Literals */
+/* ========================================================================== */
 
 /* ========================================================================== */
 /* ========================================================================== */
@@ -617,40 +603,6 @@ TOKEN:
 /* ========================================================================== */
 /* ========================================================================== */
 /* ========================================================================== */
-/* ========================================================================== */
-
-<DEFAULT, IN_REGEX, NO_LINE_TERMINATOR_HERE>
-TOKEN:
-{
-	<DECIMAL_INTEGER_LITERAL: 
-		"0"
-	|	<NON_ZERO_DIGIT>
-		(
-			<DECIMAL_DIGITS>
-		) ?
-	> :IN_REGEX
-}
-
-/*
-HexIntegerLiteral ::
-	0x HexDigit
-	0X HexDigit
-	HexIntegerLiteral HexDigit
-*/
-<DEFAULT, IN_REGEX, NO_LINE_TERMINATOR_HERE>
-TOKEN:
-{
-	<HEX_INTEGER_LITERAL:
-		"0"
-		["x", "X"]
-		(
-			<HEX_DIGIT>
-		) +
-	>	:IN_REGEX
-}
-
-/* ========================================================================== */
-/* 7.8.4 String Literals */
 /* ========================================================================== */
 
 JSStringLiteral StringLiteral() :
