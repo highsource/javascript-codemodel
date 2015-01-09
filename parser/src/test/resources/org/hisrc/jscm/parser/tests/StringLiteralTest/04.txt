@@ -1,0 +1,2 @@
+Token [id=STRING_LITERAL, kind=109, image="\\xAB"]
+Token [id=STRING_LITERAL, kind=109, image="\\xcd"]

@@ -1,0 +1,4 @@
+Token [id=STRING_LITERAL, kind=109, image=""]
+Token [id=STRING_LITERAL, kind=109, image='']
+Token [id=STRING_LITERAL, kind=109, image="'"]
+Token [id=STRING_LITERAL, kind=109, image='"']
