@@ -23,12 +23,14 @@ import org.hisrc.jscm.codemodel.literal.JSDecimalIntegerLiteral;
 import org.hisrc.jscm.codemodel.literal.JSDecimalNonIntegerLiteral;
 import org.hisrc.jscm.codemodel.literal.JSHexIntegerLiteral;
 import org.hisrc.jscm.codemodel.literal.JSNullLiteral;
+import org.hisrc.jscm.codemodel.literal.JSOctalIntegerLiteral;
 import org.hisrc.jscm.codemodel.literal.JSStringLiteral;
 import org.hisrc.jscm.codemodel.literal.impl.BooleanLiteralImpl;
 import org.hisrc.jscm.codemodel.literal.impl.DecimalIntegerLiteralImpl;
 import org.hisrc.jscm.codemodel.literal.impl.DecimalNonIntegerLiteralImpl;
 import org.hisrc.jscm.codemodel.literal.impl.HexIntegerLiteralImpl;
 import org.hisrc.jscm.codemodel.literal.impl.NullLiteralImpl;
+import org.hisrc.jscm.codemodel.literal.impl.OctalIntegerLiteralImpl;
 import org.hisrc.jscm.codemodel.literal.impl.StringLiteralImpl;
 
 public class CodeModelImpl implements JSCodeModel {
@@ -85,6 +87,12 @@ public class CodeModelImpl implements JSCodeModel {
 	public JSHexIntegerLiteral hexInteger(BigInteger value) {
 		Validate.notNull(value);
 		return new HexIntegerLiteralImpl(this, value);
+	}
+
+	@Override
+	public JSOctalIntegerLiteral octalInteger(BigInteger value) {
+		Validate.notNull(value);
+		return new OctalIntegerLiteralImpl(this, value);
 	}
 
 	@Override

@@ -15,4 +15,5 @@ public interface JSLiteralVisitor<V, E extends Exception> {
 	
 	public V visit(JSHexIntegerLiteral value) throws E;
 
+	public V visit(JSOctalIntegerLiteral value) throws E;
 }

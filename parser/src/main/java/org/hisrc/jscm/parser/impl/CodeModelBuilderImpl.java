@@ -33,6 +33,7 @@ import org.hisrc.jscm.codemodel.literal.JSDecimalIntegerLiteral;
 import org.hisrc.jscm.codemodel.literal.JSDecimalLiteral;
 import org.hisrc.jscm.codemodel.literal.JSHexIntegerLiteral;
 import org.hisrc.jscm.codemodel.literal.JSNullLiteral;
+import org.hisrc.jscm.codemodel.literal.JSOctalIntegerLiteral;
 import org.hisrc.jscm.codemodel.literal.JSStringLiteral;
 import org.hisrc.jscm.codemodel.statement.JSBlock;
 import org.hisrc.jscm.codemodel.statement.JSBreakStatement;
@@ -169,6 +170,14 @@ public class CodeModelBuilderImpl implements JSCodeModelBuilder {
 		// TODO Incorrect
 		return codeModel
 				.hexInteger(new BigInteger(token.image.substring(2), 16));
+	}
+
+	@Override
+	public JSOctalIntegerLiteral octalIntegerLiteral(Token token)
+			throws ParseException {
+		// TODO Incorrect
+		return codeModel
+				.octalInteger(new BigInteger(token.image.substring(2), 16));
 	}
 
 	@Override

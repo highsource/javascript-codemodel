@@ -9,6 +9,7 @@ import org.hisrc.jscm.codemodel.literal.JSDecimalNonIntegerLiteral;
 import org.hisrc.jscm.codemodel.literal.JSHexIntegerLiteral;
 import org.hisrc.jscm.codemodel.literal.JSLiteralVisitor;
 import org.hisrc.jscm.codemodel.literal.JSNullLiteral;
+import org.hisrc.jscm.codemodel.literal.JSOctalIntegerLiteral;
 import org.hisrc.jscm.codemodel.literal.JSStringLiteral;
 
 public class LiteralWriter implements
@@ -53,4 +54,8 @@ public class LiteralWriter implements
 		return f.hexInteger(value.asNumber());
 	}
 
+	@Override
+	public CodeWriter visit(JSOctalIntegerLiteral value) throws IOException {
+		return f.octalInteger(value.asNumber());
+	}
 }

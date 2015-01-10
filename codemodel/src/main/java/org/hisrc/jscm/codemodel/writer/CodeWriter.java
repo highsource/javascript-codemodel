@@ -80,6 +80,13 @@ public class CodeWriter {
 		return this;
 	}
 
+	public CodeWriter octalInteger(BigInteger value) throws IOException {
+		Validate.notNull(value);
+		writer.append("0");
+		writer.append(value.toString(8));
+		return this;
+	}
+
 	public CodeWriter indented() {
 		return new CodeWriter(writer.indent(INDENTATION));
 	}
