@@ -75,6 +75,9 @@ public interface JSCodeModelBuilder {
 
 	public JSStringLiteral stringLiteral(Token token) throws ParseException;
 
+	public JSOctalIntegerLiteral octalIntegerLiteral(Token token)
+			throws ParseException;
+
 	public JSHexIntegerLiteral hexIntegerLiteral(Token token)
 			throws ParseException;
 

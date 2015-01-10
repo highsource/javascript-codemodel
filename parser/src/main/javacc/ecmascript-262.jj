@@ -436,6 +436,10 @@ JSLiteral Literal() :
 	{
 		return this.builder.decimalLiteral(token);
 	}
+|	t = <OCTAL_INTEGER_LITERAL>
+	{
+		return this.builder.octalIntegerLiteral(token);
+	}
 |	t = <HEX_INTEGER_LITERAL>
 	{
 		return this.builder.hexIntegerLiteral(token);
@@ -583,6 +587,17 @@ HexIntegerLiteral ::
 TOKEN:
 {
 	<HEX_INTEGER_LITERAL: "0" ["x", "X"] ( <HEX_DIGIT> ) +>	:IN_REGEX
+}
+
+/*
+OctalIntegerLiteral ::
+	0 OctalDigit
+	OctalIntegerLiteral OctalDigit
+*/
+<DEFAULT, IN_REGEX, NO_LINE_TERMINATOR_HERE>
+TOKEN:
+{
+	<OCTAL_INTEGER_LITERAL: "0" ( <OCTAL_DIGIT> ) +>	:IN_REGEX
 }
 
 /* ========================================================================== */
