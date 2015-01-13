@@ -434,19 +434,19 @@ JSLiteral Literal() :
 {
 	t = <DECIMAL_LITERAL>
 	{
-		return this.builder.decimalLiteral(token);
+		return this.builder.decimalLiteral(t);
 	}
 |	t = <OCTAL_INTEGER_LITERAL>
 	{
-		return this.builder.octalIntegerLiteral(token);
+		return this.builder.octalIntegerLiteral(t);
 	}
 |	t = <HEX_INTEGER_LITERAL>
 	{
-		return this.builder.hexIntegerLiteral(token);
+		return this.builder.hexIntegerLiteral(t);
 	}
 |	t = <STRING_LITERAL>
 	{
-		return this.builder.stringLiteral(token);
+		return this.builder.stringLiteral(t);
 	}
 |	t = <BOOLEAN_LITERAL>
 	{
@@ -574,7 +574,11 @@ TOKEN:
 |	<#DECIMAL_DIGIT: ["0"-"9"]>
 |	<#NON_ZERO_DIGIT: ["1"-"9"]>
 |	<#EXPONENT_PART: ( "e" | "E" ) ( ["+", "-"] ) ? <DECIMAL_DIGITS>>
-|	<#DECIMAL_INTEGER_LITERAL:  "0" | <NON_ZERO_DIGIT> ( <DECIMAL_DIGITS> ) ? >
+|	<#DECIMAL_INTEGER_LITERAL:
+		// TODO Add this to allow 09 -> 9
+		"0" ( <OCTAL_DIGIT> ) * ( ["8"-"9"] ) ( <DECIMAL_DIGITS> ) ?
+	|	"0" 
+	|	<NON_ZERO_DIGIT> ( <DECIMAL_DIGITS> ) ? >
 }
 
 /*
@@ -733,22 +737,6 @@ HexEscapeSequence ::
 }
 
 /* ========================================================================== */
-/* ========================================================================== */
-/* ========================================================================== */
-/* ========================================================================== */
-/* ========================================================================== */
-/* ========================================================================== */
-/* ========================================================================== */
-/* ============================CONTINUE=FROM=HERE============================ */
-/* ========================================================================== */
-/* ========================================================================== */
-/* ========================================================================== */
-/* ========================================================================== */
-/* ========================================================================== */
-/* ========================================================================== */
-/* ========================================================================== */
-
-/* ========================================================================== */
 /* 7.8.5 Regular Expression Literals */
 /* ========================================================================== */
 
@@ -768,15 +756,7 @@ RegularExpressionFlags ::
 	[empty]
 	RegularExpressionFlags IdentifierPart
 */
-	<REGULAR_EXPRESSION_LITERAL:
-		"/"
-		<REGULAR_EXPRESSION_BODY>
-		"/"
-		(
-			<IDENTIFIER_PART>
-		) *
-	>
-|
+	<REGULAR_EXPRESSION_LITERAL: "/" <REGULAR_EXPRESSION_BODY> "/" ( <IDENTIFIER_PART> ) *> :IN_REGEX
 /*
 RegularExpressionBody ::
 	RegularExpressionFirstChar RegularExpressionChars
@@ -786,13 +766,7 @@ RegularExpressionChars ::
 	[empty]
 	RegularExpressionChars RegularExpressionChar
 */
-	<#REGULAR_EXPRESSION_BODY:
-		<REGULAR_EXPRESSION_FIRST_CHAR>
-		(
-			<REGULAR_EXPRESSION_CHAR>
-		) *
-	>
-|
+|	<#REGULAR_EXPRESSION_BODY: <REGULAR_EXPRESSION_FIRST_CHAR> ( <REGULAR_EXPRESSION_CHAR> ) *>
 /*
 RegularExpressionChar ::
 	RegularExpressionNonTerminator but not one of \ or / or [
@@ -803,44 +777,40 @@ RegularExpressionChar ::
 RegularExpressionNonTerminator ::
 	SourceCharacter but not LineTerminator
 */
-	<#REGULAR_EXPRESSION_CHAR:
+|	<#REGULAR_EXPRESSION_CHAR:
     	~[ "\r" , "\n" , "\u2028" , "\u2029", "\\", "/", "[" ]
 	|	<REGULAR_EXPRESSION_BACKSLASH_SEQUENCE>
 	|	<REGULAR_EXPRESSION_CLASS>
 	>
-|
 /*
 RegularExpressionFirstChar ::
 	RegularExpressionNonTerminator but not one of * or \ or / or [
 	RegularExpressionBackslashSequence
 	RegularExpressionClass
 */
-	<#REGULAR_EXPRESSION_FIRST_CHAR: 
+|	<#REGULAR_EXPRESSION_FIRST_CHAR: 
 		~[ "\r" , "\n" , "\u2028" , "\u2029", "*", "\\", "/", "[" ]
 	|	<REGULAR_EXPRESSION_BACKSLASH_SEQUENCE>
 	|	<REGULAR_EXPRESSION_CLASS>
 	>
-|
 /*
 RegularExpressionBackslashSequence ::
 	\ RegularExpressionNonTerminator
 */
-	<#REGULAR_EXPRESSION_BACKSLASH_SEQUENCE:
+|	<#REGULAR_EXPRESSION_BACKSLASH_SEQUENCE:
 		"\\" ~[ "\r" , "\n" , "\u2028" , "\u2029" ]
 	>
-|
 /*
 RegularExpressionClass ::
 	[ RegularExpressionClassChars ]
 */
-	<#REGULAR_EXPRESSION_CLASS:
+|	<#REGULAR_EXPRESSION_CLASS:
 		"["
 		(
 			<REGULAR_EXPRESSION_CLASS_CHAR>
 		) *
 		"]"
 	>
-|
 /*
 RegularExpressionClassChars ::
 	[empty]
@@ -851,7 +821,7 @@ RegularExpressionClassChar ::
 	RegularExpressionNonTerminator but not one of ] or \
 	RegularExpressionBackslashSequence
 */
-	<#REGULAR_EXPRESSION_CLASS_CHAR:
+|	<#REGULAR_EXPRESSION_CLASS_CHAR:
 		~[ "\r" , "\n" , "\u2028" , "\u2029", "\\", "]" ]
 	|	<REGULAR_EXPRESSION_BACKSLASH_SEQUENCE>
 	>
@@ -890,6 +860,11 @@ JSIdentifierName IdentifierName() :
 	{
 		return this.builder.identifierName(t);
 	}
+	// TODO
+/*|	t = <RESERVED_KEYWORD>
+	{
+		return this.builder.identifierName(t);
+	}*/
 }
 
 <DEFAULT, IN_REGEX, NO_LINE_TERMINATOR_HERE>
@@ -900,13 +875,7 @@ IdentifierName ::
 	IdentifierStart
 	IdentifierName IdentifierPart
 */
-	<IDENTIFIER_NAME:
-		<IDENTIFIER_START>
-		(
-			<IDENTIFIER_PART>
-		) *
-	>	:IN_REGEX
-|
+	<IDENTIFIER_NAME:	<IDENTIFIER_START> ( <IDENTIFIER_PART> ) *>	:IN_REGEX
 /*
 IdentifierStart ::
 	UnicodeLetter
@@ -914,13 +883,12 @@ IdentifierStart ::
 	_
 	\ UnicodeEscapeSequence
 */
-	<#IDENTIFIER_START:
+|	<#IDENTIFIER_START:
 		<UNICODE_LETTER>
 	|	"$"
 	|	"_"
 	|	"\\" <UNICODE_ESCAPE_SEQUENCE> /* Was without \ */
 	>
-|
 /*
 IdentifierPart ::
 	IdentifierStart
@@ -930,7 +898,7 @@ IdentifierPart ::
 	<ZWNJ>
 	<ZWJ>
 */
-	<#IDENTIFIER_PART: 
+|	<#IDENTIFIER_PART: 
 		<IDENTIFIER_START>
 	|	<UNICODE_COMBINING_MARK>
 	|	<UNICODE_DIGIT>
@@ -1212,18 +1180,12 @@ UnicodeLetter ::
 UnicodeEscapeSequence ::
 	u HexDigit HexDigit HexDigit HexDigit
 */
-|	<#UNICODE_ESCAPE_SEQUENCE:
-		"u"
-		<HEX_DIGIT>
-		<HEX_DIGIT>
-		<HEX_DIGIT>
-		<HEX_DIGIT>
-	>
+|	<#UNICODE_ESCAPE_SEQUENCE:	"u" <HEX_DIGIT> <HEX_DIGIT> <HEX_DIGIT> <HEX_DIGIT>>
 /*
 UnicodeCombiningMark ::
 	any character in the Unicode categories Non-spacing mark (Mn) or Combining spacing mark (Mc)
 */
-/* TODO */
+/* TODO Check characters */
 |	<#UNICODE_COMBINING_MARK:
 		["\u0300"-"\u034E"] 
 	|	["\u0360"-"\u0362"] 
@@ -1496,7 +1458,7 @@ UnicodeCombiningMark ::
 UnicodeDigit ::
 	any character in the Unicode category Decimal number (Nd)
 */
-|	<UNICODE_DIGIT: 
+|	<#UNICODE_DIGIT: 
 		["\u0030"-"\u0039"] 
 	|	["\u0660"-"\u0669"] 
 	|	["\u06F0"-"\u06F9"] 
@@ -1531,12 +1493,8 @@ UnicodeConnectorPunctuation ::
 	|	["\uFF3F"]
 	|	["\uFF65"]
 	>	 	
-|	<#ZWNJ:
-		"\u200D"
-	> 
-|	<#ZWJ:
-		"\u200C"
-	>
+|	<#ZWNJ:	"\u200D"> 
+|	<#ZWJ:	"\u200C">
 }
 
 /* ========================================================================== */
@@ -1550,7 +1508,7 @@ HexDigit :: one of
 <DEFAULT, IN_REGEX, NO_LINE_TERMINATOR_HERE>
 TOKEN:
 {
-	<HEX_DIGIT:
+	<#HEX_DIGIT:
 		["0"-"9"]
 	|	["a"-"f"]
 	|	["A"-"F"]
@@ -1566,46 +1524,22 @@ TOKEN:
 {
 	<#OCTAL_DIGIT:	["0"-"7"]>
 }
-/* ========================================================================== */
-/* ========================================================================== */
-/* ========================================================================== */
-/* ========================================================================== */
-/* ========================================================================== */
-/* ========================================================================== */
-/* ========================================================================== */
-/* ========================================================================== */
-/* ========================================================================== */
-/* ========================================================================== */
-/* ========================================================================== */
-/* ========================================================================== */
-/* ========================================================================== */
-/* ========================================================================== */
-/* ========================================================================== */
-/* ========================================================================== */
-/* ========================================================================== */
-/* ========================================================================== */
-/* ========================================================================== */
-/* ========================================================================== */
-/* ========================================================================== */
-/* ========================================================================== */
-/* ========================================================================== */
-/* ========================================================================== */
-/* ========================================================================== */
-/* ========================================================================== */
-/* ========================================================================== */
-/* ========================================================================== */
-/* ========================================================================== */
-/* ========================================================================== */
-/* ========================================================================== */
-/* ========================================================================== */
-/* ========================================================================== */
-/* ========================================================================== */
-/* ========================================================================== */
-/* ========================================================================== */
-/* ========================================================================== */
-/* ========================================================================== */
-/* ========================================================================== */
 
+/* ========================================================================== */
+/* ========================================================================== */
+/* ========================================================================== */
+/* ========================================================================== */
+/* ========================================================================== */
+/* ========================================================================== */
+/* ========================================================================== */
+/* ============================CONTINUE=FROM=HERE============================ */
+/* ========================================================================== */
+/* ========================================================================== */
+/* ========================================================================== */
+/* ========================================================================== */
+/* ========================================================================== */
+/* ========================================================================== */
+/* ========================================================================== */
 
 /* ========================================================================== */
 /* 11 Expressions */
@@ -3155,6 +3089,9 @@ JSVariableDeclaration[] VariableDeclarationList() :
 }
 {
 	variableDeclaration = VariableDeclaration()
+	{
+		variableDeclarationList.add(variableDeclaration);
+	}
 	(
 		","
 		variableDeclaration = VariableDeclaration()
