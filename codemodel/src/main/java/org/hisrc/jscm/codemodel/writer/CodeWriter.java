@@ -32,6 +32,10 @@ public class CodeWriter {
 		Validate.notNull(writer);
 		this.writer = writer;
 	}
+	
+	protected ExpressionWriter createExpressionWriter() {
+		return new ExpressionWriter(this);
+	}
 
 	public CodeWriter identifier(String identifier) throws IOException {
 		Validate.notNull(identifier);
@@ -150,11 +154,20 @@ public class CodeWriter {
 		writer.append(']');
 		return this;
 	}
-
-	public CodeWriter expression(JSExpression expression) throws IOException {
-		expression.acceptExpressionVisitor(new ExpressionWriter(this));
+	
+	public CodeWriter inlineComment(String comment) throws IOException {
+		writer.append("/*");
+		// TODO Check 
+		writer.append(comment);
+		writer.append("*/");
 		return this;
 	}
+
+	public CodeWriter expression(JSExpression expression) throws IOException {
+		expression.acceptExpressionVisitor(createExpressionWriter());
+		return this;
+	}
+
 
 	public CodeWriter statement(JSStatement statement) throws IOException {
 		statement.acceptStatementVisitor(new StatementWriter(this));
@@ -193,7 +206,11 @@ public class CodeWriter {
 	}
 
 	public CodeWriter literal(JSLiteral literal) throws IOException {
-		return literal.acceptLiteralVisitor(new LiteralWriter(this));
+		return literal.acceptLiteralVisitor(createLiteralWriter());
+	}
+
+	protected LiteralWriter createLiteralWriter() {
+		return new LiteralWriter(this);
 	}
 
 	public CodeWriter propertyName(JSPropertyName propertyName)
