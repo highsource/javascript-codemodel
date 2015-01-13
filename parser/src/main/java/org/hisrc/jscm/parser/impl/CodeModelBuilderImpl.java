@@ -1,5 +1,6 @@
 package org.hisrc.jscm.parser.impl;
 
+import java.math.BigDecimal;
 import java.math.BigInteger;
 
 import org.hisrc.jscm.codemodel.JSCodeModel;
@@ -148,14 +149,15 @@ public class CodeModelBuilderImpl implements JSCodeModelBuilder {
 
 	@Override
 	public JSDecimalLiteral decimalLiteral(Token token) throws ParseException {
-		return null;
+		// TODO Incorrect
+		return getCodeModel().decimal(new BigDecimal(token.image));
 	}
 
 	@Override
 	public JSDecimalIntegerLiteral decimalIntegerLiteral(Token token)
 			throws ParseException {
-		// TODO Auto-generated method stub
-		return null;
+		// TODO Incorrect
+		return getCodeModel().integer(new BigInteger(token.image));
 	}
 
 	@Override
@@ -177,7 +179,7 @@ public class CodeModelBuilderImpl implements JSCodeModelBuilder {
 			throws ParseException {
 		// TODO Incorrect
 		return codeModel
-				.octalInteger(new BigInteger(token.image.substring(2), 16));
+				.octalInteger(new BigInteger(token.image, 8));
 	}
 
 	@Override
