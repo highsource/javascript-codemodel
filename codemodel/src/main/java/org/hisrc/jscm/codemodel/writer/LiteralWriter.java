@@ -15,7 +15,7 @@ import org.hisrc.jscm.codemodel.literal.JSStringLiteral;
 public class LiteralWriter implements
 		JSLiteralVisitor<CodeWriter, IOException> {
 
-	private final CodeWriter f;
+	protected final CodeWriter f;
 
 	public LiteralWriter(CodeWriter formatter) {
 		Validate.notNull(formatter);
