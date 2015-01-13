@@ -9,6 +9,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 import org.apache.commons.io.IOUtils;
+import org.junit.Assert;
 import org.junit.Test;
 
 public abstract class AbstractDualResourceBasedTest {
@@ -25,15 +26,15 @@ public abstract class AbstractDualResourceBasedTest {
 		final List<ResourceNamePair> resourceNamePairs = new LinkedList<ResourceNamePair>();
 		boolean sourceResourceExists = true;
 		boolean targetResourceExists = true;
-		int i = 0;
+		int i = -1;
 		String sourceResourceName;
 		String targetResourceName;
 		do {
+			i++;
 			sourceResourceName = MessageFormat.format(
 					getSourceResourceNamePattern(), i);
 			targetResourceName = MessageFormat.format(
 					getTargetResourceNamePattern(), i);
-			i++;
 			sourceResourceExists = isResourceExists(sourceResourceName);
 			if (sourceResourceExists) {
 				targetResourceExists = isResourceExists(targetResourceName);
@@ -48,6 +49,10 @@ public abstract class AbstractDualResourceBasedTest {
 						targetResourceName));
 			}
 		} while (sourceResourceExists);
+		if (i == 0)
+		{
+			Assert.fail("At least one test resource is expected.");
+		}
 		return new ArrayList<ResourceNamePair>(resourceNamePairs);
 	}
 
