@@ -9,11 +9,11 @@ public class HexIntegerParser implements Parser<BigInteger> {
 
 	public static final Parser<BigInteger> INSTANCE = new HexIntegerParser();
 
-	public BigInteger parse(String hexIntegerLiteral) throws ParseException {
-		Validate.notNull(hexIntegerLiteral);
-		final HexIntegerLiteralParser hilp = new HexIntegerLiteralParser(
-				new StringReader(hexIntegerLiteral));
-		final BigInteger hexInteger = hilp.HexIntegerLiteral();
+	public BigInteger parse(String string) throws ParseException {
+		Validate.notNull(string);
+		final HexIntegerLiteralParser parser = new HexIntegerLiteralParser(
+				new StringReader(string));
+		final BigInteger hexInteger = parser.HexIntegerLiteral();
 		return hexInteger;
 
 	}
