@@ -1,0 +1,160 @@
+options {
+	STATIC = false;
+	DEBUG_PARSER = false;
+	DEBUG_TOKEN_MANAGER = false;
+	JAVA_UNICODE_ESCAPE = false;
+	UNICODE_INPUT = true;
+	JDK_VERSION = "1.5";
+}
+
+PARSER_BEGIN(DecimalLiteralParser)
+
+package org.hisrc.jscm.parser;
+
+import java.math.BigDecimal;
+import java.math.BigInteger;
+
+
+public class DecimalLiteralParser {
+
+
+}
+PARSER_END(DecimalLiteralParser)
+
+TOKEN:
+{
+	<ZERO_DIGIT:	"0">
+/*
+NonZeroDigit :: one of
+	1 2 3 4 5 6 7 8 9
+*/
+|	<NON_ZERO_DIGIT:	["1"-"9"]>
+|	<DOT:	".">
+/*
+ExponentIndicator :: one of
+	e E
+*/
+|	<EXPONENT_INDICATOR:	("e" | "E")>
+|	<PLUS:	"+"> 
+|	<MINUS:	"-">
+}
+
+/*
+DecimalLiteral ::
+	DecimalIntegerLiteral . DecimalDigits_opt ExponentPart_opt
+	. DecimalDigits ExponentPart_opt
+	DecimalIntegerLiteral ExponentPart_opt
+
+DecimalIntegerLiteral ::
+	0
+	NonZeroDigit DecimalDigits_opt
+
+DecimalDigit :: one of
+	0 1 2 3 4 5 6 7 8 9
+*/
+
+
+void DecimalLiteral():
+{
+	BigInteger integerPart = BigInteger.ZERO;
+	BigDecimal fractionalPart = BigDecimal.ZERO;
+	BigInteger exponent = null;
+}
+{
+	<DOT>
+	fractionalPart = FractionalPart()
+	(
+		exponent = ExponentPart()
+	) ?
+|	integerPart = DecimalDigits()
+	(
+		<DOT>
+		( fractionalPart = FractionalPart() ) ?
+		( exponent = ExponentPart() ) ?
+	|	exponent = ExponentPart()
+	)?
+}
+
+/*
+DecimalDigits ::
+	DecimalDigit
+	DecimalDigits DecimalDigit
+*/
+BigInteger DecimalDigits() :
+{
+	DecimalIntegerBuilder builder = new DecimalIntegerBuilder();
+	Token digitToken;
+}
+{
+	(
+		(digitToken = <ZERO_DIGIT> | digitToken = <NON_ZERO_DIGIT>)
+		{
+			builder.append(digitToken.image);
+		}
+	) +
+	{
+		return builder.value();
+	}
+}
+
+BigDecimal FractionalPart():
+{
+	DecimalFractionalBuilder builder = new DecimalFractionalBuilder();
+	Token digitToken;
+}
+{
+	<DOT>
+	(
+		(digitToken = <ZERO_DIGIT> | digitToken = <NON_ZERO_DIGIT>)
+		{
+			builder.append(digitToken.image);
+		}
+	) *
+	{
+		return builder.value();
+	}
+}
+
+/*
+ExponentPart ::
+	ExponentIndicator SignedInteger
+*/
+BigInteger ExponentPart() :
+{
+	BigInteger value = null;
+}
+{
+	<EXPONENT_INDICATOR>
+	value = SignedInteger()
+	{
+		return value;
+	}
+}
+
+/*
+SignedInteger ::
+	DecimalDigits
+	+ DecimalDigits
+	- DecimalDigits
+*/
+BigInteger SignedInteger() :
+{
+	BigInteger value = null;
+	BigInteger sign = BigInteger.ONE;
+}
+{
+	(
+		<PLUS>
+		{
+			sign = BigInteger.ONE;
+		}
+	|	<MINUS>
+		{
+			sign = BigInteger.ONE.negate();
+		}
+	) ?
+	value = DecimalDigits()
+	{
+		return value.multiply(sign);
+	}
+}
