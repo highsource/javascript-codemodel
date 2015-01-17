@@ -1,0 +1,63 @@
+options {
+	STATIC = false;
+	DEBUG_PARSER = false;
+	DEBUG_TOKEN_MANAGER = false;
+	JAVA_UNICODE_ESCAPE = false;
+	UNICODE_INPUT = true;
+	JDK_VERSION = "1.5";
+}
+
+PARSER_BEGIN(HexIntegerLiteralParser)
+
+package org.hisrc.jscm.parser;
+
+import java.math.BigInteger;
+
+
+public class HexIntegerLiteralParser {
+
+
+}
+PARSER_END(HexIntegerLiteralParser)
+
+/*
+HexIntegerLiteral ::
+	0x HexDigit
+	0X HexDigit
+	HexIntegerLiteral HexDigit
+*/
+TOKEN:
+{
+	<HEX_INTEGER_LITERAL_PREFIX:	"0" ["x", "X"]>
+}
+
+/*
+HexDigit :: one of
+	0 1 2 3 4 5 6 7 8 9 a b c d e f A B C D E F
+*/
+TOKEN:
+{
+	<HEX_DIGIT:
+		["0"-"9"]
+	|	["a"-"f"]
+	|	["A"-"F"]
+	>
+}
+
+BigInteger HexIntegerLiteral() :
+{
+	final HexIntegerBuilder builder = new HexIntegerBuilder();
+	Token digitToken;
+}
+{
+	<HEX_INTEGER_LITERAL_PREFIX>
+	(
+		digitToken = <HEX_DIGIT>
+		{
+			builder.append(digitToken.image);
+		}
+	) +
+	{
+		return builder.bigIntegerValue();
+	}
+}
