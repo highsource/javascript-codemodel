@@ -58,6 +58,6 @@ BigInteger HexIntegerLiteral() :
 		}
 	) +
 	{
-		return builder.bigIntegerValue();
+		return builder.value();
 	}
 }

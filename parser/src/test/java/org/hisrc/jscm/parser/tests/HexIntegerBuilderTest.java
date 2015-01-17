@@ -10,7 +10,7 @@ public class HexIntegerBuilderTest {
 	public void check() {
 		Assert.assertEquals(0xA0,
 				new HexIntegerBuilder().append("A").append("0")
-						.bigIntegerValue().longValue());
+						.value().longValue());
 
 	}
 }
