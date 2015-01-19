@@ -12,6 +12,7 @@ PARSER_BEGIN(HexIntegerLiteralParser)
 package org.hisrc.jscm.parser;
 
 import java.math.BigInteger;
+import org.hisrc.jscm.parser.literal.HexIntegerBuilder;
 
 
 public class HexIntegerLiteralParser {

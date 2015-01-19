@@ -12,7 +12,7 @@ PARSER_BEGIN(OctalIntegerLiteralParser)
 package org.hisrc.jscm.parser;
 
 import java.math.BigInteger;
-
+import org.hisrc.jscm.parser.literal.OctalIntegerBuilder;
 
 public class OctalIntegerLiteralParser {
 

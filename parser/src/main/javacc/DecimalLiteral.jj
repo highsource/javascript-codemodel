@@ -9,11 +9,12 @@ options {
 
 PARSER_BEGIN(DecimalLiteralParser)
 
-package org.hisrc.jscm.parser;
+package org.hisrc.jscm.parser.literal;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
-
+import org.hisrc.jscm.parser.literal.DecimalIntegerBuilder;
+import org.hisrc.jscm.parser.literal.DecimalFractionBuilder;
 
 public class DecimalLiteralParser {
 
@@ -54,25 +55,51 @@ DecimalDigit :: one of
 */
 
 
-void DecimalLiteral():
+BigDecimal DecimalLiteral():
 {
-	BigInteger integerPart = BigInteger.ZERO;
-	BigDecimal fractionalPart = BigDecimal.ZERO;
+	BigInteger integerPart = null;
+	BigDecimal fractionalPart = null;
 	BigInteger exponent = null;
+	BigDecimal value = null;
 }
 {
 	<DOT>
 	fractionalPart = FractionalPart()
+	{
+		value = fractionalPart;
+	}
 	(
 		exponent = ExponentPart()
+		{
+			value = value.pow(exponent.intValue());
+		}
 	) ?
 |	integerPart = DecimalDigits()
+	{
+		value = new BigDecimal(integerPart);
+	}
 	(
 		<DOT>
-		( fractionalPart = FractionalPart() ) ?
-		( exponent = ExponentPart() ) ?
+		(
+			fractionalPart = FractionalPart()
+			{
+				value = value.add(fractionalPart);
+			}
+		) ?
+		(
+			exponent = ExponentPart()
+			{
+				value = value.pow(exponent.intValue());
+			}
+		) ?
 	|	exponent = ExponentPart()
+		{
+			value = value.pow(exponent.intValue());
+		}
 	)?
+	{
+		return value;
+	}
 }
 
 /*
@@ -99,7 +126,7 @@ BigInteger DecimalDigits() :
 
 BigDecimal FractionalPart():
 {
-	DecimalFractionalBuilder builder = new DecimalFractionalBuilder();
+	DecimalFractionBuilder builder = new DecimalFractionBuilder();
 	Token digitToken;
 }
 {

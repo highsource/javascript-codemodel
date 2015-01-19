@@ -1,13 +1,15 @@
-package org.hisrc.jscm.parser;
+package org.hisrc.jscm.parser.literal;
 
 import java.io.StringReader;
 import java.math.BigInteger;
 
 import org.apache.commons.lang3.Validate;
+import org.hisrc.jscm.parser.OctalIntegerLiteralParser;
+import org.hisrc.jscm.parser.ParseException;
 
-public class OctalIntegerParser implements Parser<BigInteger> {
+public class OctalIntegerParser implements TypedLiteralParser<BigInteger> {
 
-	public static final Parser<BigInteger> INSTANCE = new OctalIntegerParser();
+	public static final TypedLiteralParser<BigInteger> INSTANCE = new OctalIntegerParser();
 
 	public BigInteger parse(String string) throws ParseException {
 		Validate.notNull(string);

@@ -1,28 +1,13 @@
-package org.hisrc.jscm.parser;
+package org.hisrc.jscm.parser.literal;
 
 import java.math.BigDecimal;
 import java.text.MessageFormat;
-import java.util.HashMap;
 import java.util.Map;
 
-public class DecimalFractionalBuilder {
-
-	private static final Map<String, Byte> DIGIT_MAP = new HashMap<String, Byte>();
-	{
-		DIGIT_MAP.put("0", (byte) 0);
-		DIGIT_MAP.put("1", (byte) 1);
-		DIGIT_MAP.put("2", (byte) 2);
-		DIGIT_MAP.put("3", (byte) 3);
-		DIGIT_MAP.put("4", (byte) 4);
-		DIGIT_MAP.put("5", (byte) 5);
-		DIGIT_MAP.put("6", (byte) 6);
-		DIGIT_MAP.put("7", (byte) 7);
-		DIGIT_MAP.put("8", (byte) 8);
-		DIGIT_MAP.put("9", (byte) 9);
-	}
+public class DecimalFractionBuilder {
 
 	public Map<String, Byte> getDigitMap() {
-		return DIGIT_MAP;
+		return DecimalConstants.DECIMAL_DIGIT_MAP;
 	}
 
 	public BigDecimal getBase() {
@@ -30,10 +15,10 @@ public class DecimalFractionalBuilder {
 	}
 
 	private BigDecimal value = null;
-	private BigDecimal base = BigDecimal.TEN;
-	private BigDecimal divisor = BigDecimal.TEN;
+	private BigDecimal base = DecimalConstants.DECIMAL_TEN;
+	private BigDecimal divisor = DecimalConstants.DECIMAL_TEN;
 
-	public DecimalFractionalBuilder append(String digit) {
+	public DecimalFractionBuilder append(String digit) {
 		final Byte digitByteValue = getDigitMap().get(digit);
 		if (digitByteValue == null) {
 			throw new IllegalArgumentException(MessageFormat.format(

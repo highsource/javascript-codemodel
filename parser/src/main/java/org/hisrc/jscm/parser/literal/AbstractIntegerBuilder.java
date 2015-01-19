@@ -1,4 +1,4 @@
-package org.hisrc.jscm.parser;
+package org.hisrc.jscm.parser.literal;
 
 import java.math.BigInteger;
 import java.text.MessageFormat;

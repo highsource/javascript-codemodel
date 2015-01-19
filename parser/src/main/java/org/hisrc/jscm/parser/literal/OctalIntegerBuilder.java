@@ -1,9 +1,9 @@
-package org.hisrc.jscm.parser;
+package org.hisrc.jscm.parser.literal;
 
 import java.util.HashMap;
 import java.util.Map;
 
-public class DecimalIntegerBuilder extends AbstractIntegerBuilder {
+public class OctalIntegerBuilder extends AbstractIntegerBuilder {
 
 	private static final Map<String, Byte> DIGIT_MAP = new HashMap<String, Byte>();
 	{
@@ -15,12 +15,10 @@ public class DecimalIntegerBuilder extends AbstractIntegerBuilder {
 		DIGIT_MAP.put("5", (byte) 5);
 		DIGIT_MAP.put("6", (byte) 6);
 		DIGIT_MAP.put("7", (byte) 7);
-		DIGIT_MAP.put("8", (byte) 8);
-		DIGIT_MAP.put("9", (byte) 9);
 	}
 
-	public DecimalIntegerBuilder() {
-		super((byte) 10);
+	public OctalIntegerBuilder() {
+		super((byte) 8);
 	}
 
 	@Override
@@ -29,7 +27,7 @@ public class DecimalIntegerBuilder extends AbstractIntegerBuilder {
 	}
 
 	@Override
-	public DecimalIntegerBuilder append(String digit) {
+	public OctalIntegerBuilder append(String digit) {
 		super.append(digit);
 		return this;
 	}

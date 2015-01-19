@@ -1,7 +1,7 @@
-package org.hisrc.jscm.parser.tests;
+package org.hisrc.jscm.parser.literal.tests;
 
-import org.hisrc.jscm.parser.OctalIntegerParser;
 import org.hisrc.jscm.parser.ParseException;
+import org.hisrc.jscm.parser.literal.OctalIntegerParser;
 import org.junit.Assert;
 import org.junit.Test;
 

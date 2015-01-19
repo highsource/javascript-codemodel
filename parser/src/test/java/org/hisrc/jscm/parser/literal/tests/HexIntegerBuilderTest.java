@@ -1,6 +1,6 @@
-package org.hisrc.jscm.parser.tests;
+package org.hisrc.jscm.parser.literal.tests;
 
-import org.hisrc.jscm.parser.HexIntegerBuilder;
+import org.hisrc.jscm.parser.literal.HexIntegerBuilder;
 import org.junit.Assert;
 import org.junit.Test;
 
