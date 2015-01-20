@@ -14,7 +14,7 @@ public class DecimalFractionBuilder {
 		return base;
 	}
 
-	private BigDecimal value = null;
+	private BigDecimal value = BigDecimal.ZERO;
 	private BigDecimal base = DecimalConstants.DECIMAL_TEN;
 	private BigDecimal divisor = DecimalConstants.DECIMAL_TEN;
 
@@ -38,11 +38,7 @@ public class DecimalFractionBuilder {
 	}
 
 	public BigDecimal value() {
-		if (value == null) {
-			throw new IllegalStateException("No digits were added yet.");
-		} else {
-			return value;
-		}
+		return value;
 	}
 
 }

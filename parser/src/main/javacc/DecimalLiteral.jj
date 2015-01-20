@@ -9,7 +9,7 @@ options {
 
 PARSER_BEGIN(DecimalLiteralParser)
 
-package org.hisrc.jscm.parser.literal;
+package org.hisrc.jscm.parser;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
@@ -71,32 +71,29 @@ BigDecimal DecimalLiteral():
 	(
 		exponent = ExponentPart()
 		{
-			value = value.pow(exponent.intValue());
+			value = value.scaleByPowerOfTen(exponent.intValue());
 		}
 	) ?
+	{
+		return value;
+	}
 |	integerPart = DecimalDigits()
 	{
 		value = new BigDecimal(integerPart);
 	}
 	(
 		<DOT>
-		(
-			fractionalPart = FractionalPart()
-			{
-				value = value.add(fractionalPart);
-			}
-		) ?
-		(
-			exponent = ExponentPart()
-			{
-				value = value.pow(exponent.intValue());
-			}
-		) ?
-	|	exponent = ExponentPart()
+		fractionalPart = FractionalPart()
 		{
-			value = value.pow(exponent.intValue());
+			value = value.add(fractionalPart);
 		}
-	)?
+	) ?
+	(
+		exponent = ExponentPart()
+		{
+			value = value.scaleByPowerOfTen(exponent.intValue());
+		}
+	) ?
 	{
 		return value;
 	}
@@ -130,7 +127,6 @@ BigDecimal FractionalPart():
 	Token digitToken;
 }
 {
-	<DOT>
 	(
 		(digitToken = <ZERO_DIGIT> | digitToken = <NON_ZERO_DIGIT>)
 		{
