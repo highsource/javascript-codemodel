@@ -1,0 +1,382 @@
+options {
+	STATIC = false;
+	DEBUG_PARSER = false;
+	DEBUG_TOKEN_MANAGER = false;
+	JAVA_UNICODE_ESCAPE = false;
+	UNICODE_INPUT = true;
+	JDK_VERSION = "1.5";
+}
+
+PARSER_BEGIN(StringLiteralParser)
+
+package org.hisrc.jscm.parser;
+
+import java.math.BigDecimal;
+import java.math.BigInteger;
+import org.hisrc.jscm.parser.literal.DecimalIntegerBuilder;
+import org.hisrc.jscm.parser.literal.DecimalFractionBuilder;
+
+public class StringLiteralParser {
+
+
+}
+PARSER_END(StringLiteralParser)
+
+/*
+StringLiteral ::
+	" DoubleStringCharacters_opt "
+	' SingleStringCharacters_opt '
+*/
+String StringLiteral():
+{
+	String value;
+}
+{
+	value = DoubleStringLiteral()
+|	value = SingleStringLiteral()
+	{
+		return value;
+	}
+}
+
+/*
+DoubleStringCharacters ::
+	DoubleStringCharacter DoubleStringCharacters_opt
+	
+DoubleStringCharacter ::
+	SourceCharacter but not one of " or \ or LineTerminator
+	\ EscapeSequence
+	LineContinuation	
+*/
+String DoubleStringLiteral():
+{
+	String character;
+	StringBuilder stringBuilder = new StringBuilder();
+}
+{
+	<DOUBLE_QUOTE>
+	(
+		character = DoubleStringSourceCharacter()
+	|	character = Escape()
+	|	character = LineContinuation()
+		{
+			stringBuilder.append(character);
+		}
+	) *
+	<DOUBLE_QUOTE>
+	{
+		return stringBuilder.toString();
+	}
+}
+
+String DoubleStringSourceCharacter():
+{
+	Token t;
+}
+{
+	t = <STRING_CHARACTER>
+	{
+		return t.image;
+	}
+|	<SINGLE_QUOTE>
+	{
+		return "\'";
+	}
+}
+
+/*
+SingleStringCharacters ::
+	SingleStringCharacter SingleStringCharacters_opt
+	
+SingleStringCharacter ::
+	SourceCharacter but not one of ' or \ or LineTerminator
+	\ EscapeSequence
+	LineContinuation	
+*/
+String SingleStringLiteral():
+{
+	String character;
+	StringBuilder stringBuilder = new StringBuilder();
+}
+{
+	<SINGLE_QUOTE>
+	(
+		character = SingleStringSourceCharacter()
+	|	character = Escape()
+	|	character = LineContinuation()
+		{
+			stringBuilder.append(character);
+		}
+	) *
+	<SINGLE_QUOTE>
+	{
+		return stringBuilder.toString();
+	}
+}
+
+String SingleStringSourceCharacter():
+{
+	Token t;
+}
+{
+	t = <STRING_CHARACTER>
+	{
+		return t.image;
+	}
+|	<DOUBLE_QUOTE>
+	{
+		return "\"";
+	}
+}
+
+/*
+LineContinuation ::
+	\ LineTerminatorSequence
+*/
+String LineContinuation():
+{}
+{
+	<CRLF_ESCAPE> { return "\n\r"; }
+|	<LF_ESCAPE> { return "\n"; }
+|	<CR_ESCAPE> { return "\r"; }
+|	<LS_ESCAPE> { return "\u2028"; }
+|	<PS_ESCAPE> { return "\u2029"; }
+}
+
+
+/*
+EscapeSequence ::
+	CharacterEscapeSequence
+//	0 [lookahead not_in DecimalDigit]
+	OctalEscapeSequence
+	HexEscapeSequence
+	UnicodeEscapeSequence
+*/
+String Escape():
+{
+	String value;
+}
+{
+	value = CharacterEscape()
+|	value = OctalEscape()
+|	value = HexEscape()
+|	value = UnicodeEscape()
+	{
+		return value;
+	}
+}
+
+/*
+CharacterEscapeSequence ::
+	SingleEscapeCharacter
+	NonEscapeCharacter
+*/
+String CharacterEscape():
+{
+	String value;
+}
+{
+	value = SingleEscape()
+|	value = NonEscape()
+	{
+		return value;
+	}
+}
+
+/*
+SingleEscapeCharacter :: one of
+	' " \ b f n r t v
+*/
+String SingleEscape():
+{
+	Token t;
+}
+{
+	<SINGLE_QUOTE_ESCAPE> { return "\'"; } 
+|	<DOUBLE_QUOTE_ESCAPE> { return "\""; }
+|	<SLASH_ESCAPE> { return "\\"; }
+|	<BACKSPACE_ESCAPE> { return "\b"; }
+|	<FORM_FEED_ESCAPE> { return "\f"; }
+|	<LINE_FEED_ESCAPE> { return "\n"; }
+|	<CARRIAGE_RETURN_ESCAPE> { return "\r"; }
+|	<HORIZONTAL_TAB_ESCAPE> { return "\t"; }
+|	<VERTICAL_TAB_ESCAPE> { return "\u000B"; }
+}
+
+/*
+NonEscapeCharacter ::
+	SourceCharacter but not one of EscapeCharacter or LineTerminator
+*/
+String NonEscape():
+{
+	Token t;
+}
+{
+	"\\"
+	t = <STRING_CHARACTER>
+	{
+		return t.image;
+	}
+}
+
+TOKEN : {
+	<SINGLE_QUOTE: 	"\'">
+|	<DOUBLE_QUOTE:	"\"">
+}
+
+TOKEN :
+{
+	<STRING_CHARACTER :
+		 ~["\'", "\"", "\n", "\r", "\u2028", "\u2029", "\\"]
+	>
+}
+
+/*
+LineTerminatorSequence ::
+<LF>
+<CR> [lookahead not_in <LF> ]
+<LS>
+<PS>
+<CR> <LF>
+
+LineContinuation ::
+	\ LineTerminatorSequence
+*/
+TOKEN : {
+	<CRLF_ESCAPE:	"\\" <CR> <LF>>
+|	<LF_ESCAPE:	"\\" <LF>>
+|	<CR_ESCAPE:	"\\" <CR>>
+|	<LS_ESCAPE:	"\\" <LS>>
+|	<PS_ESCAPE:	"\\" <PS>>
+}
+
+/*
+LineTerminator ::
+	<LF>
+	<CR>
+	<LS>
+	<PS>
+*/
+TOKEN :
+{
+	<LF:	"\n"> 
+|	<CR:	"\r"> 
+|	<LS:	"\u2028"> 
+|	<PS:	"\u2029">
+}
+
+/*
+SingleEscapeCharacter :: one of
+	' " \ b f n r t v
+*/
+TOKEN : {
+	<SINGLE_QUOTE_ESCAPE: 	"\\\'">
+|	<DOUBLE_QUOTE_ESCAPE:	"\\\"">
+|	<SLASH_ESCAPE:	"\\\\">
+|	<BACKSPACE_ESCAPE:	"\\b">
+|	<FORM_FEED_ESCAPE:	"\\f">
+|	<LINE_FEED_ESCAPE:	"\\n">
+|	<CARRIAGE_RETURN_ESCAPE:	"\\r">
+|	<HORIZONTAL_TAB_ESCAPE:	"\\t">
+|	<VERTICAL_TAB_ESCAPE:	"\\v">
+}
+
+/*
+OctalEscapeSequence ::
+	OctalDigit [lookahead not_in DecimalDigit]
+	ZeroToThree OctalDigit [lookahead not_in DecimalDigit]
+	FourToSeven OctalDigit
+	ZeroToThree OctalDigit OctalDigit
+ZeroToThree :: one of
+	0 1 2 3
+FourToSeven :: one of
+	4 5 6 7
+*/
+String OctalEscape():
+{
+	Token t;
+}
+{
+	t = <OCTAL_ESCAPE>
+	{
+		final String value = t.image.substring(1);
+		final char character = (char) Integer.valueOf(value, 8).intValue();
+		return String.valueOf(character);
+	}
+}
+
+TOKEN:
+{
+	<OCTAL_ESCAPE:
+		"\\" ["0"-"3"] <OCTAL_DIGIT> ( <OCTAL_DIGIT> ) ?
+	|	"\\" ["4"-"7"] <OCTAL_DIGIT>
+	|	"\\" <OCTAL_DIGIT>
+	>
+}
+
+
+/*
+HexEscapeSequence ::
+	x HexDigit HexDigit
+*/
+String HexEscape():
+{
+	Token t;
+}
+{
+	t = <HEX_ESCAPE>
+	{
+		final String value = t.image.substring(2);
+		final char character = (char) Integer.valueOf(value, 16).intValue();
+		return String.valueOf(character);;
+	}
+}
+
+TOKEN:
+{
+	<HEX_ESCAPE:	"\\x" <HEX_DIGIT> <HEX_DIGIT>>
+}
+
+/*
+UnicodeEscapeSequence ::
+	u HexDigit HexDigit HexDigit HexDigit
+*/
+String UnicodeEscape():
+{
+	Token t;
+}
+{
+	t = <UNICODE_ESCAPE>
+	{
+		final String value = t.image.substring(2);
+		final char character = (char) Integer.valueOf(value, 16).intValue();
+		return String.valueOf(character);
+	}
+}
+
+TOKEN:
+{
+	<UNICODE_ESCAPE:	"\\u" <HEX_DIGIT> <HEX_DIGIT> <HEX_DIGIT> <HEX_DIGIT>>
+}
+
+/*
+HexDigit ::: one of
+	0 1 2 3 4 5 6 7 8 9 a b c d e f A B C D E F
+*/
+TOKEN:
+{
+	<#HEX_DIGIT:
+		["0"-"9"]
+	|	["a"-"f"]
+	|	["A"-"F"]
+	>
+}
+
+/*
+OctalDigit :: one of
+	0 1 2 3 4 5 6 7
+*/
+TOKEN:
+{
+	<#OCTAL_DIGIT:	["0"-"7"]>
+}
