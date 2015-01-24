@@ -32,8 +32,10 @@ String StringLiteral():
 	String value;
 }
 {
-	value = DoubleStringLiteral()
-|	value = SingleStringLiteral()
+	(
+		value = DoubleStringLiteral()
+	|	value = SingleStringLiteral()
+	)
 	{
 		return value;
 	}
@@ -56,9 +58,11 @@ String DoubleStringLiteral():
 {
 	<DOUBLE_QUOTE>
 	(
-		character = DoubleStringSourceCharacter()
-	|	character = Escape()
-	|	character = LineContinuation()
+		(
+			character = DoubleStringSourceCharacter()
+		|	character = Escape()
+		|	character = LineContinuation()
+		)
 		{
 			stringBuilder.append(character);
 		}
@@ -101,9 +105,11 @@ String SingleStringLiteral():
 {
 	<SINGLE_QUOTE>
 	(
-		character = SingleStringSourceCharacter()
-	|	character = Escape()
-	|	character = LineContinuation()
+		(
+			character = SingleStringSourceCharacter()
+		|	character = Escape()
+		|	character = LineContinuation()
+		)
 		{
 			stringBuilder.append(character);
 		}
@@ -157,10 +163,12 @@ String Escape():
 	String value;
 }
 {
-	value = CharacterEscape()
-|	value = OctalEscape()
-|	value = HexEscape()
-|	value = UnicodeEscape()
+	(
+		value = CharacterEscape()
+	|	value = OctalEscape()
+	|	value = HexEscape()
+	|	value = UnicodeEscape()
+	)
 	{
 		return value;
 	}
@@ -176,8 +184,10 @@ String CharacterEscape():
 	String value;
 }
 {
-	value = SingleEscape()
-|	value = NonEscape()
+	(
+		value = SingleEscape()
+	|	value = NonEscape()
+	)
 	{
 		return value;
 	}

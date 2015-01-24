@@ -518,6 +518,10 @@ JSNumericLiteral NumericLiteral() :
 	{
 		return this.builder.decimalLiteral(t);
 	}
+|	t = <OCTAL_INTEGER_LITERAL>
+	{
+		return this.builder.octalIntegerLiteral(t);
+	}
 }
 
 JSDecimalLiteral DecimalLiteral() :
