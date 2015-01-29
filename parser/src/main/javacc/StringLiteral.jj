@@ -78,7 +78,11 @@ String DoubleStringSourceCharacter():
 	Token t;
 }
 {
-	t = <STRING_CHARACTER>
+	t = <NON_ESCAPE_CHARACTER>
+	{
+		return t.image;
+	}
+|	t = <SAFE_ESCAPE_CHARACTER>
 	{
 		return t.image;
 	}
@@ -125,7 +129,11 @@ String SingleStringSourceCharacter():
 	Token t;
 }
 {
-	t = <STRING_CHARACTER>
+	t = <NON_ESCAPE_CHARACTER>
+	{
+		return t.image;
+	}
+|	t = <SAFE_ESCAPE_CHARACTER>
 	{
 		return t.image;
 	}
@@ -142,11 +150,11 @@ LineContinuation ::
 String LineContinuation():
 {}
 {
-	<CRLF_ESCAPE> { return "\n\r"; }
-|	<LF_ESCAPE> { return "\n"; }
-|	<CR_ESCAPE> { return "\r"; }
-|	<LS_ESCAPE> { return "\u2028"; }
-|	<PS_ESCAPE> { return "\u2029"; }
+	<CRLF_ESCAPE> { return ""; }
+|	<LF_ESCAPE> { return ""; }
+|	<CR_ESCAPE> { return ""; }
+|	<LS_ESCAPE> { return ""; }
+|	<PS_ESCAPE> { return ""; }
 }
 
 
@@ -223,7 +231,7 @@ String NonEscape():
 }
 {
 	"\\"
-	t = <STRING_CHARACTER>
+	t = <NON_ESCAPE_CHARACTER>
 	{
 		return t.image;
 	}
@@ -236,8 +244,11 @@ TOKEN : {
 
 TOKEN :
 {
-	<STRING_CHARACTER :
-		 ~["\'", "\"", "\n", "\r", "\u2028", "\u2029", "\\"]
+	<NON_ESCAPE_CHARACTER :
+		~["\'", "\"", "\n", "\r", "\u2028", "\u2029", "\\", "b", "f", "n", "r", "t", "v", "0"-"9", "x", "u"]
+	>
+|	<SAFE_ESCAPE_CHARACTER :
+		["b", "f", "n", "r", "t", "v", "0"-"9", "x", "u"]
 	>
 }
 
@@ -379,6 +390,17 @@ TOKEN:
 		["0"-"9"]
 	|	["a"-"f"]
 	|	["A"-"F"]
+	>
+}
+
+/*
+DecimalDigit ::: one of
+	0 1 2 3 4 5 6 7 8 9
+*/
+TOKEN:
+{
+	<#DECIMAL_DIGIT:
+		["0"-"9"]
 	>
 }
 
