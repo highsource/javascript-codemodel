@@ -11,7 +11,7 @@ import org.hisrc.jscm.parser.EcmaScriptParser;
 import org.hisrc.jscm.parser.ParseException;
 import org.hisrc.jscm.parser.testing.util.AbstractDualResourceBasedTest;
 
-public class AbstractDualParserTest extends AbstractDualResourceBasedTest {
+public abstract class AbstractDualParserTest extends AbstractDualResourceBasedTest {
 
 	private EcmaScriptParser parse(String str) {
 		final Reader reader = new StringReader(str);

@@ -11,11 +11,6 @@ PARSER_BEGIN(StringLiteralParser)
 
 package org.hisrc.jscm.parser;
 
-import java.math.BigDecimal;
-import java.math.BigInteger;
-import org.hisrc.jscm.parser.literal.DecimalIntegerBuilder;
-import org.hisrc.jscm.parser.literal.DecimalFractionBuilder;
-
 public class StringLiteralParser {
 
 

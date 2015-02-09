@@ -17,7 +17,7 @@ public class DecimalParserTest {
 		Assert.assertEquals(new BigDecimal("1"),
 				DecimalParser.INSTANCE.parse("1."));
 
-		Assert.assertEquals(new BigDecimal("1"),
+		Assert.assertEquals(new BigDecimal("1.0"),
 				DecimalParser.INSTANCE.parse("1.0"));
 
 		Assert.assertEquals(new BigDecimal("1.2"),
