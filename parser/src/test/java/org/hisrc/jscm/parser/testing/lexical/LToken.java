@@ -57,6 +57,10 @@ public class LToken {
 			return false;
 		return true;
 	}
+	
+	public String getSignature() {
+		return "Token [id=" + id + ", image=" + image + "]";
+	}
 
 	@Override
 	public String toString() {

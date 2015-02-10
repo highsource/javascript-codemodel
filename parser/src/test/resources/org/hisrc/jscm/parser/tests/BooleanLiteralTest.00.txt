@@ -1,0 +1,2 @@
+Token [id=BOOLEAN_LITERAL, image=true]
+Token [id=BOOLEAN_LITERAL, image=false]

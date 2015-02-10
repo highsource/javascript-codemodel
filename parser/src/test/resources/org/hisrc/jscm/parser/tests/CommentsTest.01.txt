@@ -1,0 +1,2 @@
+Token [id=IDENTIFIER_NAME, image=Comment0]
+Token [id=IDENTIFIER_NAME, image=Comment1]

@@ -1,0 +1,8 @@
+Token [id=STRING_LITERAL, image="\\7"]
+Token [id=STRING_LITERAL, image="\\79"]
+Token [id=STRING_LITERAL, image="\\37"]
+Token [id=STRING_LITERAL, image="\\379"]
+Token [id=STRING_LITERAL, image="\\77"]
+Token [id=STRING_LITERAL, image="\\779"]
+Token [id=STRING_LITERAL, image="\\377"]
+Token [id=STRING_LITERAL, image="\\3779"]

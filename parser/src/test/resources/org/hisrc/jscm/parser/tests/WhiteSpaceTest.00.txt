@@ -1,0 +1,2 @@
+Token [id=DOT, image=.]
+Token [id=DOT, image=.]

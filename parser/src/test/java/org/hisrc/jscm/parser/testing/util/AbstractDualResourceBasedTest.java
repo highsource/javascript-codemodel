@@ -15,11 +15,11 @@ import org.junit.Test;
 public abstract class AbstractDualResourceBasedTest {
 
 	protected String getSourceResourceNamePattern() {
-		return getClass().getSimpleName() + "/{0,number,00}.js";
+		return getClass().getSimpleName() + ".{0,number,00}.js";
 	}
 
 	protected String getTargetResourceNamePattern() {
-		return getClass().getSimpleName() + "/{0,number,00}.txt";
+		return getClass().getSimpleName() + ".{0,number,00}.txt";
 	}
 
 	protected List<ResourceNamePair> getResourceNamePairs() {

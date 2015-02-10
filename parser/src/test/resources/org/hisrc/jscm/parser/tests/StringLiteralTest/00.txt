@@ -1,4 +1,0 @@
-Token [id=STRING_LITERAL, kind=110, image=""]
-Token [id=STRING_LITERAL, kind=110, image='']
-Token [id=STRING_LITERAL, kind=110, image="'"]
-Token [id=STRING_LITERAL, kind=110, image='"']

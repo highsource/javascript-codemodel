@@ -1,0 +1,1 @@
+Token [id=STRING_LITERAL, image="\\0"]

@@ -1,0 +1,2 @@
+Token [id=STRING_LITERAL, image="ab\\\r\ncd"]
+Token [id=STRING_LITERAL, image="ab\\\\u2028cd"]

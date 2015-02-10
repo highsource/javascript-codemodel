@@ -1,2 +1,0 @@
-Token [id=LBRACKET, kind=56, image=[]
-Token [id=RBRACKET, kind=57, image=]]

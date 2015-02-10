@@ -49,7 +49,7 @@ public abstract class AbstractDualTokenTest extends
 			LToken token = tokens.get(index);
 			String etalon = StringEscapeUtils.unescapeJava(etalons.get(index));
 			Assert.assertEquals("Token and etalon mismatch at position ["
-					+ index + "].", etalon, token.toString());
+					+ index + "].", etalon, token.getSignature());
 		}
 	}
 }

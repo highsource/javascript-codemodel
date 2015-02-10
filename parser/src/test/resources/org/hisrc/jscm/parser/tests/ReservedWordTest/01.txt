@@ -1,7 +1,0 @@
-Token [id=CLASS, kind=45, image=class]
-Token [id=ENUM, kind=47, image=enum]
-Token [id=EXTENDS, kind=49, image=extends]
-Token [id=SUPER, kind=51, image=super]
-Token [id=CONST, kind=46, image=const]
-Token [id=EXPORT, kind=48, image=export]
-Token [id=IMPORT, kind=50, image=import]

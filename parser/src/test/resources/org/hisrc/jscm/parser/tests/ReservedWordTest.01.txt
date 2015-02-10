@@ -1,0 +1,7 @@
+Token [id=CLASS, image=class]
+Token [id=ENUM, image=enum]
+Token [id=EXTENDS, image=extends]
+Token [id=SUPER, image=super]
+Token [id=CONST, image=const]
+Token [id=EXPORT, image=export]
+Token [id=IMPORT, image=import]

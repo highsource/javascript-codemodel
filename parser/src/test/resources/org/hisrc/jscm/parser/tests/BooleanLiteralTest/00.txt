@@ -1,2 +1,0 @@
-Token [id=BOOLEAN_LITERAL, kind=101, image=true]
-Token [id=BOOLEAN_LITERAL, kind=101, image=false]

@@ -1,2 +1,0 @@
-Token [id=DOT, kind=58, image=.]
-Token [id=DOT, kind=58, image=.]

@@ -1,0 +1,4 @@
+Token [id=REGULAR_EXPRESSION_LITERAL, image=/a\\b[][c][\\d]/e]
+Token [id=SEMICOLON, image=;]
+Token [id=REGULAR_EXPRESSION_LITERAL, image=/f\\g[][h][\\i]/]
+Token [id=SEMICOLON, image=;]

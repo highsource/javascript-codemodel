@@ -1,2 +1,0 @@
-Token [id=IDENTIFIER_NAME, kind=127, image=Comment0]
-Token [id=IDENTIFIER_NAME, kind=127, image=Comment1]

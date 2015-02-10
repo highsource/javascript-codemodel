@@ -1,2 +1,0 @@
-Token [id=STRING_LITERAL, kind=110, image="ab\\\r\ncd"]
-Token [id=STRING_LITERAL, kind=110, image="ab\\\\u2028cd"]
