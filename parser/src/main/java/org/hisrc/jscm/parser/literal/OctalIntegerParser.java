@@ -13,6 +13,6 @@ public class OctalIntegerParser implements TypedLiteralParser<BigInteger> {
 		Validate.notNull(string);
 		Validate.isTrue(string.length() > 1);
 		Validate.isTrue(string.substring(0, 1).equals("0"));
-		return new BigInteger(string, 8);
+		return new BigInteger(string.substring(1), 8);
 	}
 }
