@@ -28,6 +28,7 @@ public abstract class AbstractDualParserTest extends AbstractDualResourceBasedTe
 			program = parse(source).Program();
 			final CodeWriter codeWriter = new CommentingCodeWriter(System.out);
 			codeWriter.program(program);
+			System.out.println("");
 		} catch (ParseException pex) {
 			throw new AssertionError(pex);
 		}

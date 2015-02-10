@@ -1,0 +1,13 @@
+/*E:Literal*//*L:DecimalNonIntegerLiteral*/1.2E+3;
+/*E:Literal*//*L:DecimalNonIntegerLiteral*/0.0000045;
+/*E:Literal*//*L:DecimalNonIntegerLiteral*/7E+8;
+/*E:Literal*//*L:DecimalNonIntegerLiteral*/9;
+/*E:Literal*//*L:DecimalNonIntegerLiteral*/1.0E+10;
+/*E:Literal*//*L:DecimalNonIntegerLiteral*/0.12;
+/*E:Literal*//*L:DecimalNonIntegerLiteral*/1.3E+2;
+/*E:Literal*//*L:DecimalNonIntegerLiteral*/1400;
+/*E:Literal*//*L:DecimalNonIntegerLiteral*/0;
+/*E:Literal*//*L:OctalIntegerLiteral*/01234567;
+/*E:Literal*//*L:DecimalNonIntegerLiteral*/12345678;
+/*E:Literal*//*L:HexIntegerLiteral*/0xa;
+/*E:Literal*//*L:HexIntegerLiteral*/0x0;
