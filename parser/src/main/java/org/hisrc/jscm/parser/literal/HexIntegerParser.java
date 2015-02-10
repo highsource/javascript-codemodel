@@ -11,7 +11,9 @@ public class HexIntegerParser implements TypedLiteralParser<BigInteger> {
 
 	public BigInteger parse(String string) throws ParseException {
 		Validate.notNull(string);
-		return new BigInteger(string, 16);
+		Validate.isTrue(string.length() > 2);
+		Validate.isTrue(string.substring(0, 2).equalsIgnoreCase("0x"));
+		return new BigInteger(string.substring(2), 16);
 //		final HexIntegerLiteralParser parser = new HexIntegerLiteralParser(
 //				new StringReader(string));
 //		final BigInteger hexInteger = parser.HexIntegerLiteral();
