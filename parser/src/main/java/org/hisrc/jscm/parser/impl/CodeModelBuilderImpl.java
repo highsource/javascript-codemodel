@@ -88,9 +88,22 @@ import org.hisrc.jscm.codemodel.statement.impl.WithStatementImpl;
 import org.hisrc.jscm.parser.JSCodeModelBuilder;
 import org.hisrc.jscm.parser.ParseException;
 import org.hisrc.jscm.parser.Token;
+import org.hisrc.jscm.parser.literal.BooleanParser;
+import org.hisrc.jscm.parser.literal.DecimalIntegerParser;
+import org.hisrc.jscm.parser.literal.DecimalParser;
+import org.hisrc.jscm.parser.literal.HexIntegerParser;
+import org.hisrc.jscm.parser.literal.OctalIntegerParser;
+import org.hisrc.jscm.parser.literal.StringParser;
+import org.hisrc.jscm.parser.literal.TypedLiteralParser;
 
 public class CodeModelBuilderImpl implements JSCodeModelBuilder {
 
+	private final TypedLiteralParser<Boolean> booleanParser = BooleanParser.INSTANCE;
+	private final TypedLiteralParser<String> stringParser = StringParser.INSTANCE;
+	private final TypedLiteralParser<BigDecimal> decimalParser = DecimalParser.INSTANCE;
+	private final TypedLiteralParser<BigInteger> decimalIntegerParser = DecimalIntegerParser.INSTANCE;
+	private final TypedLiteralParser<BigInteger> hexIntegerParser = HexIntegerParser.INSTANCE;
+	private final TypedLiteralParser<BigInteger> octalIntegerParser = OctalIntegerParser.INSTANCE;
 	private final JSCodeModel codeModel;
 
 	public CodeModelBuilderImpl(JSCodeModel codeModel) {
@@ -109,7 +122,7 @@ public class CodeModelBuilderImpl implements JSCodeModelBuilder {
 	public JSThis _this() {
 		return getCodeModel()._this();
 	}
-	
+
 	@Override
 	public JSIdentifierReference identifierReference(String name) {
 		return getCodeModel().identifierReference(name);
@@ -138,60 +151,55 @@ public class CodeModelBuilderImpl implements JSCodeModelBuilder {
 	}
 
 	@Override
-	public JSNullLiteral nullLiteral(Token token) throws ParseException {
+	public JSNullLiteral nullLiteral(String literal) throws ParseException {
 		return getCodeModel()._null();
 	}
 
 	@Override
-	public JSBooleanLiteral booleanLiteral(Token token) throws ParseException {
-		return getCodeModel()._boolean(Boolean.valueOf(token.image));
-	}
-
-	@Override
-	public JSDecimalLiteral decimalLiteral(Token token) throws ParseException {
-		// TODO Incorrect
-		return getCodeModel().decimal(new BigDecimal(token.image));
-	}
-
-	@Override
-	public JSDecimalIntegerLiteral decimalIntegerLiteral(Token token)
+	public JSBooleanLiteral booleanLiteral(String literal)
 			throws ParseException {
-		// TODO Incorrect
-		return getCodeModel().integer(new BigInteger(token.image));
+		return getCodeModel()._boolean(this.booleanParser.parse(literal));
 	}
 
 	@Override
-	public JSStringLiteral stringLiteral(Token token) throws ParseException {
-		// TODO Incorrect
-		return codeModel.string(token.image);
-	}
-
-	@Override
-	public JSHexIntegerLiteral hexIntegerLiteral(Token token)
+	public JSDecimalLiteral decimalLiteral(String literal)
 			throws ParseException {
-		// TODO Incorrect
-		return codeModel
-				.hexInteger(new BigInteger(token.image.substring(2), 16));
+		return getCodeModel().decimal(this.decimalParser.parse(literal));
 	}
 
 	@Override
-	public JSOctalIntegerLiteral octalIntegerLiteral(Token token)
+	public JSDecimalIntegerLiteral decimalIntegerLiteral(String literal)
 			throws ParseException {
-		// TODO Incorrect
-		return codeModel
-				.octalInteger(new BigInteger(token.image, 8));
+		return codeModel.integer(this.decimalIntegerParser.parse(literal));
 	}
 
 	@Override
-	public JSIdentifierName identifierName(Token token) throws ParseException {
-		// TODO Incorrect
-		return new IdentifierNameImpl(token.image);
+	public JSStringLiteral stringLiteral(String literal) throws ParseException {
+		return codeModel.string(this.stringParser.parse(literal));
 	}
 
 	@Override
-	public String identifier(Token token) throws ParseException {
+	public JSHexIntegerLiteral hexIntegerLiteral(String literal)
+			throws ParseException {
+		return codeModel.hexInteger(this.hexIntegerParser.parse(literal));
+	}
+
+	@Override
+	public JSOctalIntegerLiteral octalIntegerLiteral(String literal)
+			throws ParseException {
+		return codeModel.octalInteger(this.octalIntegerParser.parse(literal));
+	}
+
+	@Override
+	public JSIdentifierName identifierName(String identifier) throws ParseException {
 		// TODO Incorrect
-		return token.image;
+		return new IdentifierNameImpl(identifier);
+	}
+
+	@Override
+	public String identifier(String identifier) throws ParseException {
+		// TODO Incorrect
+		return identifier;
 	}
 
 	@Override

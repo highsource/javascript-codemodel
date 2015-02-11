@@ -65,26 +65,26 @@ public interface JSCodeModelBuilder {
 	public JSPropertyAssignment propertyAssignment(JSPropertyName key,
 			JSAssignmentExpression value);
 
-	public JSNullLiteral nullLiteral(Token token) throws ParseException;
+	public JSNullLiteral nullLiteral(String literal) throws ParseException;
 
-	public JSBooleanLiteral booleanLiteral(Token token) throws ParseException;
+	public JSBooleanLiteral booleanLiteral(String literal) throws ParseException;
 
-	public JSDecimalLiteral decimalLiteral(Token token) throws ParseException;
+	public JSDecimalLiteral decimalLiteral(String literal) throws ParseException;
 
-	public JSDecimalIntegerLiteral decimalIntegerLiteral(Token token)
+	public JSDecimalIntegerLiteral decimalIntegerLiteral(String literal)
 			throws ParseException;
 
-	public JSStringLiteral stringLiteral(Token token) throws ParseException;
+	public JSStringLiteral stringLiteral(String literal) throws ParseException;
 
-	public JSOctalIntegerLiteral octalIntegerLiteral(Token token)
+	public JSOctalIntegerLiteral octalIntegerLiteral(String literal)
 			throws ParseException;
 
-	public JSHexIntegerLiteral hexIntegerLiteral(Token token)
+	public JSHexIntegerLiteral hexIntegerLiteral(String literal)
 			throws ParseException;
 
-	public JSIdentifierName identifierName(Token token) throws ParseException;
+	public JSIdentifierName identifierName(String identifier) throws ParseException;
 
-	public String identifier(Token token) throws ParseException;
+	public String identifier(String identifier) throws ParseException;
 
 	// Statements
 

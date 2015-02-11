@@ -434,27 +434,27 @@ JSLiteral Literal() :
 {
 	t = <DECIMAL_LITERAL>
 	{
-		return this.builder.decimalLiteral(t);
+		return this.builder.decimalLiteral(t.image);
 	}
 |	t = <OCTAL_INTEGER_LITERAL>
 	{
-		return this.builder.octalIntegerLiteral(t);
+		return this.builder.octalIntegerLiteral(t.image);
 	}
 |	t = <HEX_INTEGER_LITERAL>
 	{
-		return this.builder.hexIntegerLiteral(t);
+		return this.builder.hexIntegerLiteral(t.image);
 	}
 |	t = <STRING_LITERAL>
 	{
-		return this.builder.stringLiteral(t);
+		return this.builder.stringLiteral(t.image);
 	}
 |	t = <BOOLEAN_LITERAL>
 	{
-		return this.builder.booleanLiteral(t);
+		return this.builder.booleanLiteral(t.image);
 	}
 |	t = <NULL_LITERAL>
 	{
-		return this.builder.nullLiteral(t);
+		return this.builder.nullLiteral(t.image);
 	}
 /* TODO
 	| 
@@ -512,15 +512,15 @@ JSNumericLiteral NumericLiteral() :
 {
 	t = <HEX_INTEGER_LITERAL>
 	{
-		return this.builder.hexIntegerLiteral(t);
+		return this.builder.hexIntegerLiteral(t.image);
 	}
 |	t = <DECIMAL_LITERAL>
 	{
-		return this.builder.decimalLiteral(t);
+		return this.builder.decimalLiteral(t.image);
 	}
 |	t = <OCTAL_INTEGER_LITERAL>
 	{
-		return this.builder.octalIntegerLiteral(t);
+		return this.builder.octalIntegerLiteral(t.image);
 	}
 }
 
@@ -531,7 +531,7 @@ JSDecimalLiteral DecimalLiteral() :
 {
 	t = <DECIMAL_LITERAL>
 	{
-		return this.builder.decimalLiteral(t);
+		return this.builder.decimalLiteral(t.image);
 	}
 }
 
@@ -619,7 +619,7 @@ JSStringLiteral StringLiteral() :
 {
 	t = <STRING_LITERAL>
 	{
-		return this.builder.stringLiteral(t);
+		return this.builder.stringLiteral(t.image);
 	}
 }
 
@@ -846,7 +846,7 @@ String Identifier() :
 {
 	t = <IDENTIFIER_NAME>
 	{
-		return this.builder.identifier(t);
+		return this.builder.identifier(t.image);
 	}
 }
 
@@ -862,12 +862,12 @@ JSIdentifierName IdentifierName() :
 {
 	t = <IDENTIFIER_NAME>
 	{
-		return this.builder.identifierName(t);
+		return this.builder.identifierName(t.image);
 	}
 	// TODO
 /*|	t = <RESERVED_KEYWORD>
 	{
-		return this.builder.identifierName(t);
+		return this.builder.identifierName(t.image);
 	}*/
 }
 

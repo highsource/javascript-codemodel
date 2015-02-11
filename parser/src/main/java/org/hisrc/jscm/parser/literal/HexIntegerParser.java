@@ -14,9 +14,5 @@ public class HexIntegerParser implements TypedLiteralParser<BigInteger> {
 		Validate.isTrue(string.length() > 2);
 		Validate.isTrue(string.substring(0, 2).equalsIgnoreCase("0x"));
 		return new BigInteger(string.substring(2), 16);
-//		final HexIntegerLiteralParser parser = new HexIntegerLiteralParser(
-//				new StringReader(string));
-//		final BigInteger hexInteger = parser.HexIntegerLiteral();
-//		return hexInteger;
 	}
 }

@@ -12,10 +12,5 @@ public class DecimalParser implements TypedLiteralParser<BigDecimal> {
 	public BigDecimal parse(String string) throws ParseException {
 		Validate.notNull(string);
 		return new BigDecimal(string);
-//		final DecimalLiteralParser parser = new DecimalLiteralParser(
-//				new StringReader(string));
-//		final BigDecimal value = parser.DecimalLiteral();
-//		return value;
-
 	}
 }

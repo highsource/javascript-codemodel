@@ -58,6 +58,7 @@ public abstract class AbstractDualParserTest extends
 		final Iterator<String> resultLinesIterator = resultLines.iterator();
 		int lineNumber = 0;
 		while (sourceLinesIterator.hasNext() && resultLinesIterator.hasNext()) {
+			lineNumber++;
 			final String sourceLine = sourceLinesIterator.next();
 			final String resultLine = resultLinesIterator.next();
 			Assert.assertEquals(
@@ -74,18 +75,16 @@ public abstract class AbstractDualParserTest extends
 					//
 					sourceLine, resultLine);
 		}
-		if (sourceLinesIterator.hasNext() || sourceLinesIterator.hasNext())
-		{
+		if (sourceLinesIterator.hasNext() || sourceLinesIterator.hasNext()) {
 			Assert.assertEquals(
 					"Number of lines in source and result differs.\n"
-							//
+					//
 							+ "Source:\n" + source + "\n"
 							//
 							+ "Result:\n" + result + "\n",
 					//
 					sourceLines.size(), resultLines.size());
-			
-		}
 
+		}
 	}
 }
