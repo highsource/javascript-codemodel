@@ -10,10 +10,10 @@ import org.hisrc.jscm.codemodel.literal.JSHexIntegerLiteral;
 import org.hisrc.jscm.codemodel.literal.JSLiteralVisitor;
 import org.hisrc.jscm.codemodel.literal.JSNullLiteral;
 import org.hisrc.jscm.codemodel.literal.JSOctalIntegerLiteral;
+import org.hisrc.jscm.codemodel.literal.JSRegularExpressionLiteral;
 import org.hisrc.jscm.codemodel.literal.JSStringLiteral;
 
-public class LiteralWriter implements
-		JSLiteralVisitor<CodeWriter, IOException> {
+public class LiteralWriter implements JSLiteralVisitor<CodeWriter, IOException> {
 
 	protected final CodeWriter f;
 
@@ -24,7 +24,6 @@ public class LiteralWriter implements
 
 	@Override
 	public CodeWriter visit(JSStringLiteral value) throws IOException {
-
 		return f.string(value.asString());
 	}
 
@@ -48,7 +47,7 @@ public class LiteralWriter implements
 			throws IOException {
 		return f.decimal(value.asDecimal());
 	}
-	
+
 	@Override
 	public CodeWriter visit(JSHexIntegerLiteral value) throws IOException {
 		return f.hexInteger(value.asNumber());
@@ -57,5 +56,15 @@ public class LiteralWriter implements
 	@Override
 	public CodeWriter visit(JSOctalIntegerLiteral value) throws IOException {
 		return f.octalInteger(value.asNumber());
+	}
+
+	@Override
+	public CodeWriter visit(JSRegularExpressionLiteral value)
+			throws IOException {
+		if (value.getFlags() == null) {
+			return f.regularExpression(value.getBody(), value.getFlags());
+		} else {
+			return f.regularExpression(value.getBody(), value.getFlags());
+		}
 	}
 }

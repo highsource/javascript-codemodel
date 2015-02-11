@@ -32,7 +32,7 @@ public class CodeWriter {
 		Validate.notNull(writer);
 		this.writer = writer;
 	}
-	
+
 	protected ExpressionWriter createExpressionWriter() {
 		return new ExpressionWriter(this);
 	}
@@ -154,10 +154,10 @@ public class CodeWriter {
 		writer.append(']');
 		return this;
 	}
-	
+
 	public CodeWriter inlineComment(String comment) throws IOException {
 		writer.append("/*");
-		// TODO Check 
+		// TODO Check
 		writer.append(comment);
 		writer.append("*/");
 		return this;
@@ -167,7 +167,6 @@ public class CodeWriter {
 		expression.acceptExpressionVisitor(createExpressionWriter());
 		return this;
 	}
-
 
 	public CodeWriter statement(JSStatement statement) throws IOException {
 		statement.acceptStatementVisitor(new StatementWriter(this));
@@ -222,5 +221,15 @@ public class CodeWriter {
 	public CodeWriter program(JSProgram program) throws IOException {
 		Validate.notNull(program);
 		return program.acceptProgramVisitor(new ProgramWriter(this));
+	}
+
+	public CodeWriter regularExpression(String body, String flags)
+			throws IOException {
+		Validate.notNull(body);
+		writer.append('/').append(body).append('/');
+		if (flags != null) {
+			writer.append(flags);
+		}
+		return this;
 	}
 }

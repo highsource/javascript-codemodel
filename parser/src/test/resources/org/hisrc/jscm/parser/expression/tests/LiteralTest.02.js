@@ -1,4 +1,3 @@
-// StringLiteral
 1.2e+3
 4.5E-6
 7.e8
@@ -12,6 +11,4 @@
 012345678
 0xA
 0X0
-
-// String literal
 // regex
