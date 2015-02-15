@@ -13,6 +13,7 @@ import org.hisrc.jscm.codemodel.statement.JSBlock;
 import org.hisrc.jscm.codemodel.writer.CodeWriter;
 import org.junit.Test;
 
+
 public class ExpressionsTest {
 
 	@Test
