@@ -24,6 +24,7 @@ import org.hisrc.jscm.codemodel.literal.JSDecimalNonIntegerLiteral;
 import org.hisrc.jscm.codemodel.literal.JSHexIntegerLiteral;
 import org.hisrc.jscm.codemodel.literal.JSNullLiteral;
 import org.hisrc.jscm.codemodel.literal.JSOctalIntegerLiteral;
+import org.hisrc.jscm.codemodel.literal.JSRegularExpressionLiteral;
 import org.hisrc.jscm.codemodel.literal.JSStringLiteral;
 import org.hisrc.jscm.codemodel.literal.impl.BooleanLiteralImpl;
 import org.hisrc.jscm.codemodel.literal.impl.DecimalIntegerLiteralImpl;
@@ -31,6 +32,7 @@ import org.hisrc.jscm.codemodel.literal.impl.DecimalNonIntegerLiteralImpl;
 import org.hisrc.jscm.codemodel.literal.impl.HexIntegerLiteralImpl;
 import org.hisrc.jscm.codemodel.literal.impl.NullLiteralImpl;
 import org.hisrc.jscm.codemodel.literal.impl.OctalIntegerLiteralImpl;
+import org.hisrc.jscm.codemodel.literal.impl.RegularExpressionLiteralImpl;
 import org.hisrc.jscm.codemodel.literal.impl.StringLiteralImpl;
 
 public class CodeModelImpl implements JSCodeModel {
@@ -99,6 +101,19 @@ public class CodeModelImpl implements JSCodeModel {
 	public JSStringLiteral string(String value) {
 		Validate.notNull(value);
 		return new StringLiteralImpl(this, value);
+	}
+	
+	@Override
+	public JSRegularExpressionLiteral regularExpression(String body) {
+		Validate.notNull(body);
+		return new RegularExpressionLiteralImpl(this, body);
+	}
+
+	@Override
+	public JSRegularExpressionLiteral regularExpression(String body, String flags) {
+		Validate.notNull(body);
+		Validate.notNull(flags);
+		return new RegularExpressionLiteralImpl(this, body, flags);
 	}
 
 	@Override

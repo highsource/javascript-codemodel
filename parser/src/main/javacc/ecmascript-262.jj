@@ -456,13 +456,10 @@ JSLiteral Literal() :
 	{
 		return this.builder.nullLiteral(t.image);
 	}
-/* TODO
-	| 
-		t = <REGULAR_EXPRESSION_LITERAL>
-		{
-			jjtThis.setRegexValue(t.image);
-		}
-*/
+|	t = <REGULAR_EXPRESSION_LITERAL>
+	{
+		return this.builder.regularExpressionLiteral(t.image);
+	}
 }
 
 

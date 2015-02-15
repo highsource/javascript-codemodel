@@ -22,6 +22,7 @@ import org.hisrc.jscm.codemodel.literal.JSDecimalLiteral;
 import org.hisrc.jscm.codemodel.literal.JSHexIntegerLiteral;
 import org.hisrc.jscm.codemodel.literal.JSNullLiteral;
 import org.hisrc.jscm.codemodel.literal.JSOctalIntegerLiteral;
+import org.hisrc.jscm.codemodel.literal.JSRegularExpressionLiteral;
 import org.hisrc.jscm.codemodel.literal.JSStringLiteral;
 import org.hisrc.jscm.codemodel.statement.JSBlock;
 import org.hisrc.jscm.codemodel.statement.JSBreakStatement;
@@ -78,8 +79,11 @@ public interface JSCodeModelBuilder {
 
 	public JSOctalIntegerLiteral octalIntegerLiteral(String literal)
 			throws ParseException;
-
+	
 	public JSHexIntegerLiteral hexIntegerLiteral(String literal)
+			throws ParseException;
+
+	public JSRegularExpressionLiteral regularExpressionLiteral(String literal)
 			throws ParseException;
 
 	public JSIdentifierName identifierName(String identifier) throws ParseException;

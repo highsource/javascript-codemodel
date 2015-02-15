@@ -1,0 +1,2 @@
+/*E:Literal*//*L:RegularExpressionLiteral*//a/;
+/*E:Literal*//*L:RegularExpressionLiteral*//a/g;

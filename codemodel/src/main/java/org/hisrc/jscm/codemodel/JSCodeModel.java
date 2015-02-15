@@ -15,6 +15,7 @@ import org.hisrc.jscm.codemodel.literal.JSDecimalNonIntegerLiteral;
 import org.hisrc.jscm.codemodel.literal.JSHexIntegerLiteral;
 import org.hisrc.jscm.codemodel.literal.JSNullLiteral;
 import org.hisrc.jscm.codemodel.literal.JSOctalIntegerLiteral;
+import org.hisrc.jscm.codemodel.literal.JSRegularExpressionLiteral;
 import org.hisrc.jscm.codemodel.literal.JSStringLiteral;
 
 public interface JSCodeModel {
@@ -39,6 +40,10 @@ public interface JSCodeModel {
 	JSOctalIntegerLiteral octalInteger(BigInteger value);
 
 	JSStringLiteral string(String value);
+
+	JSRegularExpressionLiteral regularExpression(String body);
+	
+	JSRegularExpressionLiteral regularExpression(String body, String flags);
 
 	JSArrayLiteral array();
 

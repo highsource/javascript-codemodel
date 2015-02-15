@@ -3,6 +3,7 @@ package org.hisrc.jscm.parser.impl;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 
+import org.apache.commons.lang3.Validate;
 import org.hisrc.jscm.codemodel.JSCodeModel;
 import org.hisrc.jscm.codemodel.JSFunctionDeclaration;
 import org.hisrc.jscm.codemodel.JSIdentifierName;
@@ -35,6 +36,7 @@ import org.hisrc.jscm.codemodel.literal.JSDecimalLiteral;
 import org.hisrc.jscm.codemodel.literal.JSHexIntegerLiteral;
 import org.hisrc.jscm.codemodel.literal.JSNullLiteral;
 import org.hisrc.jscm.codemodel.literal.JSOctalIntegerLiteral;
+import org.hisrc.jscm.codemodel.literal.JSRegularExpressionLiteral;
 import org.hisrc.jscm.codemodel.literal.JSStringLiteral;
 import org.hisrc.jscm.codemodel.statement.JSBlock;
 import org.hisrc.jscm.codemodel.statement.JSBreakStatement;
@@ -87,7 +89,6 @@ import org.hisrc.jscm.codemodel.statement.impl.WhileStatementImpl;
 import org.hisrc.jscm.codemodel.statement.impl.WithStatementImpl;
 import org.hisrc.jscm.parser.JSCodeModelBuilder;
 import org.hisrc.jscm.parser.ParseException;
-import org.hisrc.jscm.parser.Token;
 import org.hisrc.jscm.parser.literal.BooleanParser;
 import org.hisrc.jscm.parser.literal.DecimalIntegerParser;
 import org.hisrc.jscm.parser.literal.DecimalParser;
@@ -179,6 +180,24 @@ public class CodeModelBuilderImpl implements JSCodeModelBuilder {
 	}
 
 	@Override
+	public JSRegularExpressionLiteral regularExpressionLiteral(String literal) {
+		Validate.notNull(literal);
+		int firstSlashPosition = literal.indexOf('/');
+		int lastSlashPosition = literal.lastIndexOf('/');
+		Validate.isTrue(firstSlashPosition == 0);
+		Validate.isTrue(lastSlashPosition > 0);
+
+		final String body = literal.substring(firstSlashPosition + 1,
+				lastSlashPosition);
+		final String flags = literal.substring(lastSlashPosition + 1);
+		if (flags.length() == 0) {
+			return codeModel.regularExpression(body);
+		} else {
+			return codeModel.regularExpression(body, flags);
+		}
+	}
+
+	@Override
 	public JSHexIntegerLiteral hexIntegerLiteral(String literal)
 			throws ParseException {
 		return codeModel.hexInteger(this.hexIntegerParser.parse(literal));
@@ -191,7 +210,8 @@ public class CodeModelBuilderImpl implements JSCodeModelBuilder {
 	}
 
 	@Override
-	public JSIdentifierName identifierName(String identifier) throws ParseException {
+	public JSIdentifierName identifierName(String identifier)
+			throws ParseException {
 		// TODO Incorrect
 		return new IdentifierNameImpl(identifier);
 	}

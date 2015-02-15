@@ -8,6 +8,7 @@ import org.hisrc.jscm.codemodel.literal.JSDecimalNonIntegerLiteral;
 import org.hisrc.jscm.codemodel.literal.JSHexIntegerLiteral;
 import org.hisrc.jscm.codemodel.literal.JSNullLiteral;
 import org.hisrc.jscm.codemodel.literal.JSOctalIntegerLiteral;
+import org.hisrc.jscm.codemodel.literal.JSRegularExpressionLiteral;
 import org.hisrc.jscm.codemodel.literal.JSStringLiteral;
 import org.hisrc.jscm.codemodel.writer.CodeWriter;
 import org.hisrc.jscm.codemodel.writer.LiteralWriter;
@@ -58,6 +59,13 @@ public class CommentingLiteralWriter extends LiteralWriter {
 	@Override
 	public CodeWriter visit(JSStringLiteral value) throws IOException {
 		f.inlineComment("L:StringLiteral");
+		return super.visit(value);
+	}
+	
+	@Override
+	public CodeWriter visit(JSRegularExpressionLiteral value)
+			throws IOException {
+		f.inlineComment("L:RegularExpressionLiteral");
 		return super.visit(value);
 	}
 
