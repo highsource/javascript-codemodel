@@ -19,11 +19,11 @@ options {
 	 * uses an input stream object that processes Java Unicode escapes before 
 	 * sending characters to the token manager. 
 	 */
-	JAVA_UNICODE_ESCAPE = true;
+	// JAVA_UNICODE_ESCAPE = true;
 
 	/*
 	 * Default value is false. When set to true, the generated parser 
-	 * uses uses an input stream object that reads Unicode files. By default, ASCII files 
+	 * uses an input stream object that reads Unicode files. By default, ASCII files 
 	 * are assumed. 
 	 */
 	UNICODE_INPUT = true;
@@ -133,7 +133,7 @@ WhiteSpace ::
 	<BOM>
 	<USP>
 */
-<DEFAULT, IN_REGEX, NO_LINE_TERMINATOR_HERE>
+<DEFAULT, NO_REGULAR_EXPRESSION_HERE, NO_LINE_TERMINATOR_HERE>
 SKIP :
 {
 	<WHITE_SPACE:
@@ -180,7 +180,7 @@ LineTerminator ::
 	<LS>
 	<PS>
 */
-<DEFAULT, IN_REGEX>
+<DEFAULT, NO_REGULAR_EXPRESSION_HERE>
 SPECIAL_TOKEN :
 {
 	<LINE_TERMINATOR:
@@ -234,13 +234,13 @@ SingleLineCommentChars ::
 SingleLineCommentChar ::
 	SourceCharacter but not LineTerminator
 */
-<DEFAULT, IN_REGEX, NO_LINE_TERMINATOR_HERE>
+<DEFAULT, NO_REGULAR_EXPRESSION_HERE, NO_LINE_TERMINATOR_HERE>
 SPECIAL_TOKEN :
 {
 	<SINGLE_LINE_COMMENT:	"//" ( ~["\n", "\r", "\u2028", "\u2029"] ) *>
 }
 
-<DEFAULT, IN_REGEX, NO_LINE_TERMINATOR_HERE>
+<DEFAULT, NO_REGULAR_EXPRESSION_HERE, NO_LINE_TERMINATOR_HERE>
 MORE :
 {
 	"/*"	:IN_MULTI_LINE_COMMENT
@@ -290,7 +290,7 @@ Keyword :: one of
 	default	if	throw
 	delete	in	try
 */
-<DEFAULT, IN_REGEX, NO_LINE_TERMINATOR_HERE>
+<DEFAULT, NO_REGULAR_EXPRESSION_HERE, NO_LINE_TERMINATOR_HERE>
 TOKEN :
 {
 	<BREAK:	"break">	:NO_LINE_TERMINATOR_HERE
@@ -311,7 +311,7 @@ TOKEN :
 |	<NEW:	"new">	:DEFAULT
 |	<RETURN:	"return">	:NO_LINE_TERMINATOR_HERE
 |	<SWITCH:	"switch">	:DEFAULT
-|	<THIS:	"this">	:IN_REGEX
+|	<THIS:	"this">	:NO_REGULAR_EXPRESSION_HERE
 |	<THROW:	"throw">	:NO_LINE_TERMINATOR_HERE
 |	<TRY:	"try">	:DEFAULT
 |	<TYPEOF:	"typeof">	:DEFAULT
@@ -329,7 +329,7 @@ FutureReservedWord :: one of
 	class	enum	extends	super
 	const	export	import
 */
-<DEFAULT, IN_REGEX, NO_LINE_TERMINATOR_HERE>
+<DEFAULT, NO_REGULAR_EXPRESSION_HERE, NO_LINE_TERMINATOR_HERE>
 TOKEN :
 {
 	<CLASS:	"class">	:DEFAULT
@@ -361,15 +361,15 @@ Punctuator :: one of
 	=	+=	-=	*=	%=	<<=
 	>>=	>>>=	&=	|=	^=
 */
-<DEFAULT, IN_REGEX, NO_LINE_TERMINATOR_HERE>
+<DEFAULT, NO_REGULAR_EXPRESSION_HERE, NO_LINE_TERMINATOR_HERE>
 TOKEN :
 {
 	<LBRACE:	"{">	:DEFAULT
-|	<RBRACE:	"}">	:IN_REGEX
+|	<RBRACE:	"}">	:NO_REGULAR_EXPRESSION_HERE
 |	<LPAREN:	"(">	:DEFAULT
-|	<RPAREN:	")">	:IN_REGEX
+|	<RPAREN:	")">	:NO_REGULAR_EXPRESSION_HERE
 |	<LBRACKET:	"[">	:DEFAULT
-|	<RBRACKET:	"]">	:IN_REGEX
+|	<RBRACKET:	"]">	:NO_REGULAR_EXPRESSION_HERE
 |	<DOT:	".">	:DEFAULT
 |	<SEMICOLON:	";">	:DEFAULT
 |	<COMMA:	",">	:DEFAULT
@@ -385,8 +385,8 @@ TOKEN :
 |	<MINUS:	"-">	:DEFAULT
 |	<STAR:	"*">	:DEFAULT
 |	<REM:	"%">	:DEFAULT
-|	<INCR:	"++">	:IN_REGEX
-|	<DECR:	"--">	:IN_REGEX
+|	<INCR:	"++">	:NO_REGULAR_EXPRESSION_HERE
+|	<DECR:	"--">	:NO_REGULAR_EXPRESSION_HERE
 |	<LSHIFT:	"<<">	:DEFAULT
 |	<RSHIFT:	">>">	:DEFAULT
 |	<RUNSHIFT:	">>>">	:DEFAULT
@@ -394,7 +394,7 @@ TOKEN :
 |	<BIT_OR:	"|">	:DEFAULT
 |	<XOR:	"^">	:DEFAULT
 |	<BANG:	"!">	:DEFAULT
-|	<TILDE:	"~">	:IN_REGEX
+|	<TILDE:	"~">	:NO_REGULAR_EXPRESSION_HERE
 |	<SC_AND:	"&&">	:DEFAULT
 |	<SC_OR:	"||">	:DEFAULT
 |	<HOOK:	"?">	:DEFAULT
@@ -416,7 +416,7 @@ TOKEN :
 DivPunctuator :: one of
 	/ /=
 */
-<IN_REGEX>
+<NO_REGULAR_EXPRESSION_HERE>
 TOKEN :
 {
 	<SLASHASSIGN:	"/=">	:DEFAULT
@@ -471,10 +471,10 @@ JSLiteral Literal() :
 NullLiteral ::
 	null
 */
-<DEFAULT, IN_REGEX, NO_LINE_TERMINATOR_HERE>
+<DEFAULT, NO_REGULAR_EXPRESSION_HERE, NO_LINE_TERMINATOR_HERE>
 TOKEN:
 { 
-	<NULL_LITERAL: "null">	:IN_REGEX
+	<NULL_LITERAL: "null">	:NO_REGULAR_EXPRESSION_HERE
 }
 
 /* ========================================================================== */
@@ -485,13 +485,13 @@ BooleanLiteral ::
 	true
 	false
 */
-<DEFAULT, IN_REGEX, NO_LINE_TERMINATOR_HERE>
+<DEFAULT, NO_REGULAR_EXPRESSION_HERE, NO_LINE_TERMINATOR_HERE>
 TOKEN:
 { 
 	<BOOLEAN_LITERAL:
 		"true"
 	|	"false"
-	>	:IN_REGEX
+	>	:NO_REGULAR_EXPRESSION_HERE
 }
 
 /* ========================================================================== */
@@ -563,14 +563,14 @@ SignedInteger ::
 	+ DecimalDigits
 	- DecimalDigits
 */
-<DEFAULT, IN_REGEX, NO_LINE_TERMINATOR_HERE>
+<DEFAULT, NO_REGULAR_EXPRESSION_HERE, NO_LINE_TERMINATOR_HERE>
 TOKEN:
 { 
 	<DECIMAL_LITERAL:
 		<DECIMAL_INTEGER_LITERAL> "." ( <DECIMAL_DIGITS> ) ? ( <EXPONENT_PART> ) ?
 	|	"."	<DECIMAL_DIGITS> ( <EXPONENT_PART> ) ?
 	|	<DECIMAL_INTEGER_LITERAL> (	<EXPONENT_PART> ) ? 
-	> 	:IN_REGEX
+	> 	:NO_REGULAR_EXPRESSION_HERE
 |	<#DECIMAL_DIGITS: ( <DECIMAL_DIGIT> ) +>
 |	<#DECIMAL_DIGIT: ["0"-"9"]>
 |	<#NON_ZERO_DIGIT: ["1"-"9"]>
@@ -588,10 +588,10 @@ HexIntegerLiteral ::
 	0X HexDigit
 	HexIntegerLiteral HexDigit
 */
-<DEFAULT, IN_REGEX, NO_LINE_TERMINATOR_HERE>
+<DEFAULT, NO_REGULAR_EXPRESSION_HERE, NO_LINE_TERMINATOR_HERE>
 TOKEN:
 {
-	<HEX_INTEGER_LITERAL: "0" ["x", "X"] ( <HEX_DIGIT> ) +>	:IN_REGEX
+	<HEX_INTEGER_LITERAL: "0" ["x", "X"] ( <HEX_DIGIT> ) +>	:NO_REGULAR_EXPRESSION_HERE
 }
 
 /*
@@ -599,10 +599,10 @@ OctalIntegerLiteral ::
 	0 OctalDigit
 	OctalIntegerLiteral OctalDigit
 */
-<DEFAULT, IN_REGEX, NO_LINE_TERMINATOR_HERE>
+<DEFAULT, NO_REGULAR_EXPRESSION_HERE, NO_LINE_TERMINATOR_HERE>
 TOKEN:
 {
-	<OCTAL_INTEGER_LITERAL: "0" ( <OCTAL_DIGIT> ) +>	:IN_REGEX
+	<OCTAL_INTEGER_LITERAL: "0" ( <OCTAL_DIGIT> ) +>	:NO_REGULAR_EXPRESSION_HERE
 }
 
 /* ========================================================================== */
@@ -625,13 +625,13 @@ StringLiteral ::
 	" DoubleStringCharacters_opt "
 	' SingleStringCharacters_opt '
 */
-<DEFAULT, IN_REGEX, NO_LINE_TERMINATOR_HERE>
+<DEFAULT, NO_REGULAR_EXPRESSION_HERE, NO_LINE_TERMINATOR_HERE>
 TOKEN:
 {
 	<STRING_LITERAL:
 		 "\"" ( <DOUBLE_STRING_CHARACTERS> ) ? "\""
 	|	"'" ( <SINGLE_STRING_CHARACTERS> ) ? "'"
-	>	:IN_REGEX
+	>	:NO_REGULAR_EXPRESSION_HERE
 /*
 DoubleStringCharacters ::
 	DoubleStringCharacter DoubleStringCharacters_opt
@@ -742,7 +742,7 @@ HexEscapeSequence ::
 /* ========================================================================== */
 
 /*
-If we're in the IN_REGEX lexical state, we should not recognize regular expressions
+If we're in the NO_REGULAR_EXPRESSION_HERE lexical state, we should not recognize regular expressions
 anymore.
 */ 
 <DEFAULT, NO_LINE_TERMINATOR_HERE>
@@ -757,7 +757,7 @@ RegularExpressionFlags ::
 	[empty]
 	RegularExpressionFlags IdentifierPart
 */
-	<REGULAR_EXPRESSION_LITERAL: "/" <REGULAR_EXPRESSION_BODY> "/" ( <IDENTIFIER_PART> ) *> :IN_REGEX
+	<REGULAR_EXPRESSION_LITERAL: "/" <REGULAR_EXPRESSION_BODY> "/" ( <IDENTIFIER_PART> ) *> :NO_REGULAR_EXPRESSION_HERE
 /*
 RegularExpressionBody ::
 	RegularExpressionFirstChar RegularExpressionChars
@@ -868,7 +868,7 @@ JSIdentifierName IdentifierName() :
 	}*/
 }
 
-<DEFAULT, IN_REGEX, NO_LINE_TERMINATOR_HERE>
+<DEFAULT, NO_REGULAR_EXPRESSION_HERE, NO_LINE_TERMINATOR_HERE>
 TOKEN:
 {
 /*
@@ -876,7 +876,7 @@ IdentifierName ::
 	IdentifierStart
 	IdentifierName IdentifierPart
 */
-	<IDENTIFIER_NAME:	<IDENTIFIER_START> ( <IDENTIFIER_PART> ) *>	:IN_REGEX
+	<IDENTIFIER_NAME:	<IDENTIFIER_START> ( <IDENTIFIER_PART> ) *>	:NO_REGULAR_EXPRESSION_HERE
 /*
 IdentifierStart ::
 	UnicodeLetter
@@ -1506,7 +1506,7 @@ UnicodeConnectorPunctuation ::
 HexDigit :: one of
 	0 1 2 3 4 5 6 7 8 9 a b c d e f A B C D E F
 */
-<DEFAULT, IN_REGEX, NO_LINE_TERMINATOR_HERE>
+<DEFAULT, NO_REGULAR_EXPRESSION_HERE, NO_LINE_TERMINATOR_HERE>
 TOKEN:
 {
 	<#HEX_DIGIT:
@@ -1520,7 +1520,7 @@ TOKEN:
 OctalDigit :: one of
 	0 1 2 3 4 5 6 7
 */
-<DEFAULT, IN_REGEX, NO_LINE_TERMINATOR_HERE>
+<DEFAULT, NO_REGULAR_EXPRESSION_HERE, NO_LINE_TERMINATOR_HERE>
 TOKEN:
 {
 	<#OCTAL_DIGIT:	["0"-"7"]>
@@ -1640,6 +1640,7 @@ JSArrayLiteral ArrayLiteral() :
 				{
 					elementList.add(this.builder.elision());
 				}
+				lastElementWasAssignmentExpression = false;
 			}
 			(
 				expression = AssignmentExpression()
@@ -1650,6 +1651,13 @@ JSArrayLiteral ArrayLiteral() :
 			) ?
 		) *
 	)
+	{
+		final int elementListSize = elementList.size();
+		if (!lastElementWasAssignmentExpression && elementListSize > 1)
+		{
+//			elementList.remove(elementListSize - 1);
+		}
+	}
 	"]"
 	{
 		elements =  elementList.toArray(new JSArrayElement[elementList.size()]);
@@ -2104,7 +2112,7 @@ JSMultiplicativeExpression MultiplicativeExpression() :
 		{
 			expression0 = expression0.mul(expression1);
 		}
-	|	"/"
+	|	<SLASH>
 		expression1 = UnaryExpression()
 		{
 			expression0 = expression0.div(expression1);
@@ -2727,7 +2735,7 @@ JSAssignmentExpression AssignmentExpression() :
 		(
 			"="
 		|	"*="
-		|	"/="
+		|	<SLASHASSIGN>
 		|	"%="
 		|	"+="
 		|	"-="
@@ -2751,7 +2759,7 @@ JSAssignmentExpression AssignmentExpression() :
 		{
 			return expression0.mulAssign(expression1);
 		}
-	|	"/="
+	|	<SLASHASSIGN>
 		expression1 = AssignmentExpression()
 		{
 			return expression0.divAssign(expression1);
@@ -2828,7 +2836,7 @@ JSAssignmentExpression AssignmentExpressionNoIn() :
 		(
 			"="
 		|	"*="
-		|	"/="
+		|	<SLASHASSIGN>
 		|	"%="
 		|	"+="
 		|	"-="
@@ -2852,7 +2860,7 @@ JSAssignmentExpression AssignmentExpressionNoIn() :
 		{
 			return expression0.mulAssign(expression1);
 		}
-	|	"/="
+	|	<SLASHASSIGN>
 		expression1 = AssignmentExpressionNoIn()
 		{
 			return expression0.divAssign(expression1);

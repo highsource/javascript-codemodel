@@ -10,8 +10,9 @@ import junit.framework.Assert;
 import org.apache.commons.lang3.StringEscapeUtils;
 import org.hisrc.jscm.parser.EcmaScriptParserConstants;
 import org.hisrc.jscm.parser.EcmaScriptParserTokenManager;
-import org.hisrc.jscm.parser.JavaCharStream;
+import org.hisrc.jscm.parser.SimpleCharStream;
 import org.hisrc.jscm.parser.Token;
+import org.hisrc.jscm.parser.TokenMgrError;
 import org.hisrc.jscm.parser.testing.util.AbstractDualResourceBasedTest;
 import org.hisrc.jscm.parser.tests.EcmaScriptParserTestConstants;
 
@@ -20,19 +21,29 @@ public abstract class AbstractDualTokenTest extends
 
 	private final LTokenFactory tokenFactory = EcmaScriptParserTestConstants.ECMASCRIPT_PARSER_TOKEN_FACTORY;
 
+	protected boolean isInputEscaped() {
+		return false;
+	}
+
 	private List<LToken> parseTokens(String input) {
-		final JavaCharStream stream = new JavaCharStream(
-				new StringReader(input));
+		final SimpleCharStream stream = isInputEscaped() ? new SimpleCharStream(
+				new StringReader(StringEscapeUtils.unescapeEcmaScript(input)))
+				: new SimpleCharStream(new StringReader(input));
 		final EcmaScriptParserTokenManager tokenManager = new EcmaScriptParserTokenManager(
 				stream);
 		final List<LToken> tokens = new LinkedList<LToken>();
 		{
-			for (Token t = tokenManager.getNextToken(); t != null
-					&& t.kind != EcmaScriptParserConstants.EOF; t = tokenManager
-					.getNextToken()) {
-				final LToken token = this.tokenFactory.createToken(t.kind,
-						t.image);
-				tokens.add(token);
+			try {
+				for (Token t = tokenManager.getNextToken(); t != null
+						&& t.kind != EcmaScriptParserConstants.EOF; t = tokenManager
+						.getNextToken()) {
+					final LToken token = this.tokenFactory.createToken(t.kind,
+							t.image);
+					tokens.add(token);
+				}
+
+			} catch (TokenMgrError tmer) {
+				throw tmer;
 			}
 		}
 		return new ArrayList<LToken>(tokens);

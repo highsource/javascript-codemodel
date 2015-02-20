@@ -75,7 +75,7 @@ public abstract class AbstractDualParserTest extends
 					//
 					sourceLine, resultLine);
 		}
-		if (sourceLinesIterator.hasNext() || sourceLinesIterator.hasNext()) {
+		if (sourceLinesIterator.hasNext() || resultLinesIterator.hasNext()) {
 			Assert.assertEquals(
 					"Number of lines in source and result differs.\n"
 					//

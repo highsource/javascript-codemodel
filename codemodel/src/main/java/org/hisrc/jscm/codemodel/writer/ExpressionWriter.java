@@ -147,24 +147,32 @@ public class ExpressionWriter implements
 
 		for (int index = 0; index < elementsCount; index++) {
 			final boolean first = (index == 0);
+			final boolean last = (index == elementsCount - 1);
 			final JSArrayElement element = elements.get(index);
 
-			if (!first) {
-				fi.comma().whiteSpace();
-			}
 			// TODO Not tested yet
 			element.acceptArrayElementVisitor(new JSArrayElementVisitor<CodeWriter, IOException>() {
 
 				@Override
 				public CodeWriter visitAssignment(
 						JSAssignmentExpression expression) throws IOException {
-					return fi.expression(expression);
+					CodeWriter cw = fi;
+					if (!first)
+					{
+						cw = cw.whiteSpace();
+					}
+					cw = cw.expression(expression);
+					if (!last)
+					{
+						cw = cw.comma();
+					}
+					return cw;
 				}
 
 				@Override
 				public CodeWriter visitElision(JSElision value)
 						throws IOException {
-					return fi;
+					return f.whiteSpace().comma();
 				}
 			});
 

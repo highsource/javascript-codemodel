@@ -1,2 +1,2 @@
-Token [id=STRING_LITERAL, image="\uABCD"]
-Token [id=STRING_LITERAL, image="\uEF01"]
+Token [id=STRING_LITERAL, image="\\uABCD"]
+Token [id=STRING_LITERAL, image="\\uef01"]

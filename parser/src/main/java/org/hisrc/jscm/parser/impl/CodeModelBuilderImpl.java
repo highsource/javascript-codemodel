@@ -125,8 +125,9 @@ public class CodeModelBuilderImpl implements JSCodeModelBuilder {
 	}
 
 	@Override
-	public JSIdentifierReference identifierReference(String name) {
-		return getCodeModel().identifierReference(name);
+	public JSIdentifierReference identifierReference(String name) throws ParseException {
+		final String parsedName = this.stringParser.parse("\"" + name + "\"");
+		return getCodeModel().identifierReference(parsedName);
 	}
 
 	@Override

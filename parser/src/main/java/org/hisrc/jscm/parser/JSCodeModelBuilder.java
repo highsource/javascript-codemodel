@@ -54,7 +54,7 @@ public interface JSCodeModelBuilder {
 
 	public JSThis _this();
 
-	public JSIdentifierReference identifierReference(String name);
+	public JSIdentifierReference identifierReference(String name) throws ParseException;
 
 	public JSArrayLiteral arrayLiteral(JSArrayElement[] elementList);
 

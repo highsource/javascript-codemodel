@@ -1,0 +1,8 @@
+/*E:this*/this;
+/*E:IdentifierReference*/a;
+/*E:Literal*//*L:StringLiteral*/'b';
+/*E:ArrayLiteral*/[c];
+var a = /*E:ObjectLiteral*/{
+  d: e
+};
+/*E:Brackets*/(f);

@@ -39,7 +39,7 @@ public class CodeWriter {
 
 	public CodeWriter identifier(String identifier) throws IOException {
 		Validate.notNull(identifier);
-		writer.append(identifier);
+		writer.append(StringEscapeUtils.escapeEcmaScript(identifier));
 		return this;
 	}
 

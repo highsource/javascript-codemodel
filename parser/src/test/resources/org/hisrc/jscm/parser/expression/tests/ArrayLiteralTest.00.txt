@@ -1,0 +1,16 @@
+/*E:ArrayLiteral*/[];
+/*E:ArrayLiteral*/[ ,];
+/*E:ArrayLiteral*/[ , ,];
+/*E:ArrayLiteral*/[ , , , , , , , , , , , , , , , ,];
+/*E:ArrayLiteral*/[1];
+/*E:ArrayLiteral*/[ , 1];
+/*E:ArrayLiteral*/[ , , 1];
+/*E:ArrayLiteral*/[1];
+/*E:ArrayLiteral*/[1, ,];
+/*E:ArrayLiteral*/[1, 2];
+/*E:ArrayLiteral*/[1, , 2];
+/*E:ArrayLiteral*/[ , 1, 2];
+/*E:ArrayLiteral*/[ , , 1, 2];
+/*E:ArrayLiteral*/[ , , 1, 2];
+/*E:ArrayLiteral*/[ , , 1, 2, ,];
+/*E:ArrayLiteral*/[ , , /*E:ArrayLiteral*/[], , 2, ,];
