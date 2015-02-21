@@ -22,7 +22,7 @@ public class CodeWriter {
 
 	public static final String INDENTATION = "  ";
 
-	private final IndentedAppendable writer;
+	protected final IndentedAppendable writer;
 
 	public CodeWriter(Appendable writer) {
 		this(new DefaultIndentedAppendable(writer));

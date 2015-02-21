@@ -20,4 +20,9 @@ public class CommentingCodeWriter extends CodeWriter {
 		return new CommentingLiteralWriter(this);
 	}
 
+	@Override
+	public CodeWriter indented() {
+		return new CommentingCodeWriter(writer.indent(INDENTATION));
+	}
+
 }

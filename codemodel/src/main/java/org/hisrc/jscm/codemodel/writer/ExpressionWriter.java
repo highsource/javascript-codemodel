@@ -97,60 +97,12 @@ public class ExpressionWriter implements
 
 		final List<JSArrayElement> elements = value.getElements();
 		final int elementsCount = elements.size();
-		// for (int index = 0; index < elementsCount; index++) {
-		// final boolean first = (index == 0);
-		// final boolean last = (index == (elementsCount - 1));
-		// final JSAssignmentExpression element = elements.get(index);
-		// element.acceptExpressionVisitor(new DefaultExpressionVisitor<Void,
-		// IOException>() {
-		//
-		// @Override
-		// public Void visitLiteral(JSLiteral value) throws IOException {
-		// if (!first) {
-		// fi.comma().whiteSpace();
-		// }
-		// return null;
-		// }
-		//
-		// @Override
-		// public Void visitExpression(JSExpression value)
-		// throws IOException {
-		// if (!first) {
-		// fi.comma();
-		// }
-		// fi.lineTerminator();
-		// return null;
-		// }
-		//
-		// });
-		// fi.expression(element);
-		// element.acceptExpressionVisitor(new DefaultExpressionVisitor<Void,
-		// IOException>() {
-		//
-		// @Override
-		// public Void visitLiteral(JSLiteral value) throws IOException {
-		// return null;
-		// }
-		//
-		// @Override
-		// public Void visitExpression(JSExpression value)
-		// throws IOException {
-		// if (last) {
-		// fi.lineTerminator();
-		// }
-		// return null;
-		// }
-		//
-		// });
-		//
-		// }
 
 		for (int index = 0; index < elementsCount; index++) {
 			final boolean first = (index == 0);
 			final boolean last = (index == elementsCount - 1);
 			final JSArrayElement element = elements.get(index);
 
-			// TODO Not tested yet
 			element.acceptArrayElementVisitor(new JSArrayElementVisitor<CodeWriter, IOException>() {
 
 				@Override
