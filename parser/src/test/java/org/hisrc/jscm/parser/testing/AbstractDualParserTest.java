@@ -39,8 +39,6 @@ public abstract class AbstractDualParserTest extends
 			final StringBuffer sb = new StringBuffer();
 			final CodeWriter codeWriter = new CommentingCodeWriter(sb);
 			codeWriter.program(program);
-			new CodeWriter(System.out).program(program);
-			new CommentingCodeWriter(System.out).program(program);
 			final String result = sb.toString();
 			final List<String> resultLines = Arrays.asList(StringUtils.split(
 					result, "\n\r"));
