@@ -11,7 +11,7 @@ import org.hisrc.jscm.codemodel.literal.JSStringLiteral;
 public class PropertyNameWriter implements
 		JSPropertyNameVisitor<CodeWriter, IOException> {
 
-	private final CodeWriter f;
+	protected final CodeWriter f;
 
 	public PropertyNameWriter(CodeWriter formatter) {
 		Validate.notNull(formatter);

@@ -4,7 +4,7 @@ import java.io.IOException;
 
 import org.hisrc.jscm.codemodel.lang.Validate;
 
-public abstract class AbstractIndentedAppendable implements IndentedAppendable {
+public abstract class AbstractIndentedAppendable implements IndentableAppendable {
 
 	private final Appendable appendable;
 
@@ -37,14 +37,14 @@ public abstract class AbstractIndentedAppendable implements IndentedAppendable {
 	}
 
 	@Override
-	public IndentedAppendable append(CharSequence str) throws IOException {
+	public IndentableAppendable append(CharSequence str) throws IOException {
 		pre();
 		appendable.append(str);
 		return this;
 	}
 
 	@Override
-	public IndentedAppendable append(CharSequence charSequence, int start,
+	public IndentableAppendable append(CharSequence charSequence, int start,
 			int end) throws IOException {
 		pre();
 		appendable.append(charSequence, start, end);
@@ -52,56 +52,20 @@ public abstract class AbstractIndentedAppendable implements IndentedAppendable {
 	}
 
 	@Override
-	public synchronized IndentedAppendable append(char c) throws IOException {
+	public synchronized IndentableAppendable append(char c) throws IOException {
 		pre();
 		appendable.append(c);
 		return this;
 	}
 
 	@Override
-	public IndentedAppendable indent(final CharSequence indentation) {
-		Validate.notNull(indentation);
-		final CharSequence _indentation = indentation;
-		return new AbstractIndentedAppendable(this.appendable) {
-
-			private final String indentation = AbstractIndentedAppendable.this
-					.getIndentation() + _indentation;
-
-			@Override
-			protected void setWhiteSpace(boolean value) {
-				AbstractIndentedAppendable.this.setWhiteSpace(value);
-			}
-
-			@Override
-			protected void setLineTerminator(boolean value) {
-				AbstractIndentedAppendable.this.setLineTerminator(value);
-			}
-
-			@Override
-			protected boolean isWhiteSpace() {
-				return AbstractIndentedAppendable.this.isWhiteSpace();
-			}
-
-			@Override
-			protected boolean isLineTerminator() {
-				return AbstractIndentedAppendable.this.isLineTerminator();
-			}
-
-			@Override
-			protected String getIndentation() {
-				return indentation;
-			}
-		};
-	}
-
-	@Override
-	public IndentedAppendable whiteSpace() {
+	public IndentableAppendable whiteSpace() {
 		setWhiteSpace(true);
 		return this;
 	}
 
 	@Override
-	public IndentedAppendable lineTerminator() {
+	public IndentableAppendable lineTerminator() {
 		setLineTerminator(true);
 		return this;
 	}

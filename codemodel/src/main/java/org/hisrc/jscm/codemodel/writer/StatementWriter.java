@@ -44,14 +44,15 @@ public class StatementWriter implements
 	public CodeWriter visitBlock(JSBlock value) throws IOException {
 		f.openCurlyBracket();
 		f.lineTerminator();
-		final CodeWriter fi = f.indented();
+		f.indent();
 		final List<JSStatement> statements = value.getStatements();
 
 		for (int index = 0; index < statements.size(); index++) {
 			final JSStatement statement = statements.get(index);
-			fi.statement(statement);
-			fi.lineTerminator();
+			f.statement(statement);
+			f.lineTerminator();
 		}
+		f.unindent();
 		f.closeCurlyBracket();
 		return f;
 	}
@@ -191,7 +192,7 @@ public class StatementWriter implements
 	public CodeWriter visitIf(JSIfStatement value) throws IOException {
 		f.keyword("if").whiteSpace();
 		f.openRoundBracket();
-		f.indented().expression(value.getIf());
+		f.indent().expression(value.getIf()).unindent();
 		f.closeRoundBracket();
 		f.whiteSpace();
 		f.block(value.getThen());
@@ -227,15 +228,16 @@ public class StatementWriter implements
 
 		f.keyword("switch").whiteSpace();
 		f.openRoundBracket();
-		f.indented().expression(value.getExpression());
+		f.indent().expression(value.getExpression()).unindent();
 		f.closeRoundBracket();
 		f.whiteSpace();
 		f.openCurlyBracket();
 		f.lineTerminator();
-		final CodeWriter fi = f.indented();
+		// TODO
+		final CodeWriter fi = f.indent();
 		for (JSCaseClause caseClause : value.getFirstCaseClauses()) {
 			fi.keyword("case").whiteSpace();
-			fi.indented().expression(caseClause.getExpression());
+			fi.indent().expression(caseClause.getExpression());
 			fi.colon().whiteSpace();
 			List<JSStatement> statements = caseClause.getStatements();
 			for (int index = 0; index < statements.size(); index++) {
@@ -332,7 +334,7 @@ public class StatementWriter implements
 
 		f.keyword("while").whiteSpace();
 		f.openRoundBracket();
-		f.indented().expression(value.getExpression());
+		f.indent().expression(value.getExpression()).unindent();
 		f.closeRoundBracket();
 		f.block(value.getStatement());
 
@@ -343,7 +345,7 @@ public class StatementWriter implements
 	public CodeWriter visitWith(JSWithStatement value) throws IOException {
 		f.keyword("with").whiteSpace();
 		f.openRoundBracket();
-		f.indented().expression(value.getWith());
+		f.indent().expression(value.getWith()).unindent();
 		f.closeRoundBracket().whiteSpace();
 		f.block(value.getStatement());
 		return f;

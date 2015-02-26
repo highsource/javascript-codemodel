@@ -3,6 +3,7 @@ package org.hisrc.jscm.codemodel.writer.debug;
 import org.hisrc.jscm.codemodel.writer.CodeWriter;
 import org.hisrc.jscm.codemodel.writer.ExpressionWriter;
 import org.hisrc.jscm.codemodel.writer.LiteralWriter;
+import org.hisrc.jscm.codemodel.writer.PropertyNameWriter;
 
 public class CommentingCodeWriter extends CodeWriter {
 
@@ -21,8 +22,8 @@ public class CommentingCodeWriter extends CodeWriter {
 	}
 
 	@Override
-	public CodeWriter indented() {
-		return new CommentingCodeWriter(writer.indent(INDENTATION));
+	protected PropertyNameWriter createPropertyNameWriter() {
+		return new CommentingPropertyNameWriter(this);
 	}
 
 }

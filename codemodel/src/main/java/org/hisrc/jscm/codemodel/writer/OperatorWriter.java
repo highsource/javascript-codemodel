@@ -2,7 +2,7 @@ package org.hisrc.jscm.codemodel.writer;
 
 import java.io.IOException;
 
-import org.hisrc.jscm.codemodel.io.IndentedAppendable;
+import org.hisrc.jscm.codemodel.io.IndentableAppendable;
 import org.hisrc.jscm.codemodel.lang.Validate;
 import org.hisrc.jscm.codemodel.operator.JSAssignmentOperator;
 import org.hisrc.jscm.codemodel.operator.JSBinaryOperator;
@@ -14,17 +14,17 @@ import org.hisrc.jscm.codemodel.operator.JSPrefixOperator;
 import org.hisrc.jscm.codemodel.operator.JSUnaryOperator;
 
 public class OperatorWriter implements
-		JSOperatorVisitor<IndentedAppendable, IOException> {
+		JSOperatorVisitor<IndentableAppendable, IOException> {
 
-	private final IndentedAppendable appendable;
+	private final IndentableAppendable appendable;
 
-	public OperatorWriter(IndentedAppendable appendable) {
+	public OperatorWriter(IndentableAppendable appendable) {
 		Validate.notNull(appendable);
 		this.appendable = appendable;
 	}
 
 	@Override
-	public IndentedAppendable visitAssignmentOperator(
+	public IndentableAppendable visitAssignmentOperator(
 			JSAssignmentOperator operator) throws IOException {
 		appendable.whiteSpace();
 		appendable.append(operator.asString());
@@ -33,7 +33,7 @@ public class OperatorWriter implements
 	}
 
 	@Override
-	public IndentedAppendable visitBinaryOperator(JSBinaryOperator operator)
+	public IndentableAppendable visitBinaryOperator(JSBinaryOperator operator)
 			throws IOException {
 		appendable.whiteSpace();
 		appendable.append(operator.asString());
@@ -42,7 +42,7 @@ public class OperatorWriter implements
 	}
 
 	@Override
-	public IndentedAppendable visitKeywordBinaryOperator(
+	public IndentableAppendable visitKeywordBinaryOperator(
 			JSKeywordBinaryOperator operator) throws IOException {
 		appendable.whiteSpace();
 		appendable.append(operator.asString());
@@ -51,21 +51,21 @@ public class OperatorWriter implements
 	}
 
 	@Override
-	public IndentedAppendable visitUnaryOperator(JSUnaryOperator operator)
+	public IndentableAppendable visitUnaryOperator(JSUnaryOperator operator)
 			throws IOException {
 		appendable.append(operator.asString());
 		return appendable;
 	}
 
 	@Override
-	public IndentedAppendable visitPrefixOperator(JSPrefixOperator operator)
+	public IndentableAppendable visitPrefixOperator(JSPrefixOperator operator)
 			throws IOException {
 		appendable.append(operator.asString());
 		return appendable;
 	}
 
 	@Override
-	public IndentedAppendable visitKeywordPrefixOperator(
+	public IndentableAppendable visitKeywordPrefixOperator(
 			JSKeywordPrefixOperator operator) throws IOException {
 		appendable.append(operator.asString());
 		appendable.whiteSpace();
@@ -73,7 +73,7 @@ public class OperatorWriter implements
 	}
 
 	@Override
-	public IndentedAppendable visitPostfixOperator(JSPostfixOperator operator)
+	public IndentableAppendable visitPostfixOperator(JSPostfixOperator operator)
 			throws IOException {
 		appendable.append(operator.asString());
 		return appendable;

@@ -39,16 +39,16 @@ public class SourceElementWriter implements
 		f.whiteSpace();
 		f.openCurlyBracket().lineTerminator();
 
-		final CodeWriter fi = f.indented();
+		f.indent();
 		final List<JSSourceElement> sourceElements = value.getBody()
 				.getSourceElements();
 
 		for (int index = 0; index < sourceElements.size(); index++) {
 			final JSSourceElement sourceElement = sourceElements.get(index);
-			fi.sourceElement(sourceElement);
-			fi.lineTerminator();
+			f.sourceElement(sourceElement);
+			f.lineTerminator();
 		}
-
+		f.unindent();
 		f.closeCurlyBracket();
 		return f;
 	}

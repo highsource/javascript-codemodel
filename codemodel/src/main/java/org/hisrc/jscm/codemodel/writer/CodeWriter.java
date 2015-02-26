@@ -9,7 +9,7 @@ import org.hisrc.jscm.codemodel.JSPropertyName;
 import org.hisrc.jscm.codemodel.JSSourceElement;
 import org.hisrc.jscm.codemodel.expression.JSExpression;
 import org.hisrc.jscm.codemodel.io.DefaultIndentedAppendable;
-import org.hisrc.jscm.codemodel.io.IndentedAppendable;
+import org.hisrc.jscm.codemodel.io.IndentableAppendable;
 import org.hisrc.jscm.codemodel.lang.StringEscapeUtils;
 import org.hisrc.jscm.codemodel.lang.Validate;
 import org.hisrc.jscm.codemodel.literal.JSLiteral;
@@ -22,19 +22,23 @@ public class CodeWriter {
 
 	public static final String INDENTATION = "  ";
 
-	protected final IndentedAppendable writer;
+	protected final IndentableAppendable writer;
 
 	public CodeWriter(Appendable writer) {
 		this(new DefaultIndentedAppendable(writer));
 	}
 
-	private CodeWriter(IndentedAppendable writer) {
+	private CodeWriter(IndentableAppendable writer) {
 		Validate.notNull(writer);
 		this.writer = writer;
 	}
 
 	protected ExpressionWriter createExpressionWriter() {
 		return new ExpressionWriter(this);
+	}
+
+	protected PropertyNameWriter createPropertyNameWriter() {
+		return new PropertyNameWriter(this);
 	}
 
 	public CodeWriter identifier(String identifier) throws IOException {
@@ -91,8 +95,14 @@ public class CodeWriter {
 		return this;
 	}
 
-	public CodeWriter indented() {
-		return new CodeWriter(writer.indent(INDENTATION));
+	public CodeWriter indent() {
+		writer.indent(INDENTATION);
+		return this;
+	}
+
+	public CodeWriter unindent() {
+		writer.unindent(INDENTATION);
+		return this;
 	}
 
 	public CodeWriter lineTerminator() throws IOException {
@@ -175,7 +185,6 @@ public class CodeWriter {
 
 	public CodeWriter block(JSStatement statement) throws IOException {
 		final CodeWriter f = this;
-		final CodeWriter fi = f.indented();
 		return statement
 				.acceptStatementVisitor(new AbstractStatementVisitor<CodeWriter, IOException>() {
 
@@ -188,7 +197,8 @@ public class CodeWriter {
 					@Override
 					public CodeWriter visitStatement(JSStatement statement)
 							throws IOException {
-						return fi.lineTerminator().statement(statement);
+						return f.indent().lineTerminator().statement(statement)
+								.unindent();
 					}
 				});
 	}
@@ -214,8 +224,8 @@ public class CodeWriter {
 
 	public CodeWriter propertyName(JSPropertyName propertyName)
 			throws IOException {
-		return propertyName.acceptPropertyNameVisitor(new PropertyNameWriter(
-				this));
+		return propertyName
+				.acceptPropertyNameVisitor(createPropertyNameWriter());
 	}
 
 	public CodeWriter program(JSProgram program) throws IOException {

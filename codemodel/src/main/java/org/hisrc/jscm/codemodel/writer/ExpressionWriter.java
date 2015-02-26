@@ -93,7 +93,7 @@ public class ExpressionWriter implements
 			throws IOException {
 
 		f.openSquareBracket();
-		final CodeWriter fi = f.indented();
+		f.indent();
 
 		final List<JSArrayElement> elements = value.getElements();
 		final int elementsCount = elements.size();
@@ -108,17 +108,14 @@ public class ExpressionWriter implements
 				@Override
 				public CodeWriter visitAssignment(
 						JSAssignmentExpression expression) throws IOException {
-					CodeWriter cw = fi;
-					if (!first)
-					{
-						cw = cw.whiteSpace();
+					if (!first) {
+						f.whiteSpace();
 					}
-					cw = cw.expression(expression);
-					if (!last)
-					{
-						cw = cw.comma();
+					f.expression(expression);
+					if (!last) {
+						f.comma();
 					}
-					return cw;
+					return f;
 				}
 
 				@Override
@@ -129,6 +126,7 @@ public class ExpressionWriter implements
 			});
 
 		}
+		f.unindent();
 		f.closeSquareBracket();
 
 		return f;
@@ -146,11 +144,11 @@ public class ExpressionWriter implements
 
 			f.lineTerminator();
 
-			final CodeWriter fi = f.indented();
+			f.indent();
 
 			for (int index = 0; index < propertyAssignments.size(); index++) {
 				if (index > 0) {
-					fi.comma().lineTerminator();
+					f.comma().lineTerminator();
 				}
 				final JSPropertyAssignment propertyAssignment = propertyAssignments
 						.get(index);
@@ -158,9 +156,10 @@ public class ExpressionWriter implements
 				final JSPropertyName propertyName = propertyAssignment.getKey();
 				final JSAssignmentExpression propertyValue = propertyAssignment
 						.getValue();
-				fi.propertyName(propertyName).colon().whiteSpace()
+				f.propertyName(propertyName).colon().whiteSpace()
 						.expression(propertyValue);
 			}
+			f.unindent();
 			f.lineTerminator();
 		}
 		f.closeCurlyBracket();
@@ -170,7 +169,7 @@ public class ExpressionWriter implements
 	@Override
 	public CodeWriter visitBrackets(Brackets value) throws IOException {
 		f.openRoundBracket();
-		f.indented().expression(value.getBase());
+		f.indent().expression(value.getBase()).unindent();
 		f.closeRoundBracket();
 		return f;
 	}
@@ -195,15 +194,15 @@ public class ExpressionWriter implements
 		f.closeRoundBracket().whiteSpace();
 		f.openCurlyBracket().lineTerminator();
 
-		final CodeWriter fi = f.indented();
+		f.indent();
 		final List<JSSourceElement> sourceElements = value.getBody()
 				.getSourceElements();
 		for (int index = 0; index < sourceElements.size(); index++) {
 			final JSSourceElement sourceElement = sourceElements.get(index);
-			fi.sourceElement(sourceElement);
-			fi.lineTerminator();
+			f.sourceElement(sourceElement);
+			f.lineTerminator();
 		}
-
+		f.unindent();
 		f.closeCurlyBracket();
 		return f;
 	}
@@ -214,7 +213,7 @@ public class ExpressionWriter implements
 
 		f.expression(value.getBase());
 		f.openSquareBracket();
-		f.indented().expression(value.getIndex());
+		f.indent().expression(value.getIndex()).unindent();
 		f.closeSquareBracket();
 		return f;
 	}
@@ -224,7 +223,7 @@ public class ExpressionWriter implements
 			throws IOException {
 		f.expression(value.getBase());
 		f.dot();
-		f.indented().propertyName(value.getName());
+		f.indent().propertyName(value.getName()).unindent();
 		return f;
 	}
 
@@ -240,18 +239,18 @@ public class ExpressionWriter implements
 
 		f.openRoundBracket();
 
-		final CodeWriter fi = f.indented();
+		f.indent();
 		List<JSAssignmentExpression> args = value.getArgs();
 
 		for (int index = 0; index < args.size(); index++) {
 			if (index > 0) {
-				fi.comma().whiteSpace();
+				f.comma().whiteSpace();
 
 			}
 			JSExpression arg = args.get(index);
-			fi.expression(arg);
+			f.expression(arg);
 		}
-
+		f.unindent();
 		f.closeRoundBracket();
 		return f;
 	}
@@ -277,7 +276,7 @@ public class ExpressionWriter implements
 	public CodeWriter visitCallElement(CallElement value) throws IOException {
 		f.expression(value.getBase());
 		f.openSquareBracket();
-		f.indented().expression(value.getIndex());
+		f.indent().expression(value.getIndex()).unindent();
 		f.closeSquareBracket();
 		return f;
 	}
@@ -286,7 +285,7 @@ public class ExpressionWriter implements
 	public CodeWriter visitCallProperty(CallProperty value) throws IOException {
 		f.expression(value.getBase());
 		f.dot();
-		f.indented().propertyName(value.getName());
+		f.indent().propertyName(value.getName()).unindent();
 		return f;
 	}
 
@@ -361,11 +360,11 @@ public class ExpressionWriter implements
 		f.whiteSpace();
 		f.questionMark();
 		f.whiteSpace();
-		f.indented().expression(value.getIfTrue());
+		f.indent().expression(value.getIfTrue()).unindent();
 		f.whiteSpace();
 		f.colon();
 		f.whiteSpace();
-		f.indented().expression(value.getIfFalse());
+		f.indent().expression(value.getIfFalse()).unindent();
 		return f;
 	}
 
@@ -378,7 +377,7 @@ public class ExpressionWriter implements
 	public CodeWriter visitComma(Comma value) throws IOException {
 		f.expression(value.getLeft());
 		f.comma().whiteSpace();
-		f.indented().expression(value.getRight());
+		f.indent().expression(value.getRight()).unindent();
 		return f;
 	}
 

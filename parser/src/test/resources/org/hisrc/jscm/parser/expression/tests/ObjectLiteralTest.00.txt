@@ -1,0 +1,6 @@
+/*E:Assignment*//*E:IdentifierReference*/a = /*E:ObjectLiteral*/{};
+/*E:Assignment*//*E:IdentifierReference*/a = /*E:ObjectLiteral*/{
+  /*PN:IdentifierName*/a: /*E:Literal*//*L:NullLiteral*/null,
+  /*PN:StringLiteral*//*L:StringLiteral*/'b': /*E:IdentifierReference*/undefined,
+  /*PN:NumericLiteral*//*L:DecimalNonIntegerLiteral*/3: /*E:Literal*//*L:BooleanLiteral*/true
+};
