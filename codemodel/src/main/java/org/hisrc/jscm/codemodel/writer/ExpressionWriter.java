@@ -3,7 +3,6 @@ package org.hisrc.jscm.codemodel.writer;
 import java.io.IOException;
 import java.util.List;
 
-import org.hisrc.jscm.codemodel.JSPropertyName;
 import org.hisrc.jscm.codemodel.JSSourceElement;
 import org.hisrc.jscm.codemodel.expression.JSAdditiveExpression.Additive;
 import org.hisrc.jscm.codemodel.expression.JSArrayElement;
@@ -152,12 +151,7 @@ public class ExpressionWriter implements
 				}
 				final JSPropertyAssignment propertyAssignment = propertyAssignments
 						.get(index);
-
-				final JSPropertyName propertyName = propertyAssignment.getKey();
-				final JSAssignmentExpression propertyValue = propertyAssignment
-						.getValue();
-				f.propertyName(propertyName).colon().whiteSpace()
-						.expression(propertyValue);
+				f.propertyAssignment(propertyAssignment);
 			}
 			f.unindent();
 			f.lineTerminator();

@@ -25,8 +25,12 @@ import org.hisrc.jscm.codemodel.expression.impl.ArrayLiteralImpl;
 import org.hisrc.jscm.codemodel.expression.impl.ElisionImpl;
 import org.hisrc.jscm.codemodel.expression.impl.FunctionExpressionImpl;
 import org.hisrc.jscm.codemodel.expression.impl.ObjectLiteralImpl;
-import org.hisrc.jscm.codemodel.expression.impl.ObjectLiteralImpl.PropertyAssignmentImpl;
+import org.hisrc.jscm.codemodel.expression.impl.ObjectLiteralImpl.GetterImpl;
+import org.hisrc.jscm.codemodel.expression.impl.ObjectLiteralImpl.PropertyImpl;
+import org.hisrc.jscm.codemodel.expression.impl.ObjectLiteralImpl.SetterImpl;
+import org.hisrc.jscm.codemodel.expression.impl.VariableImpl;
 import org.hisrc.jscm.codemodel.impl.CodeModelImpl;
+import org.hisrc.jscm.codemodel.impl.FunctionBodyImpl;
 import org.hisrc.jscm.codemodel.impl.FunctionDeclarationImpl;
 import org.hisrc.jscm.codemodel.impl.IdentifierNameImpl;
 import org.hisrc.jscm.codemodel.impl.ProgramImpl;
@@ -125,7 +129,8 @@ public class CodeModelBuilderImpl implements JSCodeModelBuilder {
 	}
 
 	@Override
-	public JSIdentifierReference identifierReference(String name) throws ParseException {
+	public JSIdentifierReference identifierReference(String name)
+			throws ParseException {
 		final String parsedName = this.stringParser.parse("\"" + name + "\"");
 		return getCodeModel().identifierReference(parsedName);
 	}
@@ -147,9 +152,22 @@ public class CodeModelBuilderImpl implements JSCodeModelBuilder {
 	}
 
 	@Override
-	public JSPropertyAssignment propertyAssignment(JSPropertyName key,
+	public JSPropertyAssignment property(JSPropertyName key,
 			JSAssignmentExpression value) {
-		return new PropertyAssignmentImpl(key, value);
+		return new PropertyImpl(key, value);
+	}
+
+	@Override
+	public JSPropertyAssignment getter(JSPropertyName key,
+			JSSourceElement[] body) {
+		return new GetterImpl(key, new FunctionBodyImpl(getCodeModel(), body));
+	}
+
+	@Override
+	public JSPropertyAssignment setter(JSPropertyName key, String parameter,
+			JSSourceElement[] body) {
+		return new SetterImpl(key, new VariableImpl(getCodeModel(), parameter),
+				new FunctionBodyImpl(getCodeModel(), body));
 	}
 
 	@Override

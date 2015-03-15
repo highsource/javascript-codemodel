@@ -1721,19 +1721,55 @@ PropertyAssignment :
 JSPropertyAssignment PropertyAssignment() : 
 {
 	JSPropertyName key;
-	JSAssignmentExpression expression; 
+	JSAssignmentExpression expression;
+	String parameter;
+	JSSourceElement[] body;
 }
 {
-	key = PropertyName()
+	LOOKAHEAD( { getToken(1).kind == IDENTIFIER_NAME && "get".equals(getToken(1).image) } )
+	<IDENTIFIER_NAME>
+	(
+		":"
+		expression = AssignmentExpression()
+		{
+			return this.builder.property(this.builder.identifierName("get"), expression);
+		}
+	|	key = PropertyName()
+		"("
+		")"
+		"{"
+		body = FunctionBody()
+		"}"
+		{
+			return this.builder.getter(key, body);
+		}
+	)
+|	LOOKAHEAD( { getToken(1).kind == IDENTIFIER_NAME && "set".equals(getToken(1).image) } )
+	<IDENTIFIER_NAME>
+	(
+		":"
+		expression = AssignmentExpression()
+		{
+			return this.builder.property(this.builder.identifierName("set"), expression);
+		}
+	|	key = PropertyName()
+		"("
+		parameter = PropertySetParameterList()
+		")"
+		"{"
+		body = FunctionBody()
+		"}"
+		{
+			return this.builder.setter(key, parameter, body);
+		}
+	)
+|	key = PropertyName()
 	":"
 	expression = AssignmentExpression()
 	{
-		return this.builder.propertyAssignment(key, expression);
+		return this.builder.property(key, expression);
 	}
-/* TODO
-	get PropertyName ( ) { FunctionBody }
-	set PropertyName ( PropertySetParameterList ) { FunctionBody }
-*/
+	
 }
 
 /*

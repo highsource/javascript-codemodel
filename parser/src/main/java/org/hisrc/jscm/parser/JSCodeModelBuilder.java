@@ -54,7 +54,8 @@ public interface JSCodeModelBuilder {
 
 	public JSThis _this();
 
-	public JSIdentifierReference identifierReference(String name) throws ParseException;
+	public JSIdentifierReference identifierReference(String name)
+			throws ParseException;
 
 	public JSArrayLiteral arrayLiteral(JSArrayElement[] elementList);
 
@@ -63,14 +64,22 @@ public interface JSCodeModelBuilder {
 	public JSObjectLiteral objectLiteral(
 			JSPropertyAssignment[] propertyAssignments);
 
-	public JSPropertyAssignment propertyAssignment(JSPropertyName key,
+	public JSPropertyAssignment property(JSPropertyName key,
 			JSAssignmentExpression value);
+
+	public JSPropertyAssignment getter(JSPropertyName key,
+			JSSourceElement[] body);
+
+	public JSPropertyAssignment setter(JSPropertyName key, String parameter,
+			JSSourceElement[] body);
 
 	public JSNullLiteral nullLiteral(String literal) throws ParseException;
 
-	public JSBooleanLiteral booleanLiteral(String literal) throws ParseException;
+	public JSBooleanLiteral booleanLiteral(String literal)
+			throws ParseException;
 
-	public JSDecimalLiteral decimalLiteral(String literal) throws ParseException;
+	public JSDecimalLiteral decimalLiteral(String literal)
+			throws ParseException;
 
 	public JSDecimalIntegerLiteral decimalIntegerLiteral(String literal)
 			throws ParseException;
@@ -79,14 +88,15 @@ public interface JSCodeModelBuilder {
 
 	public JSOctalIntegerLiteral octalIntegerLiteral(String literal)
 			throws ParseException;
-	
+
 	public JSHexIntegerLiteral hexIntegerLiteral(String literal)
 			throws ParseException;
 
 	public JSRegularExpressionLiteral regularExpressionLiteral(String literal)
 			throws ParseException;
 
-	public JSIdentifierName identifierName(String identifier) throws ParseException;
+	public JSIdentifierName identifierName(String identifier)
+			throws ParseException;
 
 	public String identifier(String identifier) throws ParseException;
 

@@ -3,6 +3,7 @@ package org.hisrc.jscm.codemodel.writer.debug;
 import org.hisrc.jscm.codemodel.writer.CodeWriter;
 import org.hisrc.jscm.codemodel.writer.ExpressionWriter;
 import org.hisrc.jscm.codemodel.writer.LiteralWriter;
+import org.hisrc.jscm.codemodel.writer.PropertyAssignmentWriter;
 import org.hisrc.jscm.codemodel.writer.PropertyNameWriter;
 
 public class CommentingCodeWriter extends CodeWriter {
@@ -24,6 +25,11 @@ public class CommentingCodeWriter extends CodeWriter {
 	@Override
 	protected PropertyNameWriter createPropertyNameWriter() {
 		return new CommentingPropertyNameWriter(this);
+	}
+
+	@Override
+	protected PropertyAssignmentWriter createPropertyAssignmentWriter() {
+		return new CommentingPropertyAssignmentWriter(this);
 	}
 
 }

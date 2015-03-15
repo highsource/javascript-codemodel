@@ -8,6 +8,7 @@ import org.hisrc.jscm.codemodel.JSProgram;
 import org.hisrc.jscm.codemodel.JSPropertyName;
 import org.hisrc.jscm.codemodel.JSSourceElement;
 import org.hisrc.jscm.codemodel.expression.JSExpression;
+import org.hisrc.jscm.codemodel.expression.JSObjectLiteral.JSPropertyAssignment;
 import org.hisrc.jscm.codemodel.io.DefaultIndentedAppendable;
 import org.hisrc.jscm.codemodel.io.IndentableAppendable;
 import org.hisrc.jscm.codemodel.lang.StringEscapeUtils;
@@ -39,6 +40,10 @@ public class CodeWriter {
 
 	protected PropertyNameWriter createPropertyNameWriter() {
 		return new PropertyNameWriter(this);
+	}
+
+	protected PropertyAssignmentWriter createPropertyAssignmentWriter() {
+		return new PropertyAssignmentWriter(this);
 	}
 
 	public CodeWriter identifier(String identifier) throws IOException {
@@ -226,6 +231,12 @@ public class CodeWriter {
 			throws IOException {
 		return propertyName
 				.acceptPropertyNameVisitor(createPropertyNameWriter());
+	}
+
+	public CodeWriter propertyAssignment(JSPropertyAssignment propertyAssignment)
+			throws IOException {
+		return propertyAssignment
+				.acceptPropertyAssignmentVisitor(createPropertyAssignmentWriter());
 	}
 
 	public CodeWriter program(JSProgram program) throws IOException {

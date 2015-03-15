@@ -1,0 +1,28 @@
+/*E:Assignment*//*E:IdentifierReference*/a = /*E:ObjectLiteral*/{
+  /*PA:Property*//*PN:IdentifierName*/get: /*E:Literal*//*L:NullLiteral*/null,
+  /*PA:Property*//*PN:IdentifierName*/set: /*E:Literal*//*L:NullLiteral*/null
+};
+/*E:Assignment*//*E:IdentifierReference*/a = /*E:ObjectLiteral*/{
+  /*PA:Getter*/get /*PN:IdentifierName*/get() {
+  },
+  /*PA:Setter*/set /*PN:IdentifierName*/set(set) {
+  }
+};
+/*E:Assignment*//*E:IdentifierReference*/a = /*E:ObjectLiteral*/{
+  /*PA:Getter*/get /*PN:StringLiteral*//*L:StringLiteral*/'get'() {
+  },
+  /*PA:Setter*/set /*PN:StringLiteral*//*L:StringLiteral*/'set'(set) {
+  }
+};
+/*E:Assignment*//*E:IdentifierReference*/a = /*E:ObjectLiteral*/{
+  /*PA:Getter*/get /*PN:StringLiteral*//*L:StringLiteral*/'get'() {
+  },
+  /*PA:Setter*/set /*PN:StringLiteral*//*L:StringLiteral*/'set'(set) {
+  }
+};
+/*E:Assignment*//*E:IdentifierReference*/a = /*E:ObjectLiteral*/{
+  /*PA:Getter*/get /*PN:NumericLiteral*//*L:DecimalNonIntegerLiteral*/1() {
+  },
+  /*PA:Setter*/set /*PN:NumericLiteral*//*L:DecimalNonIntegerLiteral*/2(set) {
+  }
+};

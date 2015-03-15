@@ -1,2 +1,2 @@
 a = {}
-a = { a : null, 'b' : undefined, 3 : true }
+a = { a : null, 'b' : undefined, "c" : undefined, 4 : true }
