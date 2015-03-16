@@ -1,0 +1,13 @@
+/*E:IdentifierReference*/A;
+/*E:IdentifierReference*/A/*E:MemberCall*/();
+/*E:IdentifierReference*/A/*E:MemberCall*/(/*E:Literal*//*L:StringLiteral*/'b', /*E:Literal*//*L:StringLiteral*/'c', /*E:IdentifierReference*/d, /*E:Literal*//*L:DecimalNonIntegerLiteral*/1E+10);
+/*E:IdentifierReference*/A/*E:MemberCall*/()/*E:CallArgs*/();
+/*E:IdentifierReference*/A/*E:MemberCall*/()/*E:CallElement*/[/*E:Literal*//*L:DecimalNonIntegerLiteral*/0];
+/*E:IdentifierReference*/A/*E:MemberCall*/()/*E:CallProperty*/./*PN:IdentifierName*/b;
+/*E:IdentifierReference*/A/*E:MemberCall*/()/*E:CallElement*/[/*E:Literal*//*L:DecimalNonIntegerLiteral*/0]/*E:CallProperty*/./*PN:IdentifierName*/b;
+/*E:IdentifierReference*/A/*E:MemberCall*/()/*E:CallProperty*/./*PN:IdentifierName*/b/*E:CallElement*/[/*E:Literal*//*L:DecimalNonIntegerLiteral*/0];
+/*E:IdentifierReference*/A/*E:MemberCall*/(/*E:Literal*//*L:StringLiteral*/'b', /*E:Literal*//*L:StringLiteral*/'c', /*E:IdentifierReference*/d, /*E:Literal*//*L:DecimalNonIntegerLiteral*/1E+10)/*E:CallArgs*/();
+/*E:IdentifierReference*/A/*E:MemberCall*/(/*E:Literal*//*L:StringLiteral*/'b', /*E:Literal*//*L:StringLiteral*/'c', /*E:IdentifierReference*/d, /*E:Literal*//*L:DecimalNonIntegerLiteral*/1E+10)/*E:CallElement*/[/*E:Literal*//*L:DecimalNonIntegerLiteral*/0];
+/*E:IdentifierReference*/A/*E:MemberCall*/(/*E:Literal*//*L:StringLiteral*/'b', /*E:Literal*//*L:StringLiteral*/'c', /*E:IdentifierReference*/d, /*E:Literal*//*L:DecimalNonIntegerLiteral*/1E+10)/*E:CallProperty*/./*PN:IdentifierName*/f;
+/*E:IdentifierReference*/A/*E:MemberCall*/(/*E:Literal*//*L:StringLiteral*/'b', /*E:Literal*//*L:StringLiteral*/'c', /*E:IdentifierReference*/d, /*E:Literal*//*L:DecimalNonIntegerLiteral*/1E+10)/*E:CallElement*/[/*E:Literal*//*L:DecimalNonIntegerLiteral*/0]/*E:CallProperty*/./*PN:IdentifierName*/f;
+/*E:IdentifierReference*/A/*E:MemberCall*/(/*E:Literal*//*L:StringLiteral*/'b', /*E:Literal*//*L:StringLiteral*/'c', /*E:IdentifierReference*/d, /*E:Literal*//*L:DecimalNonIntegerLiteral*/1E+10)/*E:CallProperty*/./*PN:IdentifierName*/f/*E:CallElement*/[/*E:Literal*//*L:DecimalNonIntegerLiteral*/0];

@@ -112,20 +112,30 @@ public class CommentingExpressionWriter extends ExpressionWriter {
 
 	@Override
 	public CodeWriter visitCallArgs(CallArgs value) throws IOException {
+		f.expression(value.getBase());
 		f.inlineComment("E:CallArgs");
-		return super.visitCallArgs(value);
+		visitInvocationArgs(value.getArgs());
+		return f;
+		
 	}
 
 	@Override
 	public CodeWriter visitCallElement(CallElement value) throws IOException {
+		f.expression(value.getBase());
 		f.inlineComment("E:CallElement");
-		return super.visitCallElement(value);
+		f.openSquareBracket();
+		f.indent().expression(value.getIndex()).unindent();
+		f.closeSquareBracket();
+		return f;
 	}
 
 	@Override
 	public CodeWriter visitCallProperty(CallProperty value) throws IOException {
+		f.expression(value.getBase());
 		f.inlineComment("E:CallProperty");
-		return super.visitCallProperty(value);
+		f.dot();
+		f.indent().propertyName(value.getName()).unindent();
+		return f;
 	}
 
 	@Override
@@ -154,8 +164,10 @@ public class CommentingExpressionWriter extends ExpressionWriter {
 
 	@Override
 	public CodeWriter visitMemberCall(MemberCall value) throws IOException {
+		f.expression(value.getBase());
 		f.inlineComment("E:MemberCall");
-		return super.visitMemberCall(value);
+		visitInvocationArgs(value.getArgs());
+		return f;
 	}
 
 	@Override

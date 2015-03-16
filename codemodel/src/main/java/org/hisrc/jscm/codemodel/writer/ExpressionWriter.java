@@ -226,14 +226,18 @@ public class ExpressionWriter implements
 		return visitInvocation(value);
 	}
 
-	private CodeWriter visitInvocation(JSInvocationExpression value)
+	protected CodeWriter visitInvocation(JSInvocationExpression value)
 			throws IOException {
 		f.expression(value.getBase());
+		visitInvocationArgs(value.getArgs());
+		return f;
+	}
 
+	protected CodeWriter visitInvocationArgs(List<JSAssignmentExpression> args)
+			throws IOException {
 		f.openRoundBracket();
 
 		f.indent();
-		List<JSAssignmentExpression> args = value.getArgs();
 
 		for (int index = 0; index < args.size(); index++) {
 			if (index > 0) {
