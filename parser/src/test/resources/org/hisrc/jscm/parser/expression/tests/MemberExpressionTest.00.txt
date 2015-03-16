@@ -1,0 +1,10 @@
+/*E:Literal*//*L:NullLiteral*/null;
+/*E:Function*/function () {
+};
+/*E:IdentifierReference*/a/*E:MemberElement*/[/*E:IdentifierReference*/b];
+/*E:IdentifierReference*/a/*E:MemberProperty*/./*PN:IdentifierName*/b;
+/*E:MemberNew*/new /*E:IdentifierReference*/A(/*E:IdentifierReference*/a);
+/*E:Literal*//*L:StringLiteral*/'a'/*E:MemberElement*/[/*E:IdentifierReference*/b]/*E:MemberProperty*/./*PN:IdentifierName*/c/*E:MemberElement*/[/*E:IdentifierReference*/d];
+/*E:Literal*//*L:StringLiteral*/'a'/*E:MemberProperty*/./*PN:IdentifierName*/b/*E:MemberElement*/[/*E:IdentifierReference*/c]/*E:MemberProperty*/./*PN:IdentifierName*/d;
+/*E:MemberNew*/new /*E:Literal*//*L:StringLiteral*/'a'/*E:MemberElement*/[/*E:IdentifierReference*/b]/*E:MemberProperty*/./*PN:IdentifierName*/c/*E:MemberElement*/[/*E:IdentifierReference*/d](/*E:IdentifierReference*/e, /*E:IdentifierReference*/f);
+/*E:MemberNew*/new /*E:Literal*//*L:StringLiteral*/'a'/*E:MemberProperty*/./*PN:IdentifierName*/b/*E:MemberElement*/[/*E:IdentifierReference*/c]/*E:MemberProperty*/./*PN:IdentifierName*/d(/*E:IdentifierReference*/e, /*E:IdentifierReference*/f);

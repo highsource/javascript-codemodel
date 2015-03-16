@@ -204,7 +204,6 @@ public class ExpressionWriter implements
 	@Override
 	public CodeWriter visitMemberElement(MemberElement value)
 			throws IOException {
-
 		f.expression(value.getBase());
 		f.openSquareBracket();
 		f.indent().expression(value.getIndex()).unindent();

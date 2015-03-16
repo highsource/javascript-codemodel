@@ -161,8 +161,13 @@ public class CommentingExpressionWriter extends ExpressionWriter {
 	@Override
 	public CodeWriter visitMemberElement(MemberElement value)
 			throws IOException {
+		f.expression(value.getBase());
 		f.inlineComment("E:MemberElement");
-		return super.visitMemberElement(value);
+		f.openSquareBracket();
+		f.indent().expression(value.getIndex()).unindent();
+		f.closeSquareBracket();
+		return f;
+		
 	}
 
 	@Override
@@ -174,8 +179,11 @@ public class CommentingExpressionWriter extends ExpressionWriter {
 	@Override
 	public CodeWriter visitMemberProperty(MemberProperty value)
 			throws IOException {
+		f.expression(value.getBase());
 		f.inlineComment("E:MemberProperty");
-		return super.visitMemberProperty(value);
+		f.dot();
+		f.indent().propertyName(value.getName()).unindent();
+		return f;
 	}
 
 	@Override

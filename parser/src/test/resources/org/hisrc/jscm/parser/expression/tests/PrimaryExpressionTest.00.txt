@@ -3,6 +3,6 @@
 /*E:Literal*//*L:StringLiteral*/'b';
 /*E:ArrayLiteral*/[/*E:IdentifierReference*/c];
 var a = /*E:ObjectLiteral*/{
-  /*PN:IdentifierName*/d: /*E:IdentifierReference*/e
+  /*PA:Property*//*PN:IdentifierName*/d: /*E:IdentifierReference*/e
 };
 /*E:Brackets*/(/*E:IdentifierReference*/f);
