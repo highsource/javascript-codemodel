@@ -1,0 +1,15 @@
+/*E:IdentifierReference*/A;
+/*E:New*/new /*E:IdentifierReference*/A;
+/*E:MemberNew*/new /*E:IdentifierReference*/A();
+/*E:New*/new /*E:New*/new /*E:IdentifierReference*/A;
+/*E:New*/new /*E:MemberNew*/new /*E:IdentifierReference*/A();
+/*E:IdentifierReference*/A/*E:MemberProperty*/./*PN:IdentifierName*/B;
+/*E:New*/new /*E:IdentifierReference*/A/*E:MemberProperty*/./*PN:IdentifierName*/B;
+/*E:MemberNew*/new /*E:IdentifierReference*/A/*E:MemberProperty*/./*PN:IdentifierName*/B();
+/*E:New*/new /*E:New*/new /*E:IdentifierReference*/A/*E:MemberProperty*/./*PN:IdentifierName*/B;
+/*E:New*/new /*E:MemberNew*/new /*E:IdentifierReference*/A/*E:MemberProperty*/./*PN:IdentifierName*/B();
+/*E:IdentifierReference*/A/*E:MemberElement*/[/*E:IdentifierReference*/B];
+/*E:New*/new /*E:IdentifierReference*/A/*E:MemberElement*/[/*E:IdentifierReference*/B];
+/*E:MemberNew*/new /*E:IdentifierReference*/A/*E:MemberElement*/[/*E:IdentifierReference*/B]();
+/*E:New*/new /*E:New*/new /*E:IdentifierReference*/A/*E:MemberElement*/[/*E:IdentifierReference*/B];
+/*E:New*/new /*E:MemberNew*/new /*E:IdentifierReference*/A/*E:MemberElement*/[/*E:IdentifierReference*/B]();
