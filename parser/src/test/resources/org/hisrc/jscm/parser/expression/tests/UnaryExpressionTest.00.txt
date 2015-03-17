@@ -1,0 +1,10 @@
+/*E:IdentifierReference*/a;
+/*E:Unary*/delete /*E:IdentifierReference*/a;
+/*E:Unary*/void /*E:IdentifierReference*/a;
+/*E:Unary*/typeof /*E:IdentifierReference*/a;
+/*E:Unary*/++/*E:IdentifierReference*/a;
+/*E:Unary*/--/*E:IdentifierReference*/a;
+/*E:Unary*/+/*E:IdentifierReference*/a;
+/*E:Unary*/-/*E:IdentifierReference*/a;
+/*E:Unary*/~/*E:IdentifierReference*/a;
+/*E:Unary*/!/*E:IdentifierReference*/a;

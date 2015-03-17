@@ -2090,7 +2090,6 @@ JSUnaryExpression UnaryExpression() :
 	{
 		return expression.preDecr();
 	}
-/* TODO
 |	"+"
 	expression = UnaryExpression()
 	{
@@ -2100,7 +2099,7 @@ JSUnaryExpression UnaryExpression() :
 	expression = UnaryExpression()
 	{
 		return expression.negative();
-	}*/
+	}
 |	"~"
 	expression = UnaryExpression()
 	{
