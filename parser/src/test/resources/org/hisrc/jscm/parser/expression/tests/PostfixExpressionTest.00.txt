@@ -1,0 +1,6 @@
+/*E:Literal*//*L:DecimalNonIntegerLiteral*/0;
+/*E:Literal*//*L:DecimalNonIntegerLiteral*/1/*E:Postfix*/++;
+/*E:Literal*//*L:DecimalNonIntegerLiteral*/2/*E:Postfix*/--;
+/*E:IdentifierReference*/a;
+/*E:Unary*/++/*E:IdentifierReference*/b;
+/*E:Unary*/--/*E:IdentifierReference*/c;

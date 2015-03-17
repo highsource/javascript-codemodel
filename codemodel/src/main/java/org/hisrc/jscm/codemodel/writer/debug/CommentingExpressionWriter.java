@@ -219,8 +219,10 @@ public class CommentingExpressionWriter extends ExpressionWriter {
 
 	@Override
 	public CodeWriter visitPostfix(Postfix value) throws IOException {
+		f.expression(value.getBase());
 		f.inlineComment("E:Postfix");
-		return super.visitPostfix(value);
+		f.operator(value.getOperator());
+		return f;
 	}
 
 	@Override

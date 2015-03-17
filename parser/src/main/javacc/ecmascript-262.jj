@@ -47,6 +47,7 @@ import org.hisrc.jscm.codemodel.statement.*;
 import org.hisrc.jscm.codemodel.statement.JSSwitchStatement.JSCaseClause;
 import org.hisrc.jscm.codemodel.statement.JSSwitchStatement.JSDefaultClause;
 import org.hisrc.jscm.parser.impl.*;
+import org.hisrc.jscm.parser.TokenUtils;
 
 import java.util.List;
 import java.util.LinkedList;
@@ -1797,22 +1798,6 @@ String PropertySetParameterList() :
 }
 
 /* ========================================================================== */
-/* ========================================================================== */
-/* ========================================================================== */
-/* ========================================================================== */
-/* ========================================================================== */
-/* ========================================================================== */
-/* ========================================================================== */
-/* ============================CONTINUE=FROM=HERE============================ */
-/* ========================================================================== */
-/* ========================================================================== */
-/* ========================================================================== */
-/* ========================================================================== */
-/* ========================================================================== */
-/* ========================================================================== */
-/* ========================================================================== */
-
-/* ========================================================================== */
 
 /* 11.2 Left-Hand-Side Expressions */
 
@@ -1891,6 +1876,7 @@ JSNewExpression NewExpression() :
 	JSNewExpression newExpression;
 }
 {
+	// TODO Could be improved (without semantic lookahead)
 	LOOKAHEAD(MemberExpression())
 	memberExpression = MemberExpression()
 	{
@@ -2015,6 +2001,15 @@ JSLeftHandSideExpression LeftHandSideExpression() :
 /* ========================================================================== */
 
 
+/* ========================================================================== */
+/* ========================================================================== */
+/* ========================================================================== */
+/* =====================CONTINUE=FROM=HERE=================================== */
+/* ========================================================================== */
+/* ========================================================================== */
+/* ========================================================================== */
+
+
 /* 11.3 Postfix Expressions */
 /* ========================================================================== */
 
@@ -2031,15 +2026,13 @@ JSPostfixExpression PostfixExpression() :
 {
 	expression = LeftHandSideExpression()
 	(
-		/* TODO */
-	 	/*LOOKAHEAD( "++", {getToken(0).beginLine == getToken(1).beginLine})*/
-	 	"++"
+		LOOKAHEAD ( <INCR>, { !TokenUtils.precededBySpecialTokenOfKind(getToken(1), LINE_TERMINATOR)} )
+		<INCR>
 	 	{
 	 		return expression.postIncr();
 	 	}
-	|	/* TODO */
-		/*LOOKAHEAD( "--", {getToken(0).beginLine == getToken(1).beginLine})*/	
-		"--"
+	|	LOOKAHEAD ( <DECR>, { !TokenUtils.precededBySpecialTokenOfKind(getToken(1), LINE_TERMINATOR)} )
+		<DECR>
 		{
 			return expression.postDecr();
 		}
@@ -2087,7 +2080,6 @@ JSUnaryExpression UnaryExpression() :
 	{
 		return expression.typeof();
 	}
-/* TODO
 |	"++"
 	expression = UnaryExpression()
 	{
@@ -2097,7 +2089,7 @@ JSUnaryExpression UnaryExpression() :
 	expression = UnaryExpression()
 	{
 		return expression.preDecr();
-	} */
+	}
 /* TODO
 |	"+"
 	expression = UnaryExpression()
@@ -4081,8 +4073,7 @@ void AutomaticSemicolonInsertion() {
 	if (token.kind == SEMICOLON) {
 		token = getNextToken();
 	} else if (token.specialToken != null) {
-		if ((token.specialToken.kind != LINE_TERMINATOR) &&
-			(token.specialToken.kind != SINGLE_LINE_COMMENT)) {
+		if (!TokenUtils.precededBySpecialTokenOfKind(token, LINE_TERMINATOR)) {
             throw generateParseException();
 		}
 	} else if ((token.kind != EOF) && (token.kind!=RBRACE)) {
