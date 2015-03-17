@@ -1,0 +1,4 @@
+/*E:IdentifierReference*/A;
+/*E:IdentifierReference*/A/*E:MemberCall*/(/*E:IdentifierReference*/b, /*E:Literal*//*L:StringLiteral*/'c', /*E:Literal*//*L:HexIntegerLiteral*/0xd, /*E:Literal*//*L:OctalIntegerLiteral*/07, /*E:Literal*//*L:DecimalNonIntegerLiteral*/19);
+/*E:New*/new /*E:IdentifierReference*/A;
+/*E:MemberNew*/new /*E:IdentifierReference*/A(/*E:IdentifierReference*/b, /*E:Literal*//*L:StringLiteral*/'c', /*E:Literal*//*L:HexIntegerLiteral*/0xd, /*E:Literal*//*L:OctalIntegerLiteral*/07, /*E:Literal*//*L:DecimalNonIntegerLiteral*/19);
