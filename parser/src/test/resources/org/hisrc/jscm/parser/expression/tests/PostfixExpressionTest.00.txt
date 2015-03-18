@@ -4,3 +4,5 @@
 /*E:IdentifierReference*/a;
 /*E:Unary*/++/*E:IdentifierReference*/b;
 /*E:Unary*/--/*E:IdentifierReference*/c;
+/*E:IdentifierReference*/d;
+/*E:Unary*/++/*E:IdentifierReference*/e;
