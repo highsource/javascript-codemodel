@@ -2026,12 +2026,12 @@ JSPostfixExpression PostfixExpression() :
 {
 	expression = LeftHandSideExpression()
 	(
-		LOOKAHEAD ( <INCR>, { !TokenUtils.precededBySpecialTokenOfKind(getToken(1), LINE_TERMINATOR)} )
+		LOOKAHEAD ( <INCR>, { !TokenUtils.precededByLineTerminator(getToken(1))} )
 		<INCR>
 	 	{
 	 		return expression.postIncr();
 	 	}
-	|	LOOKAHEAD ( <DECR>, { !TokenUtils.precededBySpecialTokenOfKind(getToken(1), LINE_TERMINATOR)} )
+	|	LOOKAHEAD ( <DECR>, { !TokenUtils.precededByLineTerminator(getToken(1))} )
 		<DECR>
 		{
 			return expression.postDecr();
@@ -4072,7 +4072,7 @@ void AutomaticSemicolonInsertion() {
 	if (token.kind == SEMICOLON) {
 		token = getNextToken();
 	} else if (token.specialToken != null) {
-		if (!TokenUtils.precededBySpecialTokenOfKind(token, LINE_TERMINATOR)) {
+		if (!TokenUtils.precededByLineTerminator(token)) {
             throw generateParseException();
 		}
 	} else if ((token.kind != EOF) && (token.kind!=RBRACE)) {
