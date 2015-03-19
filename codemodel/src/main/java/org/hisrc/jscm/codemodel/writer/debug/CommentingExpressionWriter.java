@@ -201,8 +201,11 @@ public class CommentingExpressionWriter extends ExpressionWriter {
 	@Override
 	public CodeWriter visitMultiplicative(Multiplicative value)
 			throws IOException {
+		f.expression(value.getLeft());
 		f.inlineComment("E:Multiplicative");
-		return super.visitMultiplicative(value);
+		f.operator(value.getOperator());
+		f.expression(value.getRight());
+		return f;
 	}
 
 	@Override
