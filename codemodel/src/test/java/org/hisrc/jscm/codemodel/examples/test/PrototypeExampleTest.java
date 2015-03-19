@@ -1,5 +1,4 @@
 package org.hisrc.jscm.codemodel.examples.test;
-
 import java.io.IOException;
 import java.io.StringWriter;
 import java.io.Writer;
