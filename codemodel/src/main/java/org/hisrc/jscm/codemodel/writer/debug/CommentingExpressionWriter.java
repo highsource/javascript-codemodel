@@ -233,14 +233,20 @@ public class CommentingExpressionWriter extends ExpressionWriter {
 
 	@Override
 	public CodeWriter visitRelational(Relational value) throws IOException {
+		f.expression(value.getLeft());
 		f.inlineComment("E:Relational");
-		return super.visitRelational(value);
+		f.operator(value.getOperator());
+		f.expression(value.getRight());
+		return f;
 	}
 
 	@Override
 	public CodeWriter visitShift(Shift value) throws IOException {
+		f.expression(value.getLeft());
 		f.inlineComment("E:Shift");
-		return super.visitShift(value);
+		f.operator(value.getOperator());
+		f.expression(value.getRight());
+		return f;
 	}
 
 	@Override
