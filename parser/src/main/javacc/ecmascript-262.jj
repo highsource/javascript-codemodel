@@ -1557,11 +1557,11 @@ JSPrimaryExpression PrimaryExpression() :
 	String identifier;
 }
 {
-	"this"
+	"this"	{SetState(NO_REGULAR_EXPRESSION_HERE);}
 	{
 		return this.builder._this();
 	}
-|	identifier = Identifier()
+|	identifier = Identifier()	{SetState(NO_REGULAR_EXPRESSION_HERE);}
 	{
 		return this.builder.identifierReference(identifier);
 	}
@@ -1577,9 +1577,7 @@ JSPrimaryExpression PrimaryExpression() :
 	{
 		return objectLiteral;
 	}
-|	"("
-	expression = Expression()
-	")"
+|	"(" expression = Expression() ")"	{SetState(NO_REGULAR_EXPRESSION_HERE);}
 	{
 		return expression.brackets();
 	} 
@@ -1613,7 +1611,7 @@ JSArrayLiteral ArrayLiteral() :
 	boolean lastElementWasAssignmentExpression = false;
 }
 {
-	"["
+	<LBRACKET>
 	(
 		(
 			expression = AssignmentExpression()
@@ -1647,7 +1645,7 @@ JSArrayLiteral ArrayLiteral() :
 //			elementList.remove(elementListSize - 1);
 		}
 	}
-	"]"
+	<RBRACKET>	{SetState(NO_REGULAR_EXPRESSION_HERE);}
 	{
 		elements =  elementList.toArray(new JSArrayElement[elementList.size()]);
 		return this.builder.arrayLiteral(elements);
@@ -1675,7 +1673,7 @@ JSObjectLiteral ObjectLiteral() :
 	JSPropertyAssignment propertyAssignment;
 }
 {
-	"{"
+	<LBRACE>
 		(
 			propertyAssignment = PropertyAssignment()
 			{
@@ -1694,7 +1692,7 @@ JSObjectLiteral ObjectLiteral() :
 				","
 			) ?
 		) ?
-	"}"
+	<RBRACE>	{SetState(NO_REGULAR_EXPRESSION_HERE);}
 	{
 		JSPropertyAssignment[] propertyAssignments = propertyNameAndValueList.toArray(new JSPropertyAssignment[propertyNameAndValueList.size()]);
 		return this.builder.objectLiteral(propertyAssignments);
@@ -1830,7 +1828,7 @@ JSMemberExpression MemberExpression() :
 		(
 			"["
 			element = Expression()
-			"]"
+			"]"	{SetState(NO_REGULAR_EXPRESSION_HERE);}
 			{
 				memberExpression = memberExpression.element(element);
 			}
@@ -1925,7 +1923,7 @@ JSCallExpression CallExpression() :
 			}
 		|	"["
 			element = Expression()
-			"]"
+			"]" {SetState(NO_REGULAR_EXPRESSION_HERE);}
 			{
 				callExpression = callExpression.element(element);
 			}
@@ -1970,7 +1968,7 @@ JSAssignmentExpression[] Arguments() :
 				}
 			) *				
 		) ?
-	")"
+	")" {SetState(NO_REGULAR_EXPRESSION_HERE);}
 	{
 		return argumentList.toArray(new JSAssignmentExpression[argumentList.size()]);
 	}
@@ -2138,9 +2136,6 @@ JSMultiplicativeExpression MultiplicativeExpression() :
 }
 {
 	expression0 = UnaryExpression()
-	{
-		SetState(NO_REGULAR_EXPRESSION_HERE);
-	}
 	(
 		<STAR>
 		expression1 = UnaryExpression()
@@ -2278,7 +2273,7 @@ JSRelationalExpression RelationalExpression() :
 	|	">="
 		expression1 = ShiftExpression()
 		{
-			expression0 = expression0.gt(expression1);
+			expression0 = expression0.ge(expression1);
 		}
 	|	"instanceof"
 		expression1 = ShiftExpression()
@@ -3961,7 +3956,7 @@ JSFunctionExpression FunctionExpression() :
 		")"
 		"{"
 		functionBody = FunctionBody()
-		"}"
+		"}" {SetState(NO_REGULAR_EXPRESSION_HERE);}
 		{
 			return this.builder.functionExpression(formalParameterList, functionBody);
 		}

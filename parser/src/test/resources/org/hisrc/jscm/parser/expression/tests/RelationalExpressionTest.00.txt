@@ -1,0 +1,7 @@
+/*E:IdentifierReference*/a;
+/*E:IdentifierReference*/a/*E:Relational*/ < /*E:IdentifierReference*/b;
+/*E:IdentifierReference*/a/*E:Relational*/ > /*E:IdentifierReference*/b;
+/*E:IdentifierReference*/a/*E:Relational*/ <= /*E:IdentifierReference*/b;
+/*E:IdentifierReference*/a/*E:Relational*/ >= /*E:IdentifierReference*/b;
+/*E:IdentifierReference*/a/*E:Relational*/ instanceof /*E:IdentifierReference*/b;
+/*E:IdentifierReference*/a/*E:Relational*/ in /*E:IdentifierReference*/b;
