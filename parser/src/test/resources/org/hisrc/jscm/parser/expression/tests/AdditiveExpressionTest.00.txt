@@ -1,0 +1,8 @@
+/*E:IdentifierReference*/a;
+/*E:IdentifierReference*/a/*E:Additive*/ + /*E:IdentifierReference*/b;
+/*E:IdentifierReference*/a/*E:Additive*/ - /*E:IdentifierReference*/b;
+/*E:IdentifierReference*/a/*E:Additive*/ + /*E:Unary*/-/*E:IdentifierReference*/b;
+/*E:IdentifierReference*/a/*E:Additive*/ - /*E:Unary*/+/*E:IdentifierReference*/b;
+/*E:IdentifierReference*/a/*E:Additive*/ + /*E:Unary*/+/*E:IdentifierReference*/b;
+/*E:IdentifierReference*/a/*E:Additive*/ + /*E:Unary*/++/*E:IdentifierReference*/b;
+/*E:IdentifierReference*/a/*E:Postfix*/++/*E:Additive*/ + /*E:IdentifierReference*/b;

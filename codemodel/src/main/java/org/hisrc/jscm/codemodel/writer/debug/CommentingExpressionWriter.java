@@ -82,8 +82,11 @@ public class CommentingExpressionWriter extends ExpressionWriter {
 
 	@Override
 	public CodeWriter visitAdditive(Additive value) throws IOException {
+		f.expression(value.getLeft());
 		f.inlineComment("E:Additive");
-		return super.visitAdditive(value);
+		f.operator(value.getOperator());
+		f.expression(value.getRight());
+		return f;
 	}
 
 	@Override
