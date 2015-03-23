@@ -2,10 +2,6 @@
 /*E:IdentifierReference*/a/*E:Multiplicative*/ * /*E:IdentifierReference*/b;
 /*E:IdentifierReference*/a/*E:Multiplicative*/ * /*E:IdentifierReference*/b;
 /*E:IdentifierReference*/a/*E:Multiplicative*/ / /*E:IdentifierReference*/b;
-a
-/ //
-b
-a%b
-a
-%
-b
+/*E:IdentifierReference*/a/*E:Multiplicative*/ / /*E:IdentifierReference*/b;
+/*E:IdentifierReference*/a/*E:Multiplicative*/ % /*E:IdentifierReference*/b;
+/*E:IdentifierReference*/a/*E:Multiplicative*/ % /*E:IdentifierReference*/b;

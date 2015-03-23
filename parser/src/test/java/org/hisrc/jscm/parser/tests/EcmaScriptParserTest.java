@@ -4,6 +4,7 @@ import java.io.Reader;
 import java.io.StringReader;
 
 import org.hisrc.jscm.codemodel.expression.JSPrimaryExpression;
+import org.hisrc.jscm.parser.BackupCharStream;
 import org.hisrc.jscm.parser.EcmaScriptParser;
 import org.hisrc.jscm.parser.ParseException;
 import org.junit.Assert;
@@ -13,7 +14,7 @@ public class EcmaScriptParserTest {
 
 	private EcmaScriptParser parse(String str) {
 		final Reader reader = new StringReader(str);
-		EcmaScriptParser parser = new EcmaScriptParser(reader);
+		EcmaScriptParser parser = new EcmaScriptParser(new BackupCharStream(reader));
 		parser.enable_tracing();
 		return parser;
 	}

@@ -12,6 +12,7 @@ import org.apache.commons.lang3.Validate;
 import org.hisrc.jscm.codemodel.JSProgram;
 import org.hisrc.jscm.codemodel.writer.CodeWriter;
 import org.hisrc.jscm.codemodel.writer.debug.CommentingCodeWriter;
+import org.hisrc.jscm.parser.BackupCharStream;
 import org.hisrc.jscm.parser.EcmaScriptParser;
 import org.hisrc.jscm.parser.ParseException;
 import org.hisrc.jscm.parser.testing.util.AbstractDualResourceBasedTest;
@@ -22,7 +23,7 @@ public abstract class AbstractDualParserTest extends
 
 	private EcmaScriptParser parse(String str) {
 		final Reader reader = new StringReader(str);
-		EcmaScriptParser parser = new EcmaScriptParser(reader);
+		EcmaScriptParser parser = new EcmaScriptParser(new BackupCharStream(reader));
 		parser.enable_tracing();
 		return parser;
 	}

@@ -8,9 +8,10 @@ import java.util.List;
 import junit.framework.Assert;
 
 import org.apache.commons.lang3.StringEscapeUtils;
+import org.hisrc.jscm.parser.BackupCharStream;
+import org.hisrc.jscm.parser.CharStream;
 import org.hisrc.jscm.parser.EcmaScriptParserConstants;
 import org.hisrc.jscm.parser.EcmaScriptParserTokenManager;
-import org.hisrc.jscm.parser.SimpleCharStream;
 import org.hisrc.jscm.parser.Token;
 import org.hisrc.jscm.parser.TokenMgrError;
 import org.hisrc.jscm.parser.testing.util.AbstractDualResourceBasedTest;
@@ -26,9 +27,10 @@ public abstract class AbstractDualTokenTest extends
 	}
 
 	private List<LToken> parseTokens(String input) {
-		final SimpleCharStream stream = isInputEscaped() ? new SimpleCharStream(
+
+		final CharStream stream = isInputEscaped() ? new BackupCharStream(
 				new StringReader(StringEscapeUtils.unescapeEcmaScript(input)))
-				: new SimpleCharStream(new StringReader(input));
+				: new BackupCharStream(new StringReader(input));
 		final EcmaScriptParserTokenManager tokenManager = new EcmaScriptParserTokenManager(
 				stream);
 		final List<LToken> tokens = new LinkedList<LToken>();

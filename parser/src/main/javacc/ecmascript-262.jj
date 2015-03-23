@@ -32,6 +32,10 @@ options {
 	 * JDK Version
 	 */
 	JDK_VERSION = "1.5";
+	
+	USER_CHAR_STREAM = true;
+	
+
 }
 
 PARSER_BEGIN(EcmaScriptParser)
@@ -135,7 +139,7 @@ WhiteSpace ::
 	<USP>
 */
 <DEFAULT, NO_REGULAR_EXPRESSION_HERE, NO_LINE_TERMINATOR_HERE>
-SKIP :
+SPECIAL_TOKEN :
 {
 	<WHITE_SPACE:
 		<TAB>
@@ -244,13 +248,13 @@ SPECIAL_TOKEN :
 <DEFAULT, NO_REGULAR_EXPRESSION_HERE, NO_LINE_TERMINATOR_HERE>
 MORE :
 {
-	"/*"	:IN_MULTI_LINE_COMMENT
+	"/*"	{ lexicalStateBeforeMultiLineComment = curLexState; } :IN_MULTI_LINE_COMMENT
 }
 
 <IN_MULTI_LINE_COMMENT>
 SPECIAL_TOKEN :
 {
-	<MULTI_LINE_COMMENT:	"*/">	:DEFAULT
+	<MULTI_LINE_COMMENT:	"*/">	{ SwitchTo(lexicalStateBeforeMultiLineComment); } /*: DEFAULT*/
 }
 
 <IN_MULTI_LINE_COMMENT>
@@ -2134,8 +2138,11 @@ JSMultiplicativeExpression MultiplicativeExpression() :
 }
 {
 	expression0 = UnaryExpression()
+	{
+		SetState(NO_REGULAR_EXPRESSION_HERE);
+	}
 	(
-		"*"
+		<STAR>
 		expression1 = UnaryExpression()
 		{
 			expression0 = expression0.mul(expression1);
@@ -2145,13 +2152,14 @@ JSMultiplicativeExpression MultiplicativeExpression() :
 		{
 			expression0 = expression0.div(expression1);
 		}
-	|	"%"
+	|	<REM>
 		expression1 = UnaryExpression()
 		{
 			expression0 = expression0.mod(expression1);
 		}
 	) *
 	{
+		SetState(DEFAULT);
 		return expression0;
 	}
 }
@@ -4067,7 +4075,7 @@ JSSourceElement SourceElement() :
 }
 
 JAVACODE
-void AutomaticSemicolonInsertion() {
+private void AutomaticSemicolonInsertion() {
 	Token token = getToken(1);
 	if (token.kind == SEMICOLON) {
 		token = getNextToken();
@@ -4078,4 +4086,52 @@ void AutomaticSemicolonInsertion() {
 	} else if ((token.kind != EOF) && (token.kind!=RBRACE)) {
 		throw generateParseException();
 	}
+}
+
+JAVACODE
+private void SetState(int state) {
+  if (state != token_source.curLexState) {
+    Token root = new Token(), last=root;
+    root.next = null;
+
+    // First, we build a list of tokens to push back, in backwards order
+    while (token.next != null) {
+      Token t = token;
+      // Find the token whose token.next is the last in the chain
+      while (t.next != null && t.next.next != null)
+        t = t.next;
+
+      // put it at the end of the new chain
+      last.next = t.next;
+      last = t.next;
+
+      // If there are special tokens, these go before the regular tokens,
+      // so we want to push them back onto the input stream in the order
+      // we find them along the specialToken chain.
+
+      if (t.next.specialToken != null) {
+        Token tt=t.next.specialToken;
+        while (tt != null) {
+          last.next = tt;
+          last = tt;
+          tt.next = null;
+          tt = tt.specialToken;
+        }
+      }
+      t.next = null;
+    };
+
+    while (root.next != null) {
+      token_source.backup(root.next.image.length());
+      root.next = root.next.next;
+    }
+    jj_ntk = -1;
+    token_source.SwitchTo(state);
+  }
+}
+
+TOKEN_MGR_DECLS : {
+	int lexicalStateBeforeMultiLineComment;
+	// Required by SetState
+	void backup(int n) { input_stream.backup(n); }
 }
