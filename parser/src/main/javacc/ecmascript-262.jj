@@ -2327,7 +2327,7 @@ JSRelationalExpression RelationalExpressionNoIn() :
 	|	">="
 		expression1 = ShiftExpression()
 		{
-			expression0 = expression0.gt(expression1);
+			expression0 = expression0.ge(expression1);
 		}
 	|	"instanceof"
 		expression1 = ShiftExpression()

@@ -1,0 +1,12 @@
+for(/*E:IdentifierReference*/a;;)
+  ;
+for(/*E:IdentifierReference*/a/*E:Relational*/ < /*E:IdentifierReference*/b;;)
+  ;
+for(/*E:IdentifierReference*/a/*E:Relational*/ > /*E:IdentifierReference*/b;;)
+  ;
+for(/*E:IdentifierReference*/a/*E:Relational*/ <= /*E:IdentifierReference*/b;;)
+  ;
+for(/*E:IdentifierReference*/a/*E:Relational*/ >= /*E:IdentifierReference*/b;;)
+  ;
+for(/*E:IdentifierReference*/a/*E:Relational*/ instanceof /*E:IdentifierReference*/b;;)
+  ;
