@@ -1,0 +1,5 @@
+/*E:IdentifierReference*/a/*E:Relational*/ < /*E:IdentifierReference*/b;
+/*E:IdentifierReference*/a/*E:Equality*/ == /*E:IdentifierReference*/b;
+/*E:IdentifierReference*/a/*E:Equality*/ != /*E:IdentifierReference*/b;
+/*E:IdentifierReference*/a/*E:Equality*/ === /*E:IdentifierReference*/b;
+/*E:IdentifierReference*/a/*E:Equality*/ !== /*E:IdentifierReference*/b;

@@ -21,7 +21,7 @@ public abstract class EqualityExpressionImpl extends BitwiseANDExpressionImpl
 
 	public Equality ne(JSRelationalExpression value) {
 		return new EqualityImpl(getCodeModel(), this, value,
-				EqualityOperator.EQ);
+				EqualityOperator.NE);
 	}
 
 	public Equality eeq(JSRelationalExpression value) {

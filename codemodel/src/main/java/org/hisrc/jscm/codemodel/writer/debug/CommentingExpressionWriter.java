@@ -155,8 +155,11 @@ public class CommentingExpressionWriter extends ExpressionWriter {
 
 	@Override
 	public CodeWriter visitEquality(Equality value) throws IOException {
+		f.expression(value.getLeft());
 		f.inlineComment("E:Equality");
-		return super.visitEquality(value);
+		f.operator(value.getOperator());
+		f.expression(value.getRight());
+		return f;
 	}
 
 	@Override
