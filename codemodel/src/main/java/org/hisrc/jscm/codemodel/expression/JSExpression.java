@@ -6,8 +6,8 @@ public interface JSExpression {
 
 	public JSExpression.Comma comma(JSAssignmentExpression expression);
 
-	public <V, E extends Exception> V acceptExpressionVisitor(JSExpressionVisitor<V, E> visitor)
-			throws E;
+	public <V, E extends Exception> V acceptExpressionVisitor(
+			JSExpressionVisitor<V, E> visitor) throws E;
 
 	public interface Comma extends JSExpression {
 
