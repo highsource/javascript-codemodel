@@ -112,8 +112,11 @@ public class CommentingExpressionWriter extends ExpressionWriter {
 
 	@Override
 	public CodeWriter visitBor(Bor value) throws IOException {
+		f.expression(value.getLeft());
 		f.inlineComment("E:Bor");
-		return super.visitBor(value);
+		f.operator(value.getOperator());
+		f.expression(value.getRight());
+		return f;
 	}
 
 	@Override
@@ -263,7 +266,10 @@ public class CommentingExpressionWriter extends ExpressionWriter {
 
 	@Override
 	public CodeWriter visitXor(Xor value) throws IOException {
+		f.expression(value.getLeft());
 		f.inlineComment("E:Xor");
-		return super.visitXor(value);
+		f.operator(value.getOperator());
+		f.expression(value.getRight());
+		return f;
 	}
 }

@@ -1,0 +1,4 @@
+for(/*E:IdentifierReference*/a/*E:Band*/ & /*E:IdentifierReference*/b;;)
+  ;
+for(/*E:IdentifierReference*/a/*E:Xor*/ ^ /*E:IdentifierReference*/b;;)
+  ;

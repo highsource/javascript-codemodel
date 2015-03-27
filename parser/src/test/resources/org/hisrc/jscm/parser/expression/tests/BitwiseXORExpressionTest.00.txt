@@ -1,0 +1,2 @@
+/*E:IdentifierReference*/a/*E:Band*/ & /*E:IdentifierReference*/b;
+/*E:IdentifierReference*/a/*E:Xor*/ ^ /*E:IdentifierReference*/b;

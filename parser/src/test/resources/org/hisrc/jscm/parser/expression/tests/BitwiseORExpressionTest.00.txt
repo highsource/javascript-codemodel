@@ -1,0 +1,2 @@
+/*E:IdentifierReference*/a/*E:Xor*/ ^ /*E:IdentifierReference*/b;
+/*E:IdentifierReference*/a/*E:Bor*/ | /*E:IdentifierReference*/b;
