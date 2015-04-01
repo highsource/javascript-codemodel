@@ -91,8 +91,11 @@ public class CommentingExpressionWriter extends ExpressionWriter {
 
 	@Override
 	public CodeWriter visitAnd(And value) throws IOException {
+		f.expression(value.getLeft());
 		f.inlineComment("E:And");
-		return super.visitAnd(value);
+		f.operator(value.getOperator());
+		f.expression(value.getRight());
+		return f;
 	}
 
 	@Override
