@@ -231,8 +231,11 @@ public class CommentingExpressionWriter extends ExpressionWriter {
 
 	@Override
 	public CodeWriter visitOr(Or value) throws IOException {
+		f.expression(value.getLeft());
 		f.inlineComment("E:Or");
-		return super.visitOr(value);
+		f.operator(value.getOperator());
+		f.expression(value.getRight());
+		return f;
 	}
 
 	@Override
