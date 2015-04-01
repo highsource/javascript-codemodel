@@ -1,0 +1,2 @@
+for(/*E:IdentifierReference*/a/*E:Or*/ || /*E:IdentifierReference*/b/*E:Conditional*/ ? /*E:IdentifierReference*/c : /*E:IdentifierReference*/d;;)
+  ;
