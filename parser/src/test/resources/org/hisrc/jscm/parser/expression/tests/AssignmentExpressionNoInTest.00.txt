@@ -1,0 +1,24 @@
+for(/*E:IdentifierReference*/a/*E:Assignment*/ = /*E:IdentifierReference*/b/*E:Conditional.Condition*/ ?/*E:Conditional.IfTrue*/ /*E:IdentifierReference*/c :/*E:Conditional.IfFalse*/ /*E:IdentifierReference*/d;;)
+  ;
+for(/*E:IdentifierReference*/a/*E:Assignment*/ *= /*E:IdentifierReference*/b;;)
+  ;
+for(/*E:IdentifierReference*/a/*E:Assignment*/ /= /*E:IdentifierReference*/b;;)
+  ;
+for(/*E:IdentifierReference*/a/*E:Assignment*/ %= /*E:IdentifierReference*/b;;)
+  ;
+for(/*E:IdentifierReference*/a/*E:Assignment*/ += /*E:IdentifierReference*/b;;)
+  ;
+for(/*E:IdentifierReference*/a/*E:Assignment*/ -= /*E:IdentifierReference*/b;;)
+  ;
+for(/*E:IdentifierReference*/a/*E:Assignment*/ <<= /*E:IdentifierReference*/b;;)
+  ;
+for(/*E:IdentifierReference*/a/*E:Assignment*/ >>= /*E:IdentifierReference*/b;;)
+  ;
+for(/*E:IdentifierReference*/a/*E:Assignment*/ >>>= /*E:IdentifierReference*/b;;)
+  ;
+for(/*E:IdentifierReference*/a/*E:Assignment*/ &= /*E:IdentifierReference*/b;;)
+  ;
+for(/*E:IdentifierReference*/a/*E:Assignment*/ ^= /*E:IdentifierReference*/b;;)
+  ;
+for(/*E:IdentifierReference*/a/*E:Assignment*/ |= /*E:IdentifierReference*/b;;)
+  ;

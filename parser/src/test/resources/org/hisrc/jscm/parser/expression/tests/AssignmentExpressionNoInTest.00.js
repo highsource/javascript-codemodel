@@ -1,0 +1,12 @@
+for(a = b ? c : d;;);
+for(a *= b;;);
+for(a /= b;;);
+for(a %= b;;);
+for(a += b;;);
+for(a -= b;;);
+for(a <<= b;;);
+for(a >>= b;;);
+for(a >>>= b;;);
+for(a &= b;;);
+for(a ^= b;;);
+for(a |= b;;);

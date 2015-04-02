@@ -1,0 +1,12 @@
+/*E:IdentifierReference*/a/*E:Assignment*/ = /*E:IdentifierReference*/b/*E:Conditional.Condition*/ ?/*E:Conditional.IfTrue*/ /*E:IdentifierReference*/c :/*E:Conditional.IfFalse*/ /*E:IdentifierReference*/d;
+/*E:IdentifierReference*/a/*E:Assignment*/ *= /*E:IdentifierReference*/b;
+/*E:IdentifierReference*/a/*E:Assignment*/ /= /*E:IdentifierReference*/b;
+/*E:IdentifierReference*/a/*E:Assignment*/ %= /*E:IdentifierReference*/b;
+/*E:IdentifierReference*/a/*E:Assignment*/ += /*E:IdentifierReference*/b;
+/*E:IdentifierReference*/a/*E:Assignment*/ -= /*E:IdentifierReference*/b;
+/*E:IdentifierReference*/a/*E:Assignment*/ <<= /*E:IdentifierReference*/b;
+/*E:IdentifierReference*/a/*E:Assignment*/ >>= /*E:IdentifierReference*/b;
+/*E:IdentifierReference*/a/*E:Assignment*/ >>>= /*E:IdentifierReference*/b;
+/*E:IdentifierReference*/a/*E:Assignment*/ &= /*E:IdentifierReference*/b;
+/*E:IdentifierReference*/a/*E:Assignment*/ ^= /*E:IdentifierReference*/b;
+/*E:IdentifierReference*/a/*E:Assignment*/ |= /*E:IdentifierReference*/b;

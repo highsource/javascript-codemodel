@@ -100,8 +100,11 @@ public class CommentingExpressionWriter extends ExpressionWriter {
 
 	@Override
 	public CodeWriter visitAssignment(Assignment value) throws IOException {
+		f.expression(value.getLeft());
 		f.inlineComment("E:Assignment");
-		return super.visitAssignment(value);
+		f.operator(value.getOperator());
+		f.expression(value.getRight());
+		return f;
 	}
 
 	@Override

@@ -1,5 +1,5 @@
-/*E:Assignment*//*E:IdentifierReference*/a = /*E:ObjectLiteral*/{};
-/*E:Assignment*//*E:IdentifierReference*/a = /*E:ObjectLiteral*/{
+/*E:IdentifierReference*/a/*E:Assignment*/ = /*E:ObjectLiteral*/{};
+/*E:IdentifierReference*/a/*E:Assignment*/ = /*E:ObjectLiteral*/{
   /*PA:Property*//*PN:IdentifierName*/a: /*E:Literal*//*L:NullLiteral*/null,
   /*PA:Property*//*PN:StringLiteral*//*L:StringLiteral*/'b': /*E:IdentifierReference*/undefined,
   /*PA:Property*//*PN:StringLiteral*//*L:StringLiteral*/'c': /*E:IdentifierReference*/undefined,
