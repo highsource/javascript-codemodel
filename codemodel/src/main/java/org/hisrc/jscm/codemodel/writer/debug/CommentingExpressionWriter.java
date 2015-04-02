@@ -155,8 +155,12 @@ public class CommentingExpressionWriter extends ExpressionWriter {
 
 	@Override
 	public CodeWriter visitComma(Comma value) throws IOException {
+		f.expression(value.getLeft());
+		f.comma();
 		f.inlineComment("E:Comma");
-		return super.visitComma(value);
+		f.whiteSpace();
+		f.indent().expression(value.getRight()).unindent();
+		return f;
 	}
 
 	@Override

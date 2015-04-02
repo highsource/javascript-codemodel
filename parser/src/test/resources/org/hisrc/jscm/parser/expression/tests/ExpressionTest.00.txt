@@ -1,0 +1,1 @@
+/*E:IdentifierReference*/a/*E:Assignment*/ = /*E:IdentifierReference*/b,/*E:Comma*/ /*E:IdentifierReference*/c/*E:Assignment*/ = /*E:IdentifierReference*/d;
