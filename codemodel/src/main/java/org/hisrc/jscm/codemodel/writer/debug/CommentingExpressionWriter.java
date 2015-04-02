@@ -159,13 +159,15 @@ public class CommentingExpressionWriter extends ExpressionWriter {
 	@Override
 	public CodeWriter visitConditional(Conditional value) throws IOException {
 		f.expression(value.getCondition());
-		f.inlineComment("E:Conditional");
+		f.inlineComment("E:Conditional.Condition");
 		f.whiteSpace();
 		f.questionMark();
+		f.inlineComment("E:Conditional.IfTrue");
 		f.whiteSpace();
 		f.indent().expression(value.getIfTrue()).unindent();
 		f.whiteSpace();
 		f.colon();
+		f.inlineComment("E:Conditional.IfFalse");
 		f.whiteSpace();
 		f.indent().expression(value.getIfFalse()).unindent();
 		return f;
