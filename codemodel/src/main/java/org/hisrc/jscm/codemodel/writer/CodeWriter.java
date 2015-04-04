@@ -38,6 +38,10 @@ public class CodeWriter {
 		return new ExpressionWriter(this);
 	}
 
+	protected StatementWriter createStatementWriter() {
+		return new StatementWriter(this);
+	}
+
 	protected PropertyNameWriter createPropertyNameWriter() {
 		return new PropertyNameWriter(this);
 	}
@@ -184,7 +188,7 @@ public class CodeWriter {
 	}
 
 	public CodeWriter statement(JSStatement statement) throws IOException {
-		statement.acceptStatementVisitor(new StatementWriter(this));
+		statement.acceptStatementVisitor(createStatementWriter());
 		return this;
 	}
 

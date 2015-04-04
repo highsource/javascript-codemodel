@@ -33,7 +33,7 @@ import org.hisrc.jscm.codemodel.statement.JSWithStatement;
 public class StatementWriter implements
 		JSStatementVisitor<CodeWriter, IOException> {
 
-	private final CodeWriter f;
+	protected final CodeWriter f;
 
 	public StatementWriter(CodeWriter formatter) {
 		Validate.notNull(formatter);
