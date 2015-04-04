@@ -1,0 +1,14 @@
+/*S:Try*/try {
+}
+/*S:Try.Catch*/catch (/*E:IdentifierReference*/x) {
+}
+/*S:Try.Finally*/finally {
+}
+/*S:Try*/try {
+}
+/*S:Try.Catch*/catch (/*E:IdentifierReference*/x) {
+}
+/*S:Try*/try {
+}
+/*S:Try.Finally*/finally {
+}
